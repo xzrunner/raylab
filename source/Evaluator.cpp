@@ -7,6 +7,7 @@
 #include "raylab/material_nodes.h"
 
 #include <blueprint/Connecting.h>
+#include <blueprint/node/Hub.h>
 
 #include <raytracing/world/World.h>
 #include <raytracing/lights/Light.h>
@@ -131,61 +132,27 @@ void Evaluator::Build(rt::World& dst, const node::World& src)
     auto& object_conns = src_inputs[node::World::ID_OBJECT]->GetConnecting();
     if (!object_conns.empty())
     {
-        std::unique_ptr<rt::GeometricObject> dst_object = nullptr;
-
         auto& object_node = object_conns[0]->GetFrom()->GetParent();
         auto object_type = object_node.get_type();
-        if (object_type == rttr::type::get<node::Box>())
+        if (object_type == rttr::type::get<bp::node::Hub>())
         {
-            auto& src_object = static_cast<const node::Box&>(object_node);
-            auto object = std::make_unique<rt::Box>(
-                to_rt_p3d(src_object.min), to_rt_p3d(src_object.max)
-            );
-            dst_object = std::move(object);
-        }
-        else if (object_type == rttr::type::get<node::Sphere>())
-        {
-            auto& src_object = static_cast<const node::Sphere&>(object_node);
-            auto object = std::make_unique<rt::Sphere>();
-            object->SetCenter(to_rt_p3d(src_object.center));
-            object->SetRadius(src_object.radius);
-            dst_object = std::move(object);
+            auto& hub = static_cast<const bp::node::Hub&>(object_node);
+            for (auto& input : hub.GetAllInput()) {
+                for (auto& conn : input->GetConnecting()) {
+                    auto& from_node = conn->GetFrom()->GetParent();
+                    auto obj = CreateObject(from_node);
+                    if (obj) {
+                        dst.AddObject(std::move(obj));
+                    }
+                }
+            }
         }
         else
         {
-            assert(0);
-        }
-
-        if (dst_object)
-        {
-            // material
-            auto& material_conns = object_node.GetAllInput()[0]->GetConnecting();
-            if (!material_conns.empty())
-            {
-                std::shared_ptr<rt::Material> dst_material = nullptr;
-
-                auto& material_node = material_conns[0]->GetFrom()->GetParent();
-                auto material_type = material_node.get_type();
-                if (material_type == rttr::type::get<node::Matte>())
-                {
-                    auto& src_material = static_cast<const node::Matte&>(material_node);
-                    auto material = std::make_shared<rt::Matte>();
-                    material->SetKa(src_material.ka);
-                    material->SetKd(src_material.kd);
-                    material->SetCd(to_rt_color(src_material.cd));
-                    dst_material = material;
-                }
-                else
-                {
-                    assert(0);
-                }
-
-                if (dst_material) {
-                    dst_object->SetMaterial(dst_material);
-                }
+            auto obj = CreateObject(object_node);
+            if (obj) {
+                dst.AddObject(std::move(obj));
             }
-
-            dst.AddObject(std::move(dst_object));
         }
     }
 
@@ -240,6 +207,75 @@ void Evaluator::Build(rt::World& dst, const node::World& src)
             dst.SetAmbient(std::move(dst_ambient));
         }
     }
+}
+
+std::unique_ptr<rt::GeometricObject>
+Evaluator::CreateObject(const bp::Node& node)
+{
+    std::unique_ptr<rt::GeometricObject> dst_object = nullptr;
+
+    auto object_type = node.get_type();
+    if (object_type == rttr::type::get<bp::node::Hub>())
+    {
+        auto& hub = static_cast<const bp::node::Hub&>(node);
+        hub.GetAllInput();
+
+    }
+    else if (object_type == rttr::type::get<node::Box>())
+    {
+        auto& src_object = static_cast<const node::Box&>(node);
+        auto object = std::make_unique<rt::Box>(
+            to_rt_p3d(src_object.min), to_rt_p3d(src_object.max)
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::Sphere>())
+    {
+        auto& src_object = static_cast<const node::Sphere&>(node);
+        auto object = std::make_unique<rt::Sphere>();
+        object->SetCenter(to_rt_p3d(src_object.center));
+        object->SetRadius(src_object.radius);
+        dst_object = std::move(object);
+    }
+    else
+    {
+        assert(0);
+    }
+
+    // material
+    auto& material_conns = node.GetAllInput()[0]->GetConnecting();
+    if (!material_conns.empty())
+    {
+        auto dst_material = CreateMaterial(material_conns[0]->GetFrom()->GetParent());
+        if (dst_material) {
+            dst_object->SetMaterial(dst_material);
+        }
+    }
+
+    return dst_object;
+}
+
+std::shared_ptr<rt::Material>
+Evaluator::CreateMaterial(const bp::Node& node)
+{
+    std::shared_ptr<rt::Material> dst_material = nullptr;
+
+    auto material_type = node.get_type();
+    if (material_type == rttr::type::get<node::Matte>())
+    {
+        auto& src_material = static_cast<const node::Matte&>(node);
+        auto material = std::make_shared<rt::Matte>();
+        material->SetKa(src_material.ka);
+        material->SetKd(src_material.kd);
+        material->SetCd(to_rt_color(src_material.cd));
+        dst_material = material;
+    }
+    else
+    {
+        assert(0);
+    }
+
+    return dst_material;
 }
 
 }

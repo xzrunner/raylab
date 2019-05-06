@@ -7,6 +7,8 @@
 #include "raylab/sample_nodes.h"
 #include "raylab/world_nodes.h"
 
+#include <blueprint/node/Hub.h>
+
 namespace raylab
 {
 
@@ -47,6 +49,8 @@ void RayLab::InitNodes()
             add_node(t);
         }
     };
+
+    add_node(rttr::type::get<bp::node::Hub>());
 
     add_node(rttr::type::get<node::World>());
     add_node(rttr::type::get<node::Output>());
