@@ -86,10 +86,9 @@ void WxPreviewPanel::renderStart()
 	//start timer
     m_timer = new wxStopWatch();
 
-//    m_thread = std::make_unique<RenderThread>(this, m_world);
-    m_thread = new RenderThread(this, m_world);
+    m_thread = std::make_shared<RenderThread>(this, m_world);
     m_thread->Create();
-	m_world->SetRenderOutput(m_thread/*.get()*/);
+	m_world->SetRenderOutput(m_thread);
     m_thread->SetPriority(20);
     m_thread->Run();
 }
