@@ -84,7 +84,7 @@ void WxPreviewPanel::renderStart()
 	updateTimer.Start(250);
 
 	//start timer
-    m_timer = new wxStopWatch();
+    m_timer = std::unique_ptr<wxStopWatch>();
 
     // fixme
 //    m_thread = std::make_shared<RenderThread>(this, m_world);
@@ -112,23 +112,21 @@ void WxPreviewPanel::OnRenderCompleted( wxCommandEvent& event )
 
 //    m_world.reset();
 
-	if(m_timer != NULL)
+	if(m_timer)
 	{
 		long interval = m_timer->Time();
 
 		wxTimeSpan timeElapsed(0, 0, 0, interval);
 		wxString timeString = timeElapsed.Format(wxT("Elapsed Time: %H:%M:%S"));
 //		m_frame->SetStatusText( timeString, 1);
-
-		delete m_timer;
-        m_timer = NULL;
 	}
 }
 
 void WxPreviewPanel::OnTimerUpdate( wxTimerEvent& event )
 {
-	if(m_timer == NULL)
-		return;
+    if (!m_timer) {
+        return;
+    }
 
 	//percent
 	float completed = (float)pixelsRendered / (float)pixelsToRender;
@@ -295,7 +293,7 @@ void *WxPreviewPanel::RenderThread::
 Entry()
 {
    m_lastUpdateTime = 0;
-   m_timer = new wxStopWatch();
+   m_timer = std::make_unique<wxStopWatch>();
 
    //world->render_scene(); //for bare bones ray tracer only
 

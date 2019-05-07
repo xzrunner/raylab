@@ -25,6 +25,7 @@ class WxPreviewPanel : public wxPanel
 public:
     WxPreviewPanel(wxWindow* parent, const wxSize& size,
         ee0::WxStagePage* stage);
+    virtual ~WxPreviewPanel();
 
     virtual void OnDraw(wxDC& dc);
 
@@ -81,9 +82,9 @@ private:
 
         std::shared_ptr<rt::World> m_world = nullptr;
 
-        std::vector<Pixel*> m_pixels;
-        wxStopWatch*        m_timer = nullptr;
-        long                m_lastUpdateTime = 0;
+        std::vector<Pixel*>          m_pixels;
+        std::unique_ptr<wxStopWatch> m_timer = nullptr;
+        long                         m_lastUpdateTime = 0;
 
     }; // RenderThread
 
@@ -94,7 +95,7 @@ private:
 
     std::shared_ptr<rt::World> m_world = nullptr;
 
-    wxStopWatch* m_timer = nullptr;
+    std::unique_ptr<wxStopWatch> m_timer = nullptr;
     wxTimer updateTimer;
 
     long pixelsRendered;
