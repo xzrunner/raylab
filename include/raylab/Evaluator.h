@@ -9,7 +9,11 @@ namespace rt
     class Material;
 }
 
-namespace bp { class Node; }
+namespace bp
+{
+    class Node;
+    class Connecting;
+}
 
 namespace raylab
 {
@@ -27,6 +31,8 @@ private:
 
     static std::shared_ptr<rt::Material>
         CreateMaterial(const bp::Node& node);
+
+    static float CalcFloat(const bp::Connecting& conn);
 
 }; // Evaluator
 

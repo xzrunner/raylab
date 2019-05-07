@@ -27,11 +27,24 @@ public:
 class Matte : public Material
 {
 public:
-    Matte() : Material("Matte") {}
+    Matte()
+        : Material("Matte")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_FLOAT, "ka", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 1, bp::PIN_FLOAT, "kd", *this));
+
+        Layout();
+    }
 
     float ka = 0;
     float kd = 0;
     pt0::Color cd;
+
+    enum InputID
+    {
+        ID_KA = 0,
+        ID_KD,
+    };
 
     RTTR_ENABLE(Material)
 

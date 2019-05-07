@@ -8,6 +8,7 @@
 #include "raylab/world_nodes.h"
 
 #include <blueprint/node/Hub.h>
+#include <blueprint/node/Vector1.h>
 
 namespace raylab
 {
@@ -51,6 +52,7 @@ void RayLab::InitNodes()
     };
 
     add_node(rttr::type::get<bp::node::Hub>());
+    add_node(rttr::type::get<bp::node::Vector1>());
 
     add_node(rttr::type::get<node::World>());
     add_node(rttr::type::get<node::Output>());

@@ -8,6 +8,7 @@
 
 #include <blueprint/Connecting.h>
 #include <blueprint/node/Hub.h>
+#include <blueprint/node/Vector1.h>
 
 #include <raytracing/world/World.h>
 #include <raytracing/lights/Light.h>
@@ -216,13 +217,7 @@ Evaluator::CreateObject(const bp::Node& node)
     std::unique_ptr<rt::Object> dst_object = nullptr;
 
     auto object_type = node.get_type();
-    if (object_type == rttr::type::get<bp::node::Hub>())
-    {
-        auto& hub = static_cast<const bp::node::Hub&>(node);
-        hub.GetAllInput();
-
-    }
-    else if (object_type == rttr::type::get<node::Box>())
+    if (object_type == rttr::type::get<node::Box>())
     {
         auto& src_object = static_cast<const node::Box&>(node);
         auto object = std::make_unique<rt::Box>(
@@ -278,9 +273,25 @@ Evaluator::CreateMaterial(const bp::Node& node)
     {
         auto& src_material = static_cast<const node::Matte&>(node);
         auto material = std::make_shared<rt::Matte>();
-        material->SetKa(src_material.ka);
-        material->SetKd(src_material.kd);
+
+        auto& inputs = node.GetAllInput();
+
+        float ka = src_material.ka;
+        auto& ka_conns = inputs[node::Matte::ID_KA]->GetConnecting();
+        if (!ka_conns.empty()) {
+            ka = CalcFloat(*ka_conns[0]);
+        }
+
+        float kd = src_material.kd;
+        auto& kd_conns = inputs[node::Matte::ID_KD]->GetConnecting();
+        if (!kd_conns.empty()) {
+            kd = CalcFloat(*kd_conns[0]);
+        }
+
+        material->SetKa(ka);
+        material->SetKd(kd);
         material->SetCd(to_rt_color(src_material.cd));
+
         dst_material = material;
     }
     else
@@ -289,6 +300,19 @@ Evaluator::CreateMaterial(const bp::Node& node)
     }
 
     return dst_material;
+}
+
+float Evaluator::CalcFloat(const bp::Connecting& conn)
+{
+    float ret = 0;
+
+    auto& node = conn.GetFrom()->GetParent();
+    auto node_type = node.get_type();
+    if (node_type == rttr::type::get<bp::node::Vector1>()) {
+        ret = static_cast<const bp::node::Vector1&>(node).GetValue();
+    }
+
+    return ret;
 }
 
 }
