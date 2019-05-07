@@ -2,8 +2,7 @@
 
 #include <raytracing/world/RenderOutput.h>
 
-//#include <wx/scrolwin.h>
-#include <wx/panel.h>
+#include <wx/scrolwin.h>
 #include <wx/thread.h>
 #include <wx/event.h>
 #include <wx/stopwatch.h>
@@ -20,7 +19,7 @@ DECLARE_EVENT_TYPE(wxEVT_RENDER, -1)
 #define ID_RENDER_NEWPIXEL  101
 #define ID_RENDER_UPDATE    102
 
-class WxPreviewPanel : public wxPanel
+class WxPreviewPanel : public wxScrolledWindow
 {
 public:
     WxPreviewPanel(wxWindow* parent, const wxSize& size,

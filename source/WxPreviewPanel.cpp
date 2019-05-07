@@ -18,7 +18,7 @@
 namespace raylab
 {
 
-BEGIN_EVENT_TABLE(WxPreviewPanel, wxPanel)
+BEGIN_EVENT_TABLE(WxPreviewPanel, wxScrolledWindow)
 	EVT_MOUSE_EVENTS(WxPreviewPanel::OnMouse)
     EVT_COMMAND(ID_RENDER_NEWPIXEL, wxEVT_RENDER, WxPreviewPanel::OnNewPixel)
     EVT_COMMAND(ID_RENDER_COMPLETED, wxEVT_RENDER, WxPreviewPanel::OnRenderCompleted)
@@ -26,7 +26,7 @@ BEGIN_EVENT_TABLE(WxPreviewPanel, wxPanel)
 END_EVENT_TABLE()
 
 WxPreviewPanel::WxPreviewPanel(wxWindow* parent, const wxSize& size, ee0::WxStagePage* stage)
-    : wxPanel(parent, wxID_ANY, wxDefaultPosition, size)
+    : wxScrolledWindow(parent, wxID_ANY, wxDefaultPosition, size)
     , m_stage(stage)
     //, m_image(NULL)
     //, m_world(NULL)
@@ -189,8 +189,8 @@ void WxPreviewPanel::SetImage(wxImage& image)
 {
 	m_image = std::make_unique<wxBitmap>(image);
 
-	//SetScrollbars(10, 10, (int)(m_image->GetWidth()  / 10.0f),
-	//	(int)(m_image->GetHeight() / 10.0f), 0, 0, true);
+	SetScrollbars(10, 10, (int)(m_image->GetWidth()  / 10.0f),
+		(int)(m_image->GetHeight() / 10.0f), 0, 0, true);
 
 	Refresh();
 }
