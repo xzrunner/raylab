@@ -49,5 +49,17 @@ public:
 
 }; // Sphere
 
+class Plane : public Object
+{
+public:
+    Plane() : Object("Plane") {}
+
+    sm::vec3 pos;
+    sm::vec3 normal = sm::vec3(0, 1, 0);
+
+    RTTR_ENABLE(Object)
+
+}; // Plane
+
 }
 }

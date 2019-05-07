@@ -17,6 +17,7 @@
 #include <raytracing/cameras/Pinhole.h>
 #include <raytracing/objects/Box.h>
 #include <raytracing/objects/Sphere.h>
+#include <raytracing/objects/Plane.h>
 #include <raytracing/materials/Matte.h>
 
 namespace
@@ -235,6 +236,18 @@ Evaluator::CreateObject(const bp::Node& node)
         auto object = std::make_unique<rt::Sphere>();
         object->SetCenter(to_rt_p3d(src_object.center));
         object->SetRadius(src_object.radius);
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::Plane>())
+    {
+        auto& src_object = static_cast<const node::Plane&>(node);
+
+        auto pos = to_rt_p3d(src_object.pos);
+        rt::Normal norm;
+        norm.x = src_object.normal.x;
+        norm.y = src_object.normal.y;
+        norm.z = src_object.normal.z;
+        auto object = std::make_unique<rt::Plane>(pos, norm);
         dst_object = std::move(object);
     }
     else

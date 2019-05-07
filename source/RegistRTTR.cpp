@@ -127,6 +127,18 @@ rttr::registration::class_<raylab::node::Sphere>("raylab::Sphere")
     )
 ;
 
+rttr::registration::class_<raylab::node::Plane>("raylab::Plane")
+    .constructor<>()
+    .property("pos", &raylab::node::Plane::pos)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Pos"))
+    )
+    .property("normal", &raylab::node::Plane::normal)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Normal"))
+    )
+;
+
 // Material
 
 rttr::registration::class_<raylab::node::Matte>("raylab::Matte")
