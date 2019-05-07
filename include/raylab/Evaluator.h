@@ -5,7 +5,7 @@
 namespace rt
 {
     class World;
-    class GeometricObject;
+    class Object;
     class Material;
 }
 
@@ -22,7 +22,7 @@ public:
     static void Build(rt::World& dst, const node::World& src);
 
 private:
-    static std::unique_ptr<rt::GeometricObject>
+    static std::unique_ptr<rt::Object>
         CreateObject(const bp::Node& node);
 
     static std::shared_ptr<rt::Material>

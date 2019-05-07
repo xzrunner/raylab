@@ -209,10 +209,10 @@ void Evaluator::Build(rt::World& dst, const node::World& src)
     }
 }
 
-std::unique_ptr<rt::GeometricObject>
+std::unique_ptr<rt::Object>
 Evaluator::CreateObject(const bp::Node& node)
 {
-    std::unique_ptr<rt::GeometricObject> dst_object = nullptr;
+    std::unique_ptr<rt::Object> dst_object = nullptr;
 
     auto object_type = node.get_type();
     if (object_type == rttr::type::get<bp::node::Hub>())
