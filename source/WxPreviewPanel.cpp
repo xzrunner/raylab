@@ -28,12 +28,18 @@ END_EVENT_TABLE()
 WxPreviewPanel::WxPreviewPanel(wxWindow* parent, const wxSize& size, ee0::WxStagePage* stage)
     : wxScrolledWindow(parent, wxID_ANY, wxDefaultPosition, size)
     , m_stage(stage)
-    //, m_image(NULL)
-    //, m_world(NULL)
-    //, thread(NULL)
-    //, timer(NULL)
-    //, updateTimer(this, ID_RENDER_UPDATE)
+    , updateTimer(this, ID_RENDER_UPDATE)
 {
+    SetOwnBackgroundColour(wxColour(143, 144, 150));
+}
+
+WxPreviewPanel::~WxPreviewPanel()
+{
+    renderPause();
+
+    if (m_thread) {
+        m_thread->Delete();
+    }
 }
 
 void WxPreviewPanel::OnDraw(wxDC& dc)
@@ -97,12 +103,28 @@ void WxPreviewPanel::renderStart()
 
 void WxPreviewPanel::renderPause()
 {
+    if (m_thread) {
+        m_thread->Pause();
+    }
 
+    updateTimer.Stop();
+
+    if (m_timer) {
+        m_timer->Pause();
+    }
 }
 
 void WxPreviewPanel::renderResume()
 {
+    if (m_thread) {
+        m_thread->Resume();
+    }
 
+    updateTimer.Start();
+
+    if (m_timer) {
+        m_timer->Resume();
+    }
 }
 
 void WxPreviewPanel::OnRenderCompleted( wxCommandEvent& event )
