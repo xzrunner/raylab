@@ -86,7 +86,9 @@ void WxPreviewPanel::renderStart()
 	//start timer
     m_timer = new wxStopWatch();
 
-    m_thread = std::make_shared<RenderThread>(this, m_world);
+    // fixme
+//    m_thread = std::make_shared<RenderThread>(this, m_world);
+    m_thread = new RenderThread(this, m_world);
     m_thread->Create();
 	m_world->SetRenderOutput(m_thread);
     m_thread->SetPriority(20);
@@ -105,10 +107,7 @@ void WxPreviewPanel::renderResume()
 
 void WxPreviewPanel::OnRenderCompleted( wxCommandEvent& event )
 {
-//	m_thread.reset();
-    //if (m_thread) {
-    //    delete m_thread;
-    //}
+    // fixme: delete m_thread?
     m_thread = nullptr;
 
 //    m_world.reset();

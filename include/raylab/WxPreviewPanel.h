@@ -100,7 +100,9 @@ private:
     long pixelsRendered;
     long pixelsToRender;
 
-    std::shared_ptr<RenderThread> m_thread = nullptr;
+    // fixme
+//    std::shared_ptr<RenderThread> m_thread = nullptr;
+    RenderThread* m_thread = nullptr;
 
     DECLARE_EVENT_TABLE()
 
