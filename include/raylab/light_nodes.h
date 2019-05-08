@@ -20,6 +20,8 @@ public:
         Layout();
     }
 
+    bool shadows = true;
+
     RTTR_ENABLE(Node)
 
 }; // Light
@@ -36,6 +38,19 @@ public:
 
 }; // Ambient
 
+class Directional : public Light
+{
+public:
+    Directional() : Light("Directional") {}
+
+    float      radiant_scale = 1.0f;
+    pt0::Color color = pt0::Color(1.0f, 1.0f, 1.0f);
+    sm::vec3   dir;
+
+    RTTR_ENABLE(Light)
+
+}; // Directional
+
 class PointLight : public Light
 {
 public:
@@ -48,6 +63,21 @@ public:
     RTTR_ENABLE(Light)
 
 }; // PointLight
+
+class AreaLight : public Light
+{
+public:
+    AreaLight()
+        : Light("AreaLight")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_ANY_VAR, "Obj", *this));
+
+        Layout();
+    }
+
+    RTTR_ENABLE(Light)
+
+}; // AreaLight
 
 }
 }

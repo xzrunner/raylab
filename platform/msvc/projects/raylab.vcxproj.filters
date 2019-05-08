@@ -50,7 +50,13 @@
     <ClInclude Include="..\..\..\include\raylab\world_nodes.h">
       <Filter>dataset\nodes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\raylab\sample_nodes.h">
+    <ClInclude Include="..\..\..\include\raylab\texture_nodes.h">
+      <Filter>dataset\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\raylab\brdf_nodes.h">
+      <Filter>dataset\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\raylab\sampler_nodes.h">
       <Filter>dataset\nodes</Filter>
     </ClInclude>
   </ItemGroup>

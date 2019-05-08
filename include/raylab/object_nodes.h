@@ -61,5 +61,28 @@ public:
 
 }; // Plane
 
+class Rectangle : public Object
+{
+public:
+    Rectangle()
+        : Object("Rectangle")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 1, bp::PIN_ANY_VAR, "Sampler", *this));
+        Layout();
+    }
+
+    sm::vec3 p0;
+    sm::vec3 a, b;
+    sm::vec3 normal = sm::vec3(0, 1, 0);
+
+    enum InputID
+    {
+        ID_SAMPLER = 1,
+    };
+
+    RTTR_ENABLE(Object)
+
+}; // Rectangle
+
 }
 }

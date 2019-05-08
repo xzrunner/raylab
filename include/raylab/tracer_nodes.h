@@ -33,5 +33,14 @@ public:
 
 }; // RayCast
 
+class AreaLighting : public Tracer
+{
+public:
+    AreaLighting() : Tracer("AreaLighting") {}
+
+    RTTR_ENABLE(Tracer)
+
+}; // AreaLighting
+
 }
 }

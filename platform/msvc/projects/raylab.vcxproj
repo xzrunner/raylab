@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\raylab\brdf_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\camera_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\Evaluator.h" />
     <ClInclude Include="..\..\..\include\raylab\light_nodes.h" />
@@ -18,7 +19,8 @@
     <ClInclude Include="..\..\..\include\raylab\Node.h" />
     <ClInclude Include="..\..\..\include\raylab\object_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\RayLab.h" />
-    <ClInclude Include="..\..\..\include\raylab\sample_nodes.h" />
+    <ClInclude Include="..\..\..\include\raylab\sampler_nodes.h" />
+    <ClInclude Include="..\..\..\include\raylab\texture_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\tracer_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\world_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\WxNodeProperty.h" />
