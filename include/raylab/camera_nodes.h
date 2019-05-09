@@ -39,5 +39,25 @@ public:
 
 }; // Pinhole
 
+class ThinLens : public Camera
+{
+public:
+    ThinLens()
+        : Camera("ThinLens")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_ANY_VAR, "Sampler", *this));
+
+        Layout();
+    }
+
+    float lens_radius = 1;	// lens radius
+    float d = 500;			// view plane distance
+    float f = 75;			// focal distance
+    float zoom = 1;			// zoom factor
+
+    RTTR_ENABLE(Camera)
+
+}; // ThinLens
+
 }
 }

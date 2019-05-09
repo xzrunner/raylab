@@ -22,10 +22,12 @@
 #include <raytracing/tracer/RayCast.h>
 #include <raytracing/tracer/AreaLighting.h>
 #include <raytracing/cameras/Pinhole.h>
+#include <raytracing/cameras/ThinLens.h>
 #include <raytracing/objects/Box.h>
 #include <raytracing/objects/Sphere.h>
 #include <raytracing/objects/Plane.h>
 #include <raytracing/objects/Rectangle.h>
+#include <raytracing/objects/Triangle.h>
 #include <raytracing/materials/Matte.h>
 #include <raytracing/materials/SV_Matte.h>
 #include <raytracing/materials/Emissive.h>
@@ -318,6 +320,18 @@ Evaluator::CreateObject(const bp::Node& node)
 
         dst_object = std::move(object);
     }
+    else if (object_type == rttr::type::get<node::Triangle>())
+    {
+        auto& src_object = static_cast<const node::Triangle&>(node);
+
+        auto v0 = to_rt_p3d(src_object.v0);
+        auto v1 = to_rt_p3d(src_object.v1);
+        auto v2 = to_rt_p3d(src_object.v2);
+        auto object = std::make_unique<rt::Triangle>(v0, v1, v2);
+        object->SetNormal(to_rt_normal(src_object.normal));
+
+        dst_object = std::move(object);
+    }
     else
     {
         assert(0);
@@ -458,16 +472,38 @@ Evaluator::CreateCamera(const bp::Node& node)
     {
         auto& src_camera = static_cast<const node::Pinhole&>(node);
         auto camera = std::make_unique<rt::Pinhole>();
-        camera->SetEye(to_rt_p3d(src_camera.pos));
-        camera->SetLookat(to_rt_p3d(src_camera.target));
         camera->SetViewDistance(src_camera.dis);
         camera->SetZoomFactor(src_camera.zoom);
+        dst_camera = std::move(camera);
+    }
+    else if (camera_type == rttr::type::get<node::ThinLens>())
+    {
+        auto& src_camera = static_cast<const node::ThinLens&>(node);
+        auto camera = std::make_unique<rt::ThinLens>();
+
+        camera->SetLensRadius(src_camera.lens_radius);
+        camera->SetViewDistance(src_camera.d);
+        camera->SetFocalDistance(src_camera.f);
+        camera->SetZoom(src_camera.zoom);
+
+        auto& conns = node.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            auto sampler = CreateSampler(conns[0]->GetFrom()->GetParent());
+            if (sampler) {
+                camera->SetSampler(sampler);
+            }
+        }
+
         dst_camera = std::move(camera);
     }
     else
     {
         assert(0);
     }
+
+    auto& src_camera = static_cast<const node::Camera&>(node);
+    dst_camera->SetEye(to_rt_p3d(src_camera.pos));
+    dst_camera->SetLookat(to_rt_p3d(src_camera.target));
 
     dst_camera->ComputeUVW();
 

@@ -84,5 +84,17 @@ public:
 
 }; // Rectangle
 
+class Triangle : public Object
+{
+public:
+    Triangle() : Object("Triangle") {}
+
+    sm::vec3 v0, v1, v2;
+    sm::vec3 normal = sm::vec3(0, 1, 0);
+
+    RTTR_ENABLE(Object)
+
+}; // Triangle
+
 }
 }

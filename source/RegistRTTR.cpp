@@ -126,6 +126,26 @@ rttr::registration::class_<raylab::node::Pinhole>("raylab::Pinhole")
     )
 ;
 
+rttr::registration::class_<raylab::node::ThinLens>("raylab::ThinLens")
+    .constructor<>()
+    .property("lens_radius", &raylab::node::ThinLens::lens_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("LensRadius"))
+    )
+    .property("d", &raylab::node::ThinLens::d)
+    (
+        rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("ViewPlaneDis"))
+    )
+    .property("f", &raylab::node::ThinLens::f)
+    (
+        rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("FocalDis"))
+    )
+    .property("zoom", &raylab::node::ThinLens::zoom)
+    (
+        rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Zoom"))
+    )
+;
+
 // Tracer
 
 rttr::registration::class_<raylab::node::RayCast>("raylab::RayCast")
@@ -188,6 +208,26 @@ rttr::registration::class_<raylab::node::Rectangle>("raylab::Rectangle")
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("B"))
     )
     .property("normal", &raylab::node::Rectangle::normal)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Normal"))
+    )
+;
+
+rttr::registration::class_<raylab::node::Triangle>("raylab::Triangle")
+    .constructor<>()
+    .property("v0", &raylab::node::Triangle::v0)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("V0"))
+    )
+    .property("v1", &raylab::node::Triangle::v1)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("V1"))
+    )
+    .property("v2", &raylab::node::Triangle::v2)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("V2"))
+    )
+    .property("normal", &raylab::node::Triangle::normal)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Normal"))
     )
