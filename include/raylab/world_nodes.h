@@ -63,6 +63,8 @@ public:
         : Node("ViewPlane")
     {
         AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_ANY_VAR, "Sampler", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 1, bp::PIN_INTEGER, "Num Samples", *this));
+
         AddPin(std::make_shared<bp::Pin>(false, 0, bp::PIN_ANY_VAR, "Out", *this));
 
         Layout();
@@ -73,6 +75,14 @@ public:
     float pixel_size = 1.0f;
 
     size_t num_samples = 0;
+
+    float max_depth = 0.0f;
+
+    enum InputID
+    {
+        ID_SAMPLER = 0,
+        ID_NUM_SAMPLES,
+    };
 
     RTTR_ENABLE(Node)
 

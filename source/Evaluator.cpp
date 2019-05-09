@@ -136,12 +136,19 @@ void Evaluator::Build(rt::World& dst, const node::World& src)
             vp->SetWidth(src_vp.width);
             vp->SetHeight(src_vp.height);
             vp->SetPixelSize(src_vp.pixel_size);
+            vp->SetMaxDepth(src_vp.max_depth);
 
-            auto& sampler_conns = vp_node.GetAllInput()[0]->GetConnecting();
+            auto& sampler_conns = vp_node.GetAllInput()[node::ViewPlane::ID_SAMPLER]->GetConnecting();
             if (!sampler_conns.empty()) {
                 vp->SetSampler(CreateSampler(sampler_conns[0]->GetFrom()->GetParent()));
             } else {
                 vp->SetSamples(src_vp.num_samples);
+            }
+
+            auto& num_conns = vp_node.GetAllInput()[node::ViewPlane::ID_NUM_SAMPLES]->GetConnecting();
+            if (!num_conns.empty()) {
+                int num = static_cast<int>(CalcFloat(*num_conns[0]));
+                vp->SetSamples(num);
             }
 
             dst_vp = std::move(vp);
