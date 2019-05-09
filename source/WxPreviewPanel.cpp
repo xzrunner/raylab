@@ -45,7 +45,8 @@ WxPreviewPanel::~WxPreviewPanel()
 void WxPreviewPanel::OnDraw(wxDC& dc)
 {
     if (m_image != NULL && m_image->IsOk()) {
-        wxBufferedDC bdc(&dc, *m_image);
+//        wxBufferedDC bdc(&dc, *m_image);
+        dc.DrawBitmap(*m_image, 0, 0, true);
     }
 }
 
@@ -183,7 +184,7 @@ void WxPreviewPanel::OnNewPixel( wxCommandEvent& event )
 {
 	//set up double buffered device context
 	wxClientDC cdc(this);
-//	DoPrepareDC(cdc);
+	DoPrepareDC(cdc);
 	wxBufferedDC bufferedDC(&cdc, *m_image);
 
 	//iterate over all pixels in the event
