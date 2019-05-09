@@ -20,6 +20,8 @@ public:
         Layout();
     }
 
+    int num_samples = 1;
+
     RTTR_ENABLE(Node)
 
 }; // Sampler

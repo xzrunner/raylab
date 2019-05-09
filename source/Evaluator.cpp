@@ -130,10 +130,18 @@ void Evaluator::Build(rt::World& dst, const node::World& src)
         {
             auto& src_vp = static_cast<const node::ViewPlane&>(vp_node);
             auto vp = std::make_unique<rt::ViewPlane>();
+
             vp->SetWidth(src_vp.width);
             vp->SetHeight(src_vp.height);
             vp->SetPixelSize(src_vp.pixel_size);
-            vp->SetSamples(src_vp.num_samples);
+
+            auto& sampler_conns = vp_node.GetAllInput()[0]->GetConnecting();
+            if (!sampler_conns.empty()) {
+                vp->SetSampler(CreateSampler(sampler_conns[0]->GetFrom()->GetParent()));
+            } else {
+                vp->SetSamples(src_vp.num_samples);
+            }
+
             dst_vp = std::move(vp);
         }
         else
@@ -516,19 +524,19 @@ Evaluator::CreateSampler(const bp::Node& node)
     if (sampler_type == rttr::type::get<node::Jittered>())
     {
         auto& src_sampler = static_cast<const node::Jittered&>(node);
-        auto sampler = std::make_shared<rt::Jittered>(1);
+        auto sampler = std::make_shared<rt::Jittered>(src_sampler.num_samples);
         dst_sampler = sampler;
     }
     else if (sampler_type == rttr::type::get<node::MultiJittered>())
     {
         auto& src_sampler = static_cast<const node::MultiJittered&>(node);
-        auto sampler = std::make_shared<rt::MultiJittered>(1);
+        auto sampler = std::make_shared<rt::MultiJittered>(src_sampler.num_samples);
         dst_sampler = sampler;
     }
     else if (sampler_type == rttr::type::get<node::Regular>())
     {
         auto& src_sampler = static_cast<const node::Regular&>(node);
-        auto sampler = std::make_shared<rt::Regular>(1);
+        auto sampler = std::make_shared<rt::Regular>(src_sampler.num_samples);
         dst_sampler = sampler;
     }
 

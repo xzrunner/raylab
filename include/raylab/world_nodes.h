@@ -62,6 +62,7 @@ public:
     ViewPlane()
         : Node("ViewPlane")
     {
+        AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_ANY_VAR, "Sampler", *this));
         AddPin(std::make_shared<bp::Pin>(false, 0, bp::PIN_ANY_VAR, "Out", *this));
 
         Layout();

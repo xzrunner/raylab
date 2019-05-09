@@ -309,6 +309,14 @@ rttr::registration::class_<raylab::node::PerfectSpecular>("raylab::PerfectSpecul
 
 // sampler
 
+rttr::registration::class_<raylab::node::Sampler>("raylab::Sampler")
+    .constructor<const std::string&>()
+    .property("num_samples", &raylab::node::Sampler::num_samples)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("NumSamples"))
+    )
+;
+
 rttr::registration::class_<raylab::node::Jittered>("raylab::Jittered")
     .constructor<>()
 ;
