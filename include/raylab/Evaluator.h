@@ -13,6 +13,7 @@ namespace rt
     class Texture;
     class BRDF;
     class Sampler;
+    class Mapping;
 }
 
 namespace bp
@@ -55,6 +56,9 @@ private:
 
     static std::shared_ptr<rt::Sampler>
         CreateSampler(const bp::Node& node);
+
+    static std::shared_ptr<rt::Mapping>
+        CreateMapping(const bp::Node& node);
 
     static float CalcFloat(const bp::Connecting& conn);
 

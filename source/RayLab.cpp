@@ -8,6 +8,7 @@
 #include "raylab/sampler_nodes.h"
 #include "raylab/texture_nodes.h"
 #include "raylab/brdf_nodes.h"
+#include "raylab/mapping_nodes.h"
 #include "raylab/world_nodes.h"
 
 #include <blueprint/node/Hub.h>
@@ -71,6 +72,7 @@ void RayLab::InitNodes()
     add_nodes(rttr::type::get<node::Sampler>().get_derived_classes());
     add_nodes(rttr::type::get<node::Texture>().get_derived_classes());
     add_nodes(rttr::type::get<node::BRDF>().get_derived_classes());
+    add_nodes(rttr::type::get<node::Mapping>().get_derived_classes());
 }
 
 }

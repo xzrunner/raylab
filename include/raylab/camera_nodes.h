@@ -60,5 +60,16 @@ public:
 
 }; // ThinLens
 
+class FishEye : public Camera
+{
+public:
+    FishEye() : Camera("FishEye") {}
+
+    float fov = 180.0f;
+
+    RTTR_ENABLE(Camera)
+
+}; // FishEye
+
 }
 }

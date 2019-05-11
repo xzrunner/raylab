@@ -8,6 +8,7 @@
 #include "raylab/texture_nodes.h"
 #include "raylab/brdf_nodes.h"
 #include "raylab/sampler_nodes.h"
+#include "raylab/mapping_nodes.h"
 
 #include <blueprint/Connecting.h>
 #include <blueprint/node/Hub.h>
@@ -23,21 +24,27 @@
 #include <raytracing/tracer/AreaLighting.h>
 #include <raytracing/cameras/Pinhole.h>
 #include <raytracing/cameras/ThinLens.h>
+#include <raytracing/cameras/FishEye.h>
 #include <raytracing/objects/Box.h>
 #include <raytracing/objects/Sphere.h>
 #include <raytracing/objects/Plane.h>
 #include <raytracing/objects/Rectangle.h>
 #include <raytracing/objects/Triangle.h>
+#include <raytracing/objects/WireframeBox.h>
+#include <raytracing/objects/Instance.h>
 #include <raytracing/materials/Matte.h>
 #include <raytracing/materials/SV_Matte.h>
 #include <raytracing/materials/Emissive.h>
 #include <raytracing/materials/Phong.h>
 #include <raytracing/materials/Reflective.h>
 #include <raytracing/texture/Checker3D.h>
+#include <raytracing/texture/ImageTexture.h>
+#include <raytracing/texture/Image.h>
 #include <raytracing/brdfs/PerfectSpecular.h>
 #include <raytracing/samplers/Jittered.h>
 #include <raytracing/samplers/MultiJittered.h>
 #include <raytracing/samplers/Regular.h>
+#include <raytracing/mapping/SphericalMap.h>
 
 namespace
 {
@@ -136,7 +143,7 @@ void Evaluator::Build(rt::World& dst, const node::World& src)
             vp->SetWidth(src_vp.width);
             vp->SetHeight(src_vp.height);
             vp->SetPixelSize(src_vp.pixel_size);
-            vp->SetMaxDepth(src_vp.max_depth);
+            vp->SetMaxDepth(static_cast<int>(src_vp.max_depth));
 
             auto& sampler_conns = vp_node.GetAllInput()[node::ViewPlane::ID_SAMPLER]->GetConnecting();
             if (!sampler_conns.empty()) {
@@ -339,6 +346,72 @@ Evaluator::CreateObject(const bp::Node& node)
 
         dst_object = std::move(object);
     }
+    else if (object_type == rttr::type::get<node::WireframeBox>())
+    {
+        auto& src_object = static_cast<const node::WireframeBox&>(node);
+
+        auto p0 = to_rt_p3d(src_object.p0);
+        auto p1 = to_rt_p3d(src_object.p1);
+        auto object = std::make_unique<rt::WireframeBox>(p0, p1, src_object.bevel_radius);
+
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::Instance>())
+    {
+        auto& src_object = static_cast<const node::Instance&>(node);
+
+        std::unique_ptr<rt::Instance> object = nullptr;
+        auto& conns = node.GetAllInput()[node::Instance::ID_OBJECT]->GetConnecting();
+        if (conns.empty()) {
+            object = std::make_unique<rt::Instance>();
+        } else {
+            object = std::make_unique<rt::Instance>(CreateObject(conns[0]->GetFrom()->GetParent()));
+        }
+        //for (auto& op : src_object.ops)
+        //{
+        //    switch (op.type)
+        //    {
+        //    case node::Instance::OpType::Scale:
+        //        object->Scale(to_rt_v3d(op.val));
+        //        break;
+        //    case node::Instance::OpType::Rotate:
+        //        if (op.val.x != 0) {
+        //            object->RotateX(op.val.x);
+        //        }
+        //        if (op.val.y != 0) {
+        //            object->RotateY(op.val.y);
+        //        }
+        //        if (op.val.z != 0) {
+        //            object->RotateZ(op.val.z);
+        //        }
+        //        break;
+        //    case node::Instance::OpType::Translate:
+        //        object->Translate(to_rt_v3d(op.val));
+        //        break;
+        //    }
+        //}
+
+        if (src_object.scale != sm::vec3(1, 1, 1)) {
+            object->Scale(to_rt_v3d(src_object.scale));
+        }
+        if (src_object.rotate != sm::vec3(0, 0, 0))
+        {
+            if (src_object.rotate.x != 0) {
+                object->RotateX(src_object.rotate.x);
+            }
+            if (src_object.rotate.y != 0) {
+                object->RotateY(src_object.rotate.y);
+            }
+            if (src_object.rotate.z != 0) {
+                object->RotateZ(src_object.rotate.z);
+            }
+        }
+        if (src_object.translate != sm::vec3(0, 0, 0)) {
+            object->Translate(to_rt_v3d(src_object.translate));
+        }
+
+        dst_object = std::move(object);
+    }
     else
     {
         assert(0);
@@ -503,6 +576,13 @@ Evaluator::CreateCamera(const bp::Node& node)
 
         dst_camera = std::move(camera);
     }
+    else if (camera_type == rttr::type::get<node::FishEye>())
+    {
+        auto& src_camera = static_cast<const node::FishEye&>(node);
+        auto camera = std::make_unique<rt::FishEye>();
+        camera->SetFov(src_camera.fov);
+        dst_camera = std::move(camera);
+    }
     else
     {
         assert(0);
@@ -531,6 +611,22 @@ Evaluator::CreateTexture(const bp::Node& node)
         tex->SetColor1(to_rt_color(src_tex.col0));
         tex->SetColor2(to_rt_color(src_tex.col1));
         tex->SetSize(src_tex.size);
+
+        dst_tex = tex;
+    }
+    else if (tex_type == rttr::type::get<node::ImageTexture>())
+    {
+        auto& src_tex = static_cast<const node::ImageTexture&>(node);
+        auto tex = std::make_shared<rt::ImageTexture>();
+
+        auto& conns = node.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            tex->SetMapping(CreateMapping(conns[0]->GetFrom()->GetParent()));
+        }
+
+        auto image = std::make_shared<rt::Image>();
+        image->ReadPPMFile(src_tex.filepath.c_str());
+        tex->SetImage(image);
 
         dst_tex = tex;
     }
@@ -563,27 +659,58 @@ Evaluator::CreateSampler(const bp::Node& node)
 {
     std::shared_ptr<rt::Sampler> dst_sampler = nullptr;
 
+    int num_samples = 0;
+    auto& conns = node.GetAllInput()[0]->GetConnecting();
+    if (!conns.empty()) {
+        num_samples = static_cast<int>(CalcFloat(*conns[0]));
+    }
+
     auto sampler_type = node.get_type();
     if (sampler_type == rttr::type::get<node::Jittered>())
     {
         auto& src_sampler = static_cast<const node::Jittered&>(node);
-        auto sampler = std::make_shared<rt::Jittered>(src_sampler.num_samples);
+        if (num_samples == 0) {
+            num_samples = src_sampler.num_samples;
+        }
+        auto sampler = std::make_shared<rt::Jittered>(num_samples);
         dst_sampler = sampler;
     }
     else if (sampler_type == rttr::type::get<node::MultiJittered>())
     {
         auto& src_sampler = static_cast<const node::MultiJittered&>(node);
-        auto sampler = std::make_shared<rt::MultiJittered>(src_sampler.num_samples);
+        if (num_samples == 0) {
+            num_samples = src_sampler.num_samples;
+        }
+        auto sampler = std::make_shared<rt::MultiJittered>(num_samples);
         dst_sampler = sampler;
     }
     else if (sampler_type == rttr::type::get<node::Regular>())
     {
         auto& src_sampler = static_cast<const node::Regular&>(node);
-        auto sampler = std::make_shared<rt::Regular>(src_sampler.num_samples);
+        if (num_samples == 0) {
+            num_samples = src_sampler.num_samples;
+        }
+        auto sampler = std::make_shared<rt::Regular>(num_samples);
         dst_sampler = sampler;
     }
 
     return dst_sampler;
+}
+
+std::shared_ptr<rt::Mapping>
+Evaluator::CreateMapping(const bp::Node& node)
+{
+    std::shared_ptr<rt::Mapping> dst_mapping = nullptr;
+
+    auto mapping_type = node.get_type();
+    if (mapping_type == rttr::type::get<node::SphericalMap>())
+    {
+        auto& src_mapping = static_cast<const node::SphericalMap&>(node);
+        auto mapping = std::make_shared<rt::SphericalMap>();
+        dst_mapping = mapping;
+    }
+
+    return dst_mapping;
 }
 
 float Evaluator::CalcFloat(const bp::Connecting& conn)

@@ -39,5 +39,22 @@ public:
 
 }; // Checker3D
 
+class ImageTexture : public Texture
+{
+public:
+    ImageTexture()
+        : Texture("ImageTexture")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_MAPPING, "Mapping", *this));
+
+        Layout();
+    }
+
+    std::string filepath;
+
+    RTTR_ENABLE(Texture)
+
+}; // ImageTexture
+
 }
 }

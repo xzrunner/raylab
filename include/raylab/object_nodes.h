@@ -97,5 +97,54 @@ public:
 
 }; // Triangle
 
+class WireframeBox : public Object
+{
+public:
+    WireframeBox() : Object("WireframeBox") {}
+
+    sm::vec3 p0, p1;
+    float bevel_radius = 0.0f;
+
+    RTTR_ENABLE(Object)
+
+}; // WireframeBox
+
+class Instance : public Object
+{
+public:
+    Instance() : Object("Instance")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_OBJECT, "Object", *this));
+        Layout();
+    }
+
+    //enum class OpType
+    //{
+    //    Scale,
+    //    Rotate,
+    //    Translate
+    //};
+
+    //struct OpSRT
+    //{
+    //    OpType   type;
+    //    sm::vec3 val;
+    //};
+
+//    std::vector<OpSRT> ops;
+
+    sm::vec3 scale = sm::vec3(1, 1, 1);
+    sm::vec3 rotate;
+    sm::vec3 translate;
+
+    enum InputID
+    {
+        ID_OBJECT = 1,
+    };
+
+    RTTR_ENABLE(Object)
+
+}; // Instance
+
 }
 }

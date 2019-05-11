@@ -7,8 +7,11 @@
 #include "raylab/texture_nodes.h"
 #include "raylab/brdf_nodes.h"
 #include "raylab/sampler_nodes.h"
+#include "raylab/mapping_nodes.h"
 
 #include <ee0/ReflectPropTypes.h>
+
+#include <js/RTTR.h>
 
 RTTR_REGISTRATION
 {
@@ -146,6 +149,14 @@ rttr::registration::class_<raylab::node::ThinLens>("raylab::ThinLens")
     )
 ;
 
+rttr::registration::class_<raylab::node::FishEye>("raylab::FishEye")
+    .constructor<>()
+    .property("fov", &raylab::node::FishEye::fov)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Fov"))
+    )
+;
+
 // Tracer
 
 rttr::registration::class_<raylab::node::RayCast>("raylab::RayCast")
@@ -230,6 +241,38 @@ rttr::registration::class_<raylab::node::Triangle>("raylab::Triangle")
     .property("normal", &raylab::node::Triangle::normal)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Normal"))
+    )
+;
+
+rttr::registration::class_<raylab::node::WireframeBox>("raylab::WireframeBox")
+    .constructor<>()
+    .property("p0", &raylab::node::WireframeBox::p0)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("P0"))
+    )
+    .property("p1", &raylab::node::WireframeBox::p1)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("P1"))
+    )
+    .property("br", &raylab::node::WireframeBox::bevel_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("BevelRadius"))
+    )
+;
+
+rttr::registration::class_<raylab::node::Instance>("raylab::Instance")
+    .constructor<>()
+    .property("scale", &raylab::node::Instance::scale)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Scale"))
+    )
+    .property("rotate", &raylab::node::Instance::rotate)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Rotate"))
+    )
+    .property("translate", &raylab::node::Instance::translate)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Translate"))
     )
 ;
 
@@ -333,6 +376,16 @@ rttr::registration::class_<raylab::node::Checker3D>("raylab::Checker3D")
     )
 ;
 
+rttr::registration::class_<raylab::node::ImageTexture>("raylab::ImageTexture")
+    .constructor<>()
+    .property("filepath", &raylab::node::ImageTexture::filepath)
+    (
+        rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Filepath")),
+        rttr::metadata(js::RTTR::FilePathTag(), true),
+        rttr::metadata(ee0::PropOpenFileTag(), ee0::PropOpenFile("*.ppm"))
+    )
+;
+
 // brdf
 
 rttr::registration::class_<raylab::node::PerfectSpecular>("raylab::PerfectSpecular")
@@ -366,6 +419,12 @@ rttr::registration::class_<raylab::node::MultiJittered>("raylab::MultiJittered")
 ;
 
 rttr::registration::class_<raylab::node::Regular>("raylab::Regular")
+    .constructor<>()
+;
+
+// mapping
+
+rttr::registration::class_<raylab::node::SphericalMap>("raylab::SphericalMap")
     .constructor<>()
 ;
 
