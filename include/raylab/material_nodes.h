@@ -1,6 +1,7 @@
 #pragma once
 
 #include "raylab/Node.h"
+#include "raylab/PinType.h"
 
 #include <blueprint/Pin.h>
 
@@ -15,7 +16,7 @@ public:
     Material(const std::string& title)
         : Node(title)
     {
-        AddPin(std::make_shared<bp::Pin>(false, 0, bp::PIN_ANY_VAR, "Out", *this));
+        AddPin(std::make_shared<bp::Pin>(false, 0, PIN_MATERIAL, "Out", *this));
 
         Layout();
     }
@@ -60,7 +61,7 @@ public:
     {
         AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_FLOAT, "ka", *this));
         AddPin(std::make_shared<bp::Pin>(true, 1, bp::PIN_FLOAT, "kd", *this));
-        AddPin(std::make_shared<bp::Pin>(true, 2, bp::PIN_FLOAT, "cd", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 2, PIN_TEXTURE, "cd", *this));
 
         Layout();
     }

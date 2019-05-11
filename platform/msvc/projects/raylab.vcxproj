@@ -15,9 +15,12 @@
     <ClInclude Include="..\..\..\include\raylab\camera_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\Evaluator.h" />
     <ClInclude Include="..\..\..\include\raylab\light_nodes.h" />
+    <ClInclude Include="..\..\..\include\raylab\mapping_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\material_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\Node.h" />
     <ClInclude Include="..\..\..\include\raylab\object_nodes.h" />
+    <ClInclude Include="..\..\..\include\raylab\PinCallback.h" />
+    <ClInclude Include="..\..\..\include\raylab\PinType.h" />
     <ClInclude Include="..\..\..\include\raylab\RayLab.h" />
     <ClInclude Include="..\..\..\include\raylab\sampler_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\texture_nodes.h" />
@@ -29,6 +32,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Evaluator.cpp" />
     <ClCompile Include="..\..\..\source\Node.cpp" />
+    <ClCompile Include="..\..\..\source\PinCallback.cpp" />
     <ClCompile Include="..\..\..\source\RayLab.cpp" />
     <ClCompile Include="..\..\..\source\RegistRTTR.cpp" />
     <ClCompile Include="..\..\..\source\WxNodeProperty.cpp" />

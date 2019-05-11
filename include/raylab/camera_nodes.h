@@ -1,6 +1,7 @@
 #pragma once
 
 #include "raylab/Node.h"
+#include "raylab/PinType.h"
 
 #include <blueprint/Pin.h>
 
@@ -15,7 +16,7 @@ public:
     Camera(const std::string& title)
         : Node(title)
     {
-        AddPin(std::make_shared<bp::Pin>(false, 0, bp::PIN_ANY_VAR, "Out", *this));
+        AddPin(std::make_shared<bp::Pin>(false, 0, PIN_CAMERA, "Out", *this));
 
         Layout();
     }
@@ -45,7 +46,7 @@ public:
     ThinLens()
         : Camera("ThinLens")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_ANY_VAR, "Sampler", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_SAMPLER, "Sampler", *this));
 
         Layout();
     }

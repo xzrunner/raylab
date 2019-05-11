@@ -1,6 +1,7 @@
 #pragma once
 
 #include "raylab/Node.h"
+#include "raylab/PinType.h"
 
 #include <blueprint/Pin.h>
 
@@ -15,8 +16,8 @@ public:
     Object(const std::string& title)
         : Node(title)
     {
-        AddPin(std::make_shared<bp::Pin>(true,  0, bp::PIN_ANY_VAR, "Material", *this));
-        AddPin(std::make_shared<bp::Pin>(false, 0, bp::PIN_ANY_VAR, "Out", *this));
+        AddPin(std::make_shared<bp::Pin>(true,  0, PIN_MATERIAL, "Material", *this));
+        AddPin(std::make_shared<bp::Pin>(false, 0, PIN_OBJECT,   "Out", *this));
 
         Layout();
     }
@@ -43,7 +44,7 @@ public:
     Sphere() : Object("Sphere") {}
 
     sm::vec3 center;
-    float radius = 0.0f;
+    float radius = 1.0f;
 
     RTTR_ENABLE(Object)
 
@@ -67,7 +68,7 @@ public:
     Rectangle()
         : Object("Rectangle")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 1, bp::PIN_ANY_VAR, "Sampler", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_SAMPLER, "Sampler", *this));
         Layout();
     }
 

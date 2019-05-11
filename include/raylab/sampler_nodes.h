@@ -1,6 +1,7 @@
 #pragma once
 
 #include "raylab/Node.h"
+#include "raylab/PinType.h"
 
 #include <blueprint/Pin.h>
 
@@ -15,7 +16,8 @@ public:
     Sampler(const std::string& title)
         : Node(title)
     {
-        AddPin(std::make_shared<bp::Pin>(false, 0, bp::PIN_ANY_VAR, "Out", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_INTEGER, "Num Samples", *this));
+        AddPin(std::make_shared<bp::Pin>(false, 0, PIN_SAMPLER, "Out", *this));
 
         Layout();
     }

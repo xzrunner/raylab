@@ -1,4 +1,5 @@
 #include "raylab/RayLab.h"
+#include "raylab/PinCallback.h"
 #include "raylab/light_nodes.h"
 #include "raylab/camera_nodes.h"
 #include "raylab/tracer_nodes.h"
@@ -25,6 +26,8 @@ RayLab::RayLab()
 
     Init();
     InitNodes();
+
+    InitPinCallback();
 }
 
 void RayLab::Init()
