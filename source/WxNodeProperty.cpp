@@ -1,4 +1,5 @@
 #include "raylab/WxNodeProperty.h"
+#include "raylab/camera_nodes.h"
 
 #include <ee0/SubjectMgr.h>
 #include <ee0/ReflectPropTypes.h>
@@ -46,7 +47,15 @@ void WxNodeProperty::LoadFromNode(const n0::SceneNodePtr& obj, const bp::NodePtr
 
 		auto ui_info = ui_info_obj.get_value<ee0::UIMetaInfo>();
         auto prop_type = prop.get_type();
-
+        if (prop_type == rttr::type::get<node::Stereo::ViewingType>())
+        {
+            const wxChar* TYPES[] = { wxT("Parallel"), wxT("Transverse"), NULL };
+            auto type_prop = new wxEnumProperty(ui_info.desc, wxPG_LABEL, TYPES);
+            auto type = prop.get_value(node).get_value<node::Stereo::ViewingType>();
+            type_prop->SetValue(static_cast<int>(type));
+            m_pg->Append(type_prop);
+        }
+        else
         {
             ee0::WxPropHelper::CreateProp(m_pg, ui_info, node, prop, [&](const std::string& filepath)
             {
@@ -121,6 +130,11 @@ void WxNodeProperty::OnPropertyGridChanged(wxPropertyGridEvent& event)
 		}
 		auto ui_info = ui_info_obj.get_value<ee0::UIMetaInfo>();
         auto prop_type = prop.get_type();
+        if (prop_type == rttr::type::get<node::Stereo::ViewingType>() && key == ui_info.desc)
+        {
+            prop.set_value(m_node, node::Stereo::ViewingType(wxANY_AS(val, int)));
+        }
+        else
         {
             ee0::WxPropHelper::UpdateProp(key, val, ui_info, m_node, prop);
         }

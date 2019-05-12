@@ -146,5 +146,44 @@ public:
 
 }; // Instance
 
+class SolidCylinder : public Object
+{
+public:
+    SolidCylinder() : Object("SolidCylinder") {}
+
+    float bottom = 0;
+    float top    = 0;
+    float radius = 0;
+
+    RTTR_ENABLE(Object)
+
+}; // SolidCylinder
+
+class ConvexPartCylinder : public Object
+{
+public:
+    ConvexPartCylinder() : Object("ConvexPartCylinder") {}
+
+    float bottom    = 0;
+    float top       = 1;
+    float radius    = 1;
+    float polar_min = 0;
+    float polar_max = 180;
+
+    RTTR_ENABLE(Object)
+
+}; // ConvexPartCylinder
+
+class Grid : public Object
+{
+public:
+    Grid() : Object("Grid") {}
+
+    std::string filename;
+
+    RTTR_ENABLE(Object)
+
+}; // Grid
+
 }
 }

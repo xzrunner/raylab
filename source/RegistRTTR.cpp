@@ -104,6 +104,18 @@ rttr::registration::class_<raylab::node::AreaLight>("raylab::AreaLight")
     .constructor<>()
 ;
 
+rttr::registration::class_<raylab::node::AmbientOccluder>("raylab::AmbientOccluder")
+    .constructor<>()
+    .property("scale_radiance", &raylab::node::AmbientOccluder::scale_radiance)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("ScaleRadiance"))
+    )
+    .property("min_amount", &raylab::node::AmbientOccluder::min_amount)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("MinAmount"))
+    )
+;
+
 // Camera
 
 rttr::registration::class_<raylab::node::Camera>("raylab::Camera")
@@ -154,6 +166,40 @@ rttr::registration::class_<raylab::node::FishEye>("raylab::FishEye")
     .property("fov", &raylab::node::FishEye::fov)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Fov"))
+    )
+;
+
+rttr::registration::class_<raylab::node::Spherical>("raylab::Spherical")
+    .constructor<>()
+    .property("hori_fov", &raylab::node::Spherical::hori_fov)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("HoriFov"))
+    )
+    .property("vert_fov", &raylab::node::Spherical::vert_fov)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("VertFov"))
+    )
+;
+
+rttr::registration::enumeration<raylab::node::Stereo::ViewingType>("rlab_stereo_viewing_type")
+(
+	rttr::value("parallel",   raylab::node::Stereo::ViewingType::Parallel),
+    rttr::value("Transverse", raylab::node::Stereo::ViewingType::Transverse)
+);
+
+rttr::registration::class_<raylab::node::Stereo>("raylab::Stereo")
+    .constructor<>()
+    .property("viewing_type", &raylab::node::Stereo::viewing_type)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("ViewingType"))
+    )
+    .property("pixel_gap", &raylab::node::Stereo::pixel_gap)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("PixelGap"))
+    )
+    .property("stereo_angle", &raylab::node::Stereo::stereo_angle)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("StereoAngle"))
     )
 ;
 
@@ -273,6 +319,56 @@ rttr::registration::class_<raylab::node::Instance>("raylab::Instance")
     .property("translate", &raylab::node::Instance::translate)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Translate"))
+    )
+;
+
+rttr::registration::class_<raylab::node::SolidCylinder>("raylab::SolidCylinder")
+    .constructor<>()
+    .property("bottom", &raylab::node::SolidCylinder::bottom)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bottom"))
+    )
+    .property("top", &raylab::node::SolidCylinder::top)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Top"))
+    )
+    .property("radius", &raylab::node::SolidCylinder::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+;
+
+rttr::registration::class_<raylab::node::ConvexPartCylinder>("raylab::ConvexPartCylinder")
+    .constructor<>()
+    .property("bottom", &raylab::node::ConvexPartCylinder::bottom)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bottom"))
+    )
+    .property("top", &raylab::node::ConvexPartCylinder::top)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Top"))
+    )
+    .property("radius", &raylab::node::ConvexPartCylinder::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+    .property("polar_min", &raylab::node::ConvexPartCylinder::polar_min)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("PolarMin"))
+    )
+    .property("polar_max", &raylab::node::ConvexPartCylinder::polar_max)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("PolarMax"))
+    )
+;
+
+rttr::registration::class_<raylab::node::Grid>("raylab::Grid")
+    .constructor<>()
+    .property("filename", &raylab::node::Grid::filename)
+    (
+        rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Filename")),
+        rttr::metadata(js::RTTR::FilePathTag(), true),
+        rttr::metadata(ee0::PropOpenFileTag(), ee0::PropOpenFile("*.ply"))
     )
 ;
 
@@ -422,9 +518,17 @@ rttr::registration::class_<raylab::node::Regular>("raylab::Regular")
     .constructor<>()
 ;
 
+rttr::registration::class_<raylab::node::PureRandom>("raylab::PureRandom")
+    .constructor<>()
+;
+
 // mapping
 
 rttr::registration::class_<raylab::node::SphericalMap>("raylab::SphericalMap")
+    .constructor<>()
+;
+
+rttr::registration::class_<raylab::node::LightProbe>("raylab::LightProbe")
     .constructor<>()
 ;
 

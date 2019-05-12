@@ -32,5 +32,14 @@ public:
 
 }; // SphericalMap
 
+class LightProbe : public Mapping
+{
+public:
+    LightProbe() : Mapping("LightProbe") {}
+
+    RTTR_ENABLE(Mapping)
+
+}; // LightProbe
+
 }
 }

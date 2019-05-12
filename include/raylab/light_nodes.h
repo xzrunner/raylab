@@ -80,5 +80,23 @@ public:
 
 }; // AreaLight
 
+class AmbientOccluder : public Light
+{
+public:
+    AmbientOccluder()
+        : Light("AmbientOccluder")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_SAMPLER, "Sampler", *this));
+
+        Layout();
+    }
+
+    float scale_radiance = 1.0f;
+    float min_amount = 0;
+
+    RTTR_ENABLE(Light)
+
+}; // AmbientOccluder
+
 }
 }

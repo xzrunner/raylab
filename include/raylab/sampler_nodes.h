@@ -55,5 +55,14 @@ public:
 
 }; // Regular
 
+class PureRandom : public Sampler
+{
+public:
+    PureRandom() : Sampler("PureRandom") {}
+
+    RTTR_ENABLE(Sampler)
+
+}; // PureRandom
+
 }
 }

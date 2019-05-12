@@ -20,11 +20,14 @@
 #include <raytracing/lights/Directional.h>
 #include <raytracing/lights/PointLight.h>
 #include <raytracing/lights/AreaLight.h>
+#include <raytracing/lights/AmbientOccluder.h>
 #include <raytracing/tracer/RayCast.h>
 #include <raytracing/tracer/AreaLighting.h>
 #include <raytracing/cameras/Pinhole.h>
 #include <raytracing/cameras/ThinLens.h>
 #include <raytracing/cameras/FishEye.h>
+#include <raytracing/cameras/Spherical.h>
+#include <raytracing/cameras/Stereo.h>
 #include <raytracing/objects/Box.h>
 #include <raytracing/objects/Sphere.h>
 #include <raytracing/objects/Plane.h>
@@ -32,6 +35,9 @@
 #include <raytracing/objects/Triangle.h>
 #include <raytracing/objects/WireframeBox.h>
 #include <raytracing/objects/Instance.h>
+#include <raytracing/objects/SolidCylinder.h>
+#include <raytracing/objects/ConvexPartCylinder.h>
+#include <raytracing/objects/Grid.h>
 #include <raytracing/materials/Matte.h>
 #include <raytracing/materials/SV_Matte.h>
 #include <raytracing/materials/Emissive.h>
@@ -44,7 +50,9 @@
 #include <raytracing/samplers/Jittered.h>
 #include <raytracing/samplers/MultiJittered.h>
 #include <raytracing/samplers/Regular.h>
+#include <raytracing/samplers/PureRandom.h>
 #include <raytracing/mapping/SphericalMap.h>
+#include <raytracing/mapping/LightProbe.h>
 
 namespace
 {
@@ -173,23 +181,7 @@ void Evaluator::Build(rt::World& dst, const node::World& src)
     auto& ambient_conns = src_inputs[node::World::ID_AMBIENT]->GetConnecting();
     if (!ambient_conns.empty())
     {
-        std::unique_ptr<rt::Light> dst_ambient = nullptr;
-
-        auto& ambient_node = ambient_conns[0]->GetFrom()->GetParent();
-        auto ambient_type = ambient_node.get_type();
-        if (ambient_type == rttr::type::get<node::Ambient>())
-        {
-            auto& src_ambient = static_cast<const node::Ambient&>(ambient_node);
-            auto ambient = std::make_unique<rt::Ambient>();
-            ambient->ScaleRadiance(src_ambient.radiant_scale);
-            ambient->SetColor(to_rt_color(src_ambient.color));
-            dst_ambient = std::move(ambient);
-        }
-        else
-        {
-            assert(0);
-        }
-
+        auto dst_ambient = CreateLight(ambient_conns[0]->GetFrom()->GetParent());
         if (dst_ambient) {
             dst.SetAmbient(std::move(dst_ambient));
         }
@@ -242,6 +234,24 @@ Evaluator::CreateLight(const bp::Node& node)
             std::shared_ptr<rt::Object> obj = CreateObject(conns[0]->GetFrom()->GetParent());
             if (obj) {
                 light->SetObject(obj);
+            }
+        }
+
+        dst_light = std::move(light);
+    }
+    else if (light_type == rttr::type::get<node::AmbientOccluder>())
+    {
+        auto& src_light = static_cast<const node::AmbientOccluder&>(node);
+        auto light = std::make_unique<rt::AmbientOccluder>();
+
+        light->ScaleRadiance(src_light.scale_radiance);
+        light->SetMinAmount(src_light.min_amount);
+
+        auto& conns = node.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            auto sampler = CreateSampler(conns[0]->GetFrom()->GetParent());
+            if (sampler) {
+                light->SetSampler(sampler);
             }
         }
 
@@ -410,6 +420,29 @@ Evaluator::CreateObject(const bp::Node& node)
             object->Translate(to_rt_v3d(src_object.translate));
         }
 
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::SolidCylinder>())
+    {
+        auto& src_object = static_cast<const node::SolidCylinder&>(node);
+        auto object = std::make_unique<rt::SolidCylinder>(
+            src_object.bottom, src_object.top, src_object.radius
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::ConvexPartCylinder>())
+    {
+        auto& src_object = static_cast<const node::ConvexPartCylinder&>(node);
+        auto object = std::make_unique<rt::ConvexPartCylinder>(
+            src_object.bottom, src_object.top, src_object.radius, src_object.polar_min, src_object.polar_max
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::Grid>())
+    {
+        auto& src_object = static_cast<const node::Grid&>(node);
+        auto object = std::make_unique<rt::Grid>();
+        object->ReadFlatTriangles(src_object.filename);
         dst_object = std::move(object);
     }
     else
@@ -583,6 +616,52 @@ Evaluator::CreateCamera(const bp::Node& node)
         camera->SetFov(src_camera.fov);
         dst_camera = std::move(camera);
     }
+    else if (camera_type == rttr::type::get<node::Spherical>())
+    {
+        auto& src_camera = static_cast<const node::Spherical&>(node);
+        auto camera = std::make_unique<rt::Spherical>();
+        camera->SetHorizontalFov(src_camera.hori_fov);
+        camera->SetVerticalFov(src_camera.vert_fov);
+        dst_camera = std::move(camera);
+    }
+    else if (camera_type == rttr::type::get<node::Stereo>())
+    {
+        auto& src_camera = static_cast<const node::Stereo&>(node);
+        auto camera = std::make_unique<rt::Stereo>();
+
+        auto& left_conns = node.GetAllInput()[node::Stereo::ID_LEFT_CAM]->GetConnecting();
+        if (!left_conns.empty())
+        {
+            std::shared_ptr<rt::Camera> cam = CreateCamera(left_conns[0]->GetFrom()->GetParent());
+            if (cam) {
+                camera->SetLeftCam(cam);
+            }
+        }
+
+        auto& right_conns = node.GetAllInput()[node::Stereo::ID_RIGHT_CAM]->GetConnecting();
+        if (!right_conns.empty())
+        {
+            std::shared_ptr<rt::Camera> cam = CreateCamera(right_conns[0]->GetFrom()->GetParent());
+            if (cam) {
+                camera->SetRightCam(cam);
+            }
+        }
+
+        switch (src_camera.viewing_type)
+        {
+        case node::Stereo::ViewingType::Parallel:
+            camera->SetViewingType(rt::Stereo::ViewingType::Parallel);
+            break;
+        case node::Stereo::ViewingType::Transverse:
+            camera->SetViewingType(rt::Stereo::ViewingType::Transverse);
+            break;
+        }
+
+        camera->SetPixelGap(src_camera.pixel_gap);
+        camera->SetStereoAngle(src_camera.stereo_angle);
+
+        dst_camera = std::move(camera);
+    }
     else
     {
         assert(0);
@@ -593,6 +672,10 @@ Evaluator::CreateCamera(const bp::Node& node)
     dst_camera->SetLookat(to_rt_p3d(src_camera.target));
 
     dst_camera->ComputeUVW();
+
+    if (camera_type == rttr::type::get<node::Stereo>()) {
+        static_cast<rt::Stereo*>(dst_camera.get())->SetupCameras();
+    }
 
     return dst_camera;
 }
@@ -693,6 +776,15 @@ Evaluator::CreateSampler(const bp::Node& node)
         auto sampler = std::make_shared<rt::Regular>(num_samples);
         dst_sampler = sampler;
     }
+    else if (sampler_type == rttr::type::get<node::PureRandom>())
+    {
+        auto& src_sampler = static_cast<const node::PureRandom&>(node);
+        if (num_samples == 0) {
+            num_samples = src_sampler.num_samples;
+        }
+        auto sampler = std::make_shared<rt::PureRandom>(num_samples);
+        dst_sampler = sampler;
+    }
 
     return dst_sampler;
 }
@@ -707,6 +799,12 @@ Evaluator::CreateMapping(const bp::Node& node)
     {
         auto& src_mapping = static_cast<const node::SphericalMap&>(node);
         auto mapping = std::make_shared<rt::SphericalMap>();
+        dst_mapping = mapping;
+    }
+    else if (mapping_type == rttr::type::get<node::LightProbe>())
+    {
+        auto& src_mapping = static_cast<const node::LightProbe&>(node);
+        auto mapping = std::make_shared<rt::LightProbe>();
         dst_mapping = mapping;
     }
 

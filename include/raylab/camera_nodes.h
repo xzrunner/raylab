@@ -21,7 +21,7 @@ public:
         Layout();
     }
 
-    sm::vec3 pos;
+    sm::vec3 pos = sm::vec3(0, 0, 500);
     sm::vec3 target;
 
     RTTR_ENABLE(Node)
@@ -33,7 +33,7 @@ class Pinhole : public Camera
 public:
     Pinhole() : Camera("Pinhole") {}
 
-    float dis = 0.0f;
+    float dis = 500.0f;
     float zoom = 1.0f;
 
     RTTR_ENABLE(Camera)
@@ -70,6 +70,51 @@ public:
     RTTR_ENABLE(Camera)
 
 }; // FishEye
+
+class Spherical : public Camera
+{
+public:
+    Spherical() : Camera("Spherical") {}
+
+    float hori_fov = 360.0f;
+    float vert_fov = 180.0f;
+
+    RTTR_ENABLE(Camera)
+
+}; // Spherical
+
+class Stereo : public Camera
+{
+public:
+    Stereo()
+        : Camera("Stereo")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, ID_LEFT_CAM, PIN_CAMERA, "Left", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_RIGHT_CAM, PIN_CAMERA, "Right", *this));
+
+        Layout();
+    }
+
+    enum class ViewingType
+    {
+        Parallel,
+        Transverse
+    };
+    ViewingType viewing_type;
+
+    int pixel_gap = 0;
+
+    float stereo_angle = 0.0f;
+
+    enum InputID
+    {
+        ID_LEFT_CAM = 0,
+        ID_RIGHT_CAM,
+    };
+
+    RTTR_ENABLE(Camera)
+
+}; // Stereo
 
 }
 }

@@ -102,7 +102,7 @@ public:
     float kd = 0.0f;
     float ks = 0.0f;
     pt0::Color cd;
-    pt0::Color cs;
+    pt0::Color cs = pt0::Color(1.0f, 1.0f, 1.0f);
     float exp = 0.0f;
 
     RTTR_ENABLE(Material)
