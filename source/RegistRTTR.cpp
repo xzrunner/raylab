@@ -362,6 +362,12 @@ rttr::registration::class_<raylab::node::ConvexPartCylinder>("raylab::ConvexPart
     )
 ;
 
+rttr::registration::enumeration<raylab::node::Grid::TriangleType>("rlab_grid_triangle_type")
+(
+	rttr::value("flat",   raylab::node::Grid::TriangleType::Flat),
+    rttr::value("smooth", raylab::node::Grid::TriangleType::Smooth)
+);
+
 rttr::registration::class_<raylab::node::Grid>("raylab::Grid")
     .constructor<>()
     .property("filename", &raylab::node::Grid::filename)
@@ -369,6 +375,10 @@ rttr::registration::class_<raylab::node::Grid>("raylab::Grid")
         rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Filename")),
         rttr::metadata(js::RTTR::FilePathTag(), true),
         rttr::metadata(ee0::PropOpenFileTag(), ee0::PropOpenFile("*.ply"))
+    )
+    .property("triangle_type", &raylab::node::Grid::triangle_type)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("TriangleType"))
     )
 ;
 

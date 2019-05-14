@@ -442,8 +442,18 @@ Evaluator::CreateObject(const bp::Node& node)
     {
         auto& src_object = static_cast<const node::Grid&>(node);
         auto object = std::make_unique<rt::Grid>();
-        object->ReadFlatTriangles(src_object.filename);
+
+        switch (src_object.triangle_type)
+        {
+        case node::Grid::TriangleType::Flat:
+            object->ReadFlatTriangles(src_object.filename);
+            break;
+        case node::Grid::TriangleType::Smooth:
+            object->ReadSmoothTriangles(src_object.filename);
+            break;
+        }
         object->SetupCells();
+
         dst_object = std::move(object);
     }
     else

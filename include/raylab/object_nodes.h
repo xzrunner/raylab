@@ -181,6 +181,13 @@ public:
 
     std::string filename;
 
+    enum class TriangleType
+    {
+        Flat,
+        Smooth
+    };
+    TriangleType triangle_type;
+
     RTTR_ENABLE(Object)
 
 }; // Grid
