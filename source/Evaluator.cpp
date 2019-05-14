@@ -443,6 +443,7 @@ Evaluator::CreateObject(const bp::Node& node)
         auto& src_object = static_cast<const node::Grid&>(node);
         auto object = std::make_unique<rt::Grid>();
         object->ReadFlatTriangles(src_object.filename);
+        object->SetupCells();
         dst_object = std::move(object);
     }
     else
