@@ -68,7 +68,8 @@ public:
     Rectangle()
         : Object("Rectangle")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_SAMPLER, "Sampler", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_SAMPLER,    "Sampler", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 2, bp::PIN_FLOAT3, "P0",      *this));
         Layout();
     }
 
@@ -79,6 +80,7 @@ public:
     enum InputID
     {
         ID_SAMPLER = 1,
+        ID_P0,
     };
 
     RTTR_ENABLE(Object)

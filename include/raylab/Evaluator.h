@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SM_Vector.h>
+
 #include <memory>
 
 namespace rt
@@ -61,6 +63,7 @@ private:
         CreateMapping(const bp::Node& node);
 
     static float CalcFloat(const bp::Connecting& conn);
+    static sm::vec3 CalcFloat3(const bp::Connecting& conn);
 
 }; // Evaluator
 

@@ -79,8 +79,8 @@ bool can_type_cast_func(int type_from, int type_to)
         return true;
     }
 
-    if (type_from == bp::PIN_INTEGER && type_to == bp::PIN_FLOAT ||
-        type_from == bp::PIN_FLOAT && type_to == bp::PIN_INTEGER) {
+    if (type_from == bp::PIN_INTEGER && type_to == bp::PIN_FLOAT1 ||
+        type_from == bp::PIN_FLOAT1 && type_to == bp::PIN_INTEGER) {
         return true;
     }
 

@@ -31,8 +31,8 @@ public:
     Matte()
         : Material("Matte")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_FLOAT, "ka", *this));
-        AddPin(std::make_shared<bp::Pin>(true, 1, bp::PIN_FLOAT, "kd", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_FLOAT1, "ka", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 1, bp::PIN_FLOAT1, "kd", *this));
 
         Layout();
     }
@@ -59,8 +59,8 @@ public:
     SV_Matte()
         : Material("SV_Matte")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_FLOAT, "ka", *this));
-        AddPin(std::make_shared<bp::Pin>(true, 1, bp::PIN_FLOAT, "kd", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_FLOAT1, "ka", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 1, bp::PIN_FLOAT1, "kd", *this));
         AddPin(std::make_shared<bp::Pin>(true, 2, PIN_TEXTURE, "cd", *this));
 
         Layout();

@@ -13,6 +13,7 @@
 #include <blueprint/Connecting.h>
 #include <blueprint/node/Hub.h>
 #include <blueprint/node/Vector1.h>
+#include <blueprint/node/Vector3.h>
 
 #include <raytracing/world/World.h>
 #include <raytracing/lights/Light.h>
@@ -329,15 +330,21 @@ Evaluator::CreateObject(const bp::Node& node)
     {
         auto& src_object = static_cast<const node::Rectangle&>(node);
 
-        auto p0   = to_rt_p3d(src_object.p0);
+        rt::Point3D p0;
+        auto& conns_p0 = node.GetAllInput()[node::Rectangle::ID_P0]->GetConnecting();
+        if (!conns_p0.empty()) {
+            p0 = to_rt_p3d(CalcFloat3(*conns_p0[0]));
+        } else {
+            p0 = to_rt_p3d(src_object.p0);
+        }
         auto a    = to_rt_v3d(src_object.a);
         auto b    = to_rt_v3d(src_object.b);
         auto norm = to_rt_normal(src_object.normal);
-        auto object = std::make_unique<rt::Rectangle>(p0, a, b, norm);
+        auto object = std::make_unique<rt::Rectangle>(p0, a, b/*, norm*/);
 
-        auto& conns = node.GetAllInput()[node::Rectangle::ID_SAMPLER]->GetConnecting();
-        if (!conns.empty()) {
-            if (auto sampler = CreateSampler(conns[0]->GetFrom()->GetParent())) {
+        auto& conns_sampler = node.GetAllInput()[node::Rectangle::ID_SAMPLER]->GetConnecting();
+        if (!conns_sampler.empty()) {
+            if (auto sampler = CreateSampler(conns_sampler[0]->GetFrom()->GetParent())) {
                 object->SetSampler(sampler);
             }
         }
@@ -830,6 +837,19 @@ float Evaluator::CalcFloat(const bp::Connecting& conn)
     auto node_type = node.get_type();
     if (node_type == rttr::type::get<bp::node::Vector1>()) {
         ret = static_cast<const bp::node::Vector1&>(node).GetValue();
+    }
+
+    return ret;
+}
+
+sm::vec3 Evaluator::CalcFloat3(const bp::Connecting& conn)
+{
+    sm::vec3 ret;
+
+    auto& node = conn.GetFrom()->GetParent();
+    auto node_type = node.get_type();
+    if (node_type == rttr::type::get<bp::node::Vector3>()) {
+        ret = static_cast<const bp::node::Vector3&>(node).GetValue();
     }
 
     return ret;
