@@ -44,6 +44,10 @@ rttr::registration::class_<raylab::node::ViewPlane>("raylab::ViewPlane")
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("NumSamples"))
     )
+    .property("show_out_of_gamut", &raylab::node::ViewPlane::show_out_of_gamut)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("ShowOutOfGamut"))
+    )
 ;
 
 // Light

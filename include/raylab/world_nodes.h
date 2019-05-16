@@ -79,6 +79,8 @@ public:
 
     float max_depth = 0.0f;
 
+    bool show_out_of_gamut = false;
+
     enum InputID
     {
         ID_SAMPLER = 0,

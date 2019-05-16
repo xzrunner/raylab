@@ -155,6 +155,7 @@ void Evaluator::Build(rt::World& dst, const node::World& src)
             vp->SetHeight(src_vp.height);
             vp->SetPixelSize(src_vp.pixel_size);
             vp->SetMaxDepth(static_cast<int>(src_vp.max_depth));
+            vp->SetShowOutOfGamut(src_vp.show_out_of_gamut);
 
             auto& sampler_conns = vp_node.GetAllInput()[node::ViewPlane::ID_SAMPLER]->GetConnecting();
             if (!sampler_conns.empty()) {
