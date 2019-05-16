@@ -322,6 +322,26 @@ rttr::registration::class_<raylab::node::Instance>("raylab::Instance")
     )
 ;
 
+rttr::registration::class_<raylab::node::Disk>("raylab::Disk")
+    .constructor<>()
+    .property("center", &raylab::node::Disk::center)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Center"))
+    )
+    .property("normal", &raylab::node::Disk::normal)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Normal"))
+    )
+    .property("radius", &raylab::node::Disk::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+    .property("shadows", &raylab::node::Disk::shadows)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Shadows"))
+    )
+;
+
 rttr::registration::class_<raylab::node::SolidCylinder>("raylab::SolidCylinder")
     .constructor<>()
     .property("bottom", &raylab::node::SolidCylinder::bottom)
@@ -357,6 +377,30 @@ rttr::registration::class_<raylab::node::ConvexPartCylinder>("raylab::ConvexPart
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("PolarMin"))
     )
     .property("polar_max", &raylab::node::ConvexPartCylinder::polar_max)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("PolarMax"))
+    )
+;
+
+rttr::registration::class_<raylab::node::OpenPartCylinder>("raylab::OpenPartCylinder")
+    .constructor<>()
+    .property("bottom", &raylab::node::OpenPartCylinder::bottom)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bottom"))
+    )
+    .property("top", &raylab::node::OpenPartCylinder::top)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Top"))
+    )
+    .property("radius", &raylab::node::OpenPartCylinder::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+    .property("polar_min", &raylab::node::OpenPartCylinder::polar_min)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("PolarMin"))
+    )
+    .property("polar_max", &raylab::node::OpenPartCylinder::polar_max)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("PolarMax"))
     )

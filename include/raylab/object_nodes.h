@@ -148,6 +148,32 @@ public:
 
 }; // Instance
 
+class Disk : public Object
+{
+public:
+    Disk()
+        : Object("Disk")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_SAMPLER,  "Sampler",  *this));
+
+        Layout();
+    }
+
+    enum InputID
+    {
+        ID_SAMPLER = 1,
+    };
+
+    sm::vec3 center;
+    sm::vec3 normal = sm::vec3(0, 0, 1);
+    float    radius = 1.0;
+
+    bool shadows = false;
+
+    RTTR_ENABLE(Object)
+
+}; // Disk
+
 class SolidCylinder : public Object
 {
 public:
@@ -175,6 +201,21 @@ public:
     RTTR_ENABLE(Object)
 
 }; // ConvexPartCylinder
+
+class OpenPartCylinder : public Object
+{
+public:
+    OpenPartCylinder() : Object("OpenPartCylinder") {}
+
+    float bottom    = 0;
+    float top       = 1;
+    float radius    = 1;
+    float polar_min = 0;
+    float polar_max = 180;
+
+    RTTR_ENABLE(Object)
+
+}; // OpenPartCylinder
 
 class Grid : public Object
 {

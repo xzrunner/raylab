@@ -36,8 +36,10 @@
 #include <raytracing/objects/Triangle.h>
 #include <raytracing/objects/WireframeBox.h>
 #include <raytracing/objects/Instance.h>
+#include <raytracing/objects/Disk.h>
 #include <raytracing/objects/SolidCylinder.h>
 #include <raytracing/objects/ConvexPartCylinder.h>
+#include <raytracing/objects/OpenPartCylinder.h>
 #include <raytracing/objects/Grid.h>
 #include <raytracing/materials/Matte.h>
 #include <raytracing/materials/SV_Matte.h>
@@ -429,6 +431,21 @@ Evaluator::CreateObject(const bp::Node& node)
 
         dst_object = std::move(object);
     }
+    else if (object_type == rttr::type::get<node::Disk>())
+    {
+        auto& src_object = static_cast<const node::Disk&>(node);
+
+        auto center = to_rt_p3d(src_object.center);
+        auto normal = to_rt_normal(src_object.normal);
+        auto object = std::make_unique<rt::Disk>(center, normal, src_object.radius);
+
+        auto& conns = node.GetAllInput()[node::Disk::ID_SAMPLER]->GetConnecting();
+        if (!conns.empty()) {
+            object->SetSampler(CreateSampler(conns[0]->GetFrom()->GetParent()));
+        }
+
+        dst_object = std::move(object);
+    }
     else if (object_type == rttr::type::get<node::SolidCylinder>())
     {
         auto& src_object = static_cast<const node::SolidCylinder&>(node);
@@ -441,6 +458,14 @@ Evaluator::CreateObject(const bp::Node& node)
     {
         auto& src_object = static_cast<const node::ConvexPartCylinder&>(node);
         auto object = std::make_unique<rt::ConvexPartCylinder>(
+            src_object.bottom, src_object.top, src_object.radius, src_object.polar_min, src_object.polar_max
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::OpenPartCylinder>())
+    {
+        auto& src_object = static_cast<const node::OpenPartCylinder&>(node);
+        auto object = std::make_unique<rt::OpenPartCylinder>(
             src_object.bottom, src_object.top, src_object.radius, src_object.polar_min, src_object.polar_max
         );
         dst_object = std::move(object);
