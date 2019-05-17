@@ -98,5 +98,27 @@ public:
 
 }; // AmbientOccluder
 
+class EnvironmentLight : public Light
+{
+public:
+    EnvironmentLight()
+        : Light("EnvironmentLight")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_SAMPLER,  "Sampler",  *this));
+        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_MATERIAL, "Material", *this));
+
+        Layout();
+    }
+
+    enum InputID
+    {
+        ID_SAMPLER = 0,
+        ID_MATERIAL,
+    };
+
+    RTTR_ENABLE(Light)
+
+}; // EnvironmentLight
+
 }
 }

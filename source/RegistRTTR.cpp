@@ -120,6 +120,10 @@ rttr::registration::class_<raylab::node::AmbientOccluder>("raylab::AmbientOcclud
     )
 ;
 
+rttr::registration::class_<raylab::node::EnvironmentLight>("raylab::EnvironmentLight")
+    .constructor<>()
+;
+
 // Camera
 
 rttr::registration::class_<raylab::node::Camera>("raylab::Camera")
@@ -427,6 +431,22 @@ rttr::registration::class_<raylab::node::Grid>("raylab::Grid")
     .property("triangle_type", &raylab::node::Grid::triangle_type)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("TriangleType"))
+    )
+;
+
+rttr::registration::class_<raylab::node::ConcaveSphere>("raylab::ConcaveSphere")
+    .constructor<>()
+    .property("center", &raylab::node::ConcaveSphere::center)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Center"))
+    )
+    .property("radius", &raylab::node::ConcaveSphere::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+    .property("shadows", &raylab::node::ConcaveSphere::shadows)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Shadows"))
     )
 ;
 

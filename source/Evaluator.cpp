@@ -22,6 +22,7 @@
 #include <raytracing/lights/PointLight.h>
 #include <raytracing/lights/AreaLight.h>
 #include <raytracing/lights/AmbientOccluder.h>
+#include <raytracing/lights/EnvironmentLight.h>
 #include <raytracing/tracer/RayCast.h>
 #include <raytracing/tracer/AreaLighting.h>
 #include <raytracing/cameras/Pinhole.h>
@@ -41,6 +42,7 @@
 #include <raytracing/objects/ConvexPartCylinder.h>
 #include <raytracing/objects/OpenPartCylinder.h>
 #include <raytracing/objects/Grid.h>
+#include <raytracing/objects/ConcaveSphere.h>
 #include <raytracing/materials/Matte.h>
 #include <raytracing/materials/SV_Matte.h>
 #include <raytracing/materials/Emissive.h>
@@ -256,6 +258,29 @@ Evaluator::CreateLight(const bp::Node& node)
             auto sampler = CreateSampler(conns[0]->GetFrom()->GetParent());
             if (sampler) {
                 light->SetSampler(sampler);
+            }
+        }
+
+        dst_light = std::move(light);
+    }
+    else if (light_type == rttr::type::get<node::EnvironmentLight>())
+    {
+        auto& src_light = static_cast<const node::EnvironmentLight&>(node);
+        auto light = std::make_unique<rt::EnvironmentLight>();
+
+        auto& samp_conns = node.GetAllInput()[node::EnvironmentLight::ID_SAMPLER]->GetConnecting();
+        if (!samp_conns.empty()) {
+            auto sampler = CreateSampler(samp_conns[0]->GetFrom()->GetParent());
+            if (sampler) {
+                light->SetSampler(sampler);
+            }
+        }
+
+        auto& mat_conns = node.GetAllInput()[node::EnvironmentLight::ID_MATERIAL]->GetConnecting();
+        if (!mat_conns.empty()) {
+            auto material = CreateMaterial(mat_conns[0]->GetFrom()->GetParent());
+            if (material) {
+                light->SetMaterial(material);
             }
         }
 
@@ -486,6 +511,16 @@ Evaluator::CreateObject(const bp::Node& node)
             break;
         }
         object->SetupCells();
+
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::ConcaveSphere>())
+    {
+        auto& src_object = static_cast<const node::ConcaveSphere&>(node);
+
+        auto center = to_rt_p3d(src_object.center);
+        auto object = std::make_unique<rt::ConcaveSphere>(center, src_object.radius);
+        object->SetShadows(src_object.shadows);
 
         dst_object = std::move(object);
     }

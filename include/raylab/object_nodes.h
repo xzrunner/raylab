@@ -235,5 +235,19 @@ public:
 
 }; // Grid
 
+class ConcaveSphere : public Object
+{
+public:
+    ConcaveSphere() : Object("ConcaveSphere") {}
+
+    sm::vec3 center;
+    float    radius = 1.0f;
+
+    bool shadows = false;
+
+    RTTR_ENABLE(Object)
+
+}; // ConcaveSphere
+
 }
 }
