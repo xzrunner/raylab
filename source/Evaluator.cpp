@@ -96,9 +96,27 @@ void Evaluator::Build(rt::World& dst, const node::World& src)
     auto& src_inputs = src.GetAllInput();
 
     auto& light_conns = src_inputs[node::World::ID_LIGHT]->GetConnecting();
-    if (!light_conns.empty()) {
-        if (auto dst_light = CreateLight(light_conns[0]->GetFrom()->GetParent())) {
-            dst.AddLight(std::move(dst_light));
+    if (!light_conns.empty())
+    {
+        auto& light_node = light_conns[0]->GetFrom()->GetParent();
+        auto object_type = light_node.get_type();
+        if (object_type == rttr::type::get<bp::node::Hub>())
+        {
+            auto& hub = static_cast<const bp::node::Hub&>(light_node);
+            for (auto& input : hub.GetAllInput()) {
+                for (auto& conn : input->GetConnecting()) {
+                    auto& from_node = conn->GetFrom()->GetParent();
+                    if (auto light = CreateLight(from_node)) {
+                        dst.AddLight(std::move(light));
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (auto light = CreateLight(light_node)) {
+                dst.AddLight(std::move(light));
+            }
         }
     }
 
