@@ -73,6 +73,8 @@
 #include <raytracing/mapping/SphericalMap.h>
 #include <raytracing/mapping/LightProbe.h>
 
+#include <boost/filesystem.hpp>
+
 namespace
 {
 
@@ -562,14 +564,20 @@ Evaluator::CreateObject(const bp::Node& node)
         auto& src_object = static_cast<const node::Grid&>(node);
         auto object = std::make_unique<rt::Grid>();
 
-        switch (src_object.triangle_type)
+        // read from file
+        if (!src_object.filename.empty() &&
+            boost::filesystem::exists(src_object.filename))
         {
-        case node::Grid::TriangleType::Flat:
-            object->ReadFlatTriangles(src_object.filename);
-            break;
-        case node::Grid::TriangleType::Smooth:
-            object->ReadSmoothTriangles(src_object.filename);
-            break;
+            switch (src_object.triangle_type)
+            {
+            case node::Grid::TriangleType::Flat:
+                object->ReadFlatTriangles(src_object.filename);
+                break;
+            case node::Grid::TriangleType::Smooth:
+                object->ReadSmoothTriangles(src_object.filename);
+                break;
+            }
+        }
 
         // gen tessellate sphere
         if (src_object.hori_steps != 0 &&
