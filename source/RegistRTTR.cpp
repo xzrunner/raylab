@@ -465,6 +465,14 @@ rttr::registration::class_<raylab::node::Grid>("raylab::Grid")
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("TriangleType"))
     )
+    .property("hori_steps", &raylab::node::Grid::hori_steps)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Hori Steps"))
+    )
+    .property("vert_steps", &raylab::node::Grid::vert_steps)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Vert Steps"))
+    )
 ;
 
 rttr::registration::class_<raylab::node::ConcaveSphere>("raylab::ConcaveSphere")

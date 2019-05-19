@@ -245,6 +245,10 @@ public:
 
     std::string filename;
 
+    // Tessellate Sphere
+    int hori_steps = 0;
+    int vert_steps = 0;
+
     enum class TriangleType
     {
         Flat,

@@ -570,6 +570,20 @@ Evaluator::CreateObject(const bp::Node& node)
         case node::Grid::TriangleType::Smooth:
             object->ReadSmoothTriangles(src_object.filename);
             break;
+
+        // gen tessellate sphere
+        if (src_object.hori_steps != 0 &&
+            src_object.vert_steps != 0)
+        {
+            switch (src_object.triangle_type)
+            {
+            case node::Grid::TriangleType::Flat:
+                object->TessellateFlatSphere(src_object.hori_steps, src_object.vert_steps);
+                break;
+            case node::Grid::TriangleType::Smooth:
+                object->TessellateSmoothSphere(src_object.hori_steps, src_object.vert_steps);
+                break;
+            }
         }
 
         auto& conns = node.GetAllInput()[node::Grid::ID_CHILDREN]->GetConnecting();
@@ -708,7 +722,7 @@ Evaluator::CreateObject(const bp::Node& node)
     }
 
     // material
-    if (node.get_type() != rttr::type::get<node::Grid>())
+//    if (node.get_type() != rttr::type::get<node::Grid>())
     {
         auto& material_conns = node.GetAllInput()[0]->GetConnecting();
         if (!material_conns.empty())
