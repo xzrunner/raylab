@@ -52,5 +52,14 @@ public:
 
 }; // FirstHit
 
+class Whitted : public Tracer
+{
+public:
+    Whitted() : Tracer("Whitted") {}
+
+    RTTR_ENABLE(Tracer)
+
+}; // Whitted
+
 }
 }

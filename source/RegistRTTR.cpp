@@ -44,6 +44,10 @@ rttr::registration::class_<raylab::node::ViewPlane>("raylab::ViewPlane")
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("NumSamples"))
     )
+    .property("max_depth", &raylab::node::ViewPlane::max_depth)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Max Depth"))
+    )
     .property("show_out_of_gamut", &raylab::node::ViewPlane::show_out_of_gamut)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("ShowOutOfGamut"))
@@ -250,6 +254,10 @@ rttr::registration::class_<raylab::node::AreaLighting>("raylab::AreaLighting")
 ;
 
 rttr::registration::class_<raylab::node::FirstHit>("raylab::FirstHit")
+    .constructor<>()
+;
+
+rttr::registration::class_<raylab::node::Whitted>("raylab::Whitted")
     .constructor<>()
 ;
 
@@ -820,6 +828,30 @@ rttr::registration::class_<raylab::node::ConeChecker>("raylab::ConeChecker")
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color2"))
     )
     .property("line_color", &raylab::node::ConeChecker::line_color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("LineColor"))
+    )
+;
+
+rttr::registration::class_<raylab::node::PlaneChecker>("raylab::PlaneChecker")
+    .constructor<>()
+    .property("outline_width", &raylab::node::PlaneChecker::outline_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Outline Width"))
+    )
+    .property("size", &raylab::node::PlaneChecker::size)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Size"))
+    )
+    .property("color1", &raylab::node::PlaneChecker::color1)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color1"))
+    )
+    .property("color2", &raylab::node::PlaneChecker::color2)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color2"))
+    )
+    .property("line_color", &raylab::node::PlaneChecker::line_color)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("LineColor"))
     )

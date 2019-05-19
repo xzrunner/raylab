@@ -27,6 +27,7 @@
 #include <raytracing/tracer/RayCast.h>
 #include <raytracing/tracer/AreaLighting.h>
 #include <raytracing/tracer/FirstHit.h>
+#include <raytracing/tracer/Whitted.h>
 #include <raytracing/cameras/Pinhole.h>
 #include <raytracing/cameras/ThinLens.h>
 #include <raytracing/cameras/FishEye.h>
@@ -65,6 +66,7 @@
 #include <raytracing/texture/ImageTexture.h>
 #include <raytracing/texture/Image.h>
 #include <raytracing/texture/ConeChecker.h>
+#include <raytracing/texture/PlaneChecker.h>
 #include <raytracing/brdfs/PerfectSpecular.h>
 #include <raytracing/samplers/Jittered.h>
 #include <raytracing/samplers/MultiJittered.h>
@@ -362,6 +364,12 @@ Evaluator::CreateTracer(const bp::Node& node, rt::World& dst)
     {
         auto& src_tracer = static_cast<const node::FirstHit&>(node);
         auto tracer = std::make_unique<rt::FirstHit>(dst);
+        dst_tracer = std::move(tracer);
+    }
+    else if (tracer_type == rttr::type::get<node::Whitted>())
+    {
+        auto& src_tracer = static_cast<const node::Whitted&>(node);
+        auto tracer = std::make_unique<rt::Whitted>(dst);
         dst_tracer = std::move(tracer);
     }
     else
@@ -1016,6 +1024,20 @@ Evaluator::CreateTexture(const bp::Node& node)
         tex->SetColor1(to_rt_color(src_tex.color1));
         tex->SetColor2(to_rt_color(src_tex.color2));
         tex->SetLineColor(to_rt_color(src_tex.line_color));
+
+        dst_tex = tex;
+    }
+    else if (tex_type == rttr::type::get<node::PlaneChecker>())
+    {
+        auto& src_tex = static_cast<const node::PlaneChecker&>(node);
+        auto tex = std::make_shared<rt::PlaneChecker>();
+
+        tex->SetOutlineWidth(src_tex.outline_width);
+        tex->SetSize(src_tex.size);
+
+        tex->SetColor1(to_rt_color(src_tex.color1));
+        tex->SetColor2(to_rt_color(src_tex.color2));
+        tex->SetOutlineColor(to_rt_color(src_tex.line_color));
 
         dst_tex = tex;
     }

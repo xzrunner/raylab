@@ -74,5 +74,21 @@ public:
 
 }; // ConeChecker
 
+class PlaneChecker : public Texture
+{
+public:
+    PlaneChecker() : Texture("PlaneChecker") {}
+
+    float outline_width = 0;		// width of the horizontal lines as a fraction of the checker width
+    float size = 0;
+
+    pt0::Color color1     = pt0::Color(1.0f, 1.0f, 1.0f);   // checker color 1
+    pt0::Color color2     = pt0::Color(0.5f, 0.5f, 0.5f);   // checker color 2
+    pt0::Color line_color = pt0::Color(0, 0, 0);            // the line color
+
+    RTTR_ENABLE(Texture)
+
+}; // PlaneChecker
+
 }
 }
