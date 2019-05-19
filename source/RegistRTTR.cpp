@@ -124,6 +124,22 @@ rttr::registration::class_<raylab::node::EnvironmentLight>("raylab::EnvironmentL
     .constructor<>()
 ;
 
+rttr::registration::class_<raylab::node::FakeSphericalLight>("raylab::FakeSphericalLight")
+    .constructor<>()
+    .property("ls", &raylab::node::FakeSphericalLight::scale_radiance)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radiant Scale"))
+    )
+    .property("jitter_amount", &raylab::node::FakeSphericalLight::jitter_amount)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Jitter Amount"))
+    )
+    .property("distance_attenuation", &raylab::node::FakeSphericalLight::distance_attenuation)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Distance Attenuation"))
+    )
+;
+
 // Camera
 
 rttr::registration::class_<raylab::node::Camera>("raylab::Camera")
@@ -211,12 +227,29 @@ rttr::registration::class_<raylab::node::Stereo>("raylab::Stereo")
     )
 ;
 
+rttr::registration::class_<raylab::node::Orthographic>("raylab::Orthographic")
+    .constructor<>()
+    .property("dis", &raylab::node::Orthographic::dis)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Dis"))
+    )
+    .property("zoom", &raylab::node::Orthographic::zoom)
+    (
+        rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Zoom"))
+    )
+;
+
 // Tracer
 
 rttr::registration::class_<raylab::node::RayCast>("raylab::RayCast")
     .constructor<>()
 ;
+
 rttr::registration::class_<raylab::node::AreaLighting>("raylab::AreaLighting")
+    .constructor<>()
+;
+
+rttr::registration::class_<raylab::node::FirstHit>("raylab::FirstHit")
     .constructor<>()
 ;
 
@@ -450,6 +483,198 @@ rttr::registration::class_<raylab::node::ConcaveSphere>("raylab::ConcaveSphere")
     )
 ;
 
+rttr::registration::class_<raylab::node::Torus>("raylab::Torus")
+    .constructor<>()
+    .property("swept_radius", &raylab::node::Torus::swept_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Swept Radius"))
+    )
+    .property("tube_radius", &raylab::node::Torus::tube_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Tube Radius"))
+    )
+;
+
+rttr::registration::class_<raylab::node::OpenCone>("raylab::OpenCone")
+    .constructor<>()
+    .property("height", &raylab::node::OpenCone::height)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Height"))
+    )
+    .property("radius", &raylab::node::OpenCone::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+;
+
+rttr::registration::class_<raylab::node::ConvexPartSphere>("raylab::ConvexPartSphere")
+    .constructor<>()
+    .property("center", &raylab::node::ConvexPartSphere::center)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Center"))
+    )
+    .property("radius", &raylab::node::ConvexPartSphere::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+    .property("azimuth_min", &raylab::node::ConvexPartSphere::azimuth_min)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Azimuth Min"))
+    )
+    .property("azimuth_max", &raylab::node::ConvexPartSphere::azimuth_max)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Azimuth Max"))
+    )
+    .property("polar_min", &raylab::node::ConvexPartSphere::polar_min)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Polar Min"))
+    )
+    .property("polar_max", &raylab::node::ConvexPartSphere::polar_max)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Polar Max"))
+    )
+;
+
+rttr::registration::class_<raylab::node::FlatRimmedBowl>("raylab::FlatRimmedBowl")
+    .constructor<>()
+    .property("inner_radius", &raylab::node::FlatRimmedBowl::inner_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Inner Radius"))
+    )
+    .property("outer_radius", &raylab::node::FlatRimmedBowl::outer_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Outer Radius"))
+    )
+;
+
+rttr::registration::class_<raylab::node::RoundRimmedBowl>("raylab::RoundRimmedBowl")
+    .constructor<>()
+    .property("inner_radius", &raylab::node::RoundRimmedBowl::inner_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Inner Radius"))
+    )
+    .property("outer_radius", &raylab::node::RoundRimmedBowl::outer_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Outer Radius"))
+    )
+    .property("openning_angle", &raylab::node::RoundRimmedBowl::openning_angle)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Openning Angle"))
+    )
+;
+
+rttr::registration::class_<raylab::node::ThickRing>("raylab::ThickRing")
+    .constructor<>()
+    .property("bottom", &raylab::node::ThickRing::bottom)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bottom"))
+    )
+    .property("top", &raylab::node::ThickRing::top)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Top"))
+    )
+    .property("inner_radius", &raylab::node::ThickRing::inner_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Inner Radius"))
+    )
+    .property("outer_radius", &raylab::node::ThickRing::outer_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Outer Radius"))
+    )
+;
+
+rttr::registration::class_<raylab::node::BeveledCylinder>("raylab::BeveledCylinder")
+    .constructor<>()
+    .property("bottom", &raylab::node::BeveledCylinder::bottom)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bottom"))
+    )
+    .property("top", &raylab::node::BeveledCylinder::top)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Top"))
+    )
+    .property("radius", &raylab::node::BeveledCylinder::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+    .property("bevel_radius", &raylab::node::BeveledCylinder::bevel_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bevel Radius"))
+    )
+;
+
+rttr::registration::class_<raylab::node::BeveledRing>("raylab::BeveledRing")
+    .constructor<>()
+    .property("bottom", &raylab::node::BeveledRing::bottom)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bottom"))
+    )
+    .property("top", &raylab::node::BeveledRing::top)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Top"))
+    )
+    .property("inner_radius", &raylab::node::BeveledRing::inner_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Inner Radius"))
+    )
+    .property("outer_radius", &raylab::node::BeveledRing::outer_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Outer Radius"))
+    )
+    .property("bevel_radius", &raylab::node::BeveledRing::bevel_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bevel Radius"))
+    )
+;
+
+rttr::registration::class_<raylab::node::BeveledBox>("raylab::BeveledBox")
+    .constructor<>()
+    .property("bottom", &raylab::node::BeveledBox::bottom)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bottom"))
+    )
+    .property("top", &raylab::node::BeveledBox::top)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Top"))
+    )
+    .property("bevel_radius", &raylab::node::BeveledBox::bevel_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bevel Radius"))
+    )
+;
+
+rttr::registration::class_<raylab::node::BeveledWedge>("raylab::BeveledWedge")
+    .constructor<>()
+    .property("min_y", &raylab::node::BeveledWedge::min_y)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("MinY"))
+    )
+    .property("max_y", &raylab::node::BeveledWedge::max_y)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("MaxY"))
+    )
+    .property("inner_radius", &raylab::node::BeveledWedge::inner_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Inner Radius"))
+    )
+    .property("outer_radius", &raylab::node::BeveledWedge::outer_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Outer Radius"))
+    )
+    .property("bevel_radius", &raylab::node::BeveledWedge::bevel_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bevel Radius"))
+    )
+    .property("min_azimuth", &raylab::node::BeveledWedge::min_azimuth)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Min Azimuth"))
+    )
+    .property("max_azimuth", &raylab::node::BeveledWedge::max_azimuth)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Max Azimuth"))
+    )
+;
+
 // Material
 
 rttr::registration::class_<raylab::node::Matte>("raylab::Matte")
@@ -557,6 +782,38 @@ rttr::registration::class_<raylab::node::ImageTexture>("raylab::ImageTexture")
         rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Filepath")),
         rttr::metadata(js::RTTR::FilePathTag(), true),
         rttr::metadata(ee0::PropOpenFileTag(), ee0::PropOpenFile("*.ppm"))
+    )
+;
+
+rttr::registration::class_<raylab::node::ConeChecker>("raylab::ConeChecker")
+    .constructor<>()
+    .property("num_horizontal_checkers", &raylab::node::ConeChecker::num_horizontal_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("NumHorizontalCheckers"))
+    )
+    .property("num_vertical_checkers", &raylab::node::ConeChecker::num_vertical_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("NumVerticalCheckers"))
+    )
+    .property("horizontal_line_width", &raylab::node::ConeChecker::horizontal_line_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("HorizontalLineWidth"))
+    )
+    .property("vertical_line_width", &raylab::node::ConeChecker::vertical_line_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("VerticalLineWidth"))
+    )
+    .property("color1", &raylab::node::ConeChecker::color1)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color1"))
+    )
+    .property("color2", &raylab::node::ConeChecker::color2)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color2"))
+    )
+    .property("line_color", &raylab::node::ConeChecker::line_color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("LineColor"))
     )
 ;
 

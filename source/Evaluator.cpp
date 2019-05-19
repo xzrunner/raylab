@@ -23,13 +23,16 @@
 #include <raytracing/lights/AreaLight.h>
 #include <raytracing/lights/AmbientOccluder.h>
 #include <raytracing/lights/EnvironmentLight.h>
+#include <raytracing/lights/FakeSphericalLight.h>
 #include <raytracing/tracer/RayCast.h>
 #include <raytracing/tracer/AreaLighting.h>
+#include <raytracing/tracer/FirstHit.h>
 #include <raytracing/cameras/Pinhole.h>
 #include <raytracing/cameras/ThinLens.h>
 #include <raytracing/cameras/FishEye.h>
 #include <raytracing/cameras/Spherical.h>
 #include <raytracing/cameras/Stereo.h>
+#include <raytracing/cameras/Orthographic.h>
 #include <raytracing/objects/Box.h>
 #include <raytracing/objects/Sphere.h>
 #include <raytracing/objects/Plane.h>
@@ -43,6 +46,16 @@
 #include <raytracing/objects/OpenPartCylinder.h>
 #include <raytracing/objects/Grid.h>
 #include <raytracing/objects/ConcaveSphere.h>
+#include <raytracing/objects/Torus.h>
+#include <raytracing/objects/OpenCone.h>
+#include <raytracing/objects/ConvexPartSphere.h>
+#include <raytracing/objects/FlatRimmedBowl.h>
+#include <raytracing/objects/RoundRimmedBowl.h>
+#include <raytracing/objects/ThickRing.h>
+#include <raytracing/objects/BeveledCylinder.h>
+#include <raytracing/objects/BeveledRing.h>
+#include <raytracing/objects/BeveledBox.h>
+#include <raytracing/objects/BeveledWedge.h>
 #include <raytracing/materials/Matte.h>
 #include <raytracing/materials/SV_Matte.h>
 #include <raytracing/materials/Emissive.h>
@@ -51,6 +64,7 @@
 #include <raytracing/texture/Checker3D.h>
 #include <raytracing/texture/ImageTexture.h>
 #include <raytracing/texture/Image.h>
+#include <raytracing/texture/ConeChecker.h>
 #include <raytracing/brdfs/PerfectSpecular.h>
 #include <raytracing/samplers/Jittered.h>
 #include <raytracing/samplers/MultiJittered.h>
@@ -304,6 +318,15 @@ Evaluator::CreateLight(const bp::Node& node)
 
         dst_light = std::move(light);
     }
+    else if (light_type == rttr::type::get<node::FakeSphericalLight>())
+    {
+        auto& src_light = static_cast<const node::FakeSphericalLight&>(node);
+        auto light = std::make_unique<rt::FakeSphericalLight>();
+        light->ScaleRadiance(src_light.scale_radiance);
+        light->SetJitterAmount(src_light.jitter_amount);
+        light->SetDistanceAttenuation(src_light.distance_attenuation);
+        dst_light = std::move(light);
+    }
     else
     {
         assert(0);
@@ -331,6 +354,12 @@ Evaluator::CreateTracer(const bp::Node& node, rt::World& dst)
     {
         auto& src_tracer = static_cast<const node::AreaLighting&>(node);
         auto tracer = std::make_unique<rt::AreaLighting>(dst);
+        dst_tracer = std::move(tracer);
+    }
+    else if (tracer_type == rttr::type::get<node::FirstHit>())
+    {
+        auto& src_tracer = static_cast<const node::FirstHit&>(node);
+        auto tracer = std::make_unique<rt::FirstHit>(dst);
         dst_tracer = std::move(tracer);
     }
     else
@@ -496,6 +525,20 @@ Evaluator::CreateObject(const bp::Node& node)
         auto object = std::make_unique<rt::SolidCylinder>(
             src_object.bottom, src_object.top, src_object.radius
         );
+
+        auto& conns_b = node.GetAllInput()[node::SolidCylinder::ID_BOTTOM_MATERIAL]->GetConnecting();
+        if (!conns_b.empty()) {
+            object->SetBottomMaterial(CreateMaterial(conns_b[0]->GetFrom()->GetParent()));
+        }
+        auto& conns_t = node.GetAllInput()[node::SolidCylinder::ID_TOP_MATERIAL]->GetConnecting();
+        if (!conns_t.empty()) {
+            object->SetTopMaterial(CreateMaterial(conns_t[0]->GetFrom()->GetParent()));
+        }
+        auto& conns_w = node.GetAllInput()[node::SolidCylinder::ID_WALL_MATERIAL]->GetConnecting();
+        if (!conns_w.empty()) {
+            object->SetWallMaterial(CreateMaterial(conns_w[0]->GetFrom()->GetParent()));
+        }
+
         dst_object = std::move(object);
     }
     else if (object_type == rttr::type::get<node::ConvexPartCylinder>())
@@ -528,6 +571,25 @@ Evaluator::CreateObject(const bp::Node& node)
             object->ReadSmoothTriangles(src_object.filename);
             break;
         }
+
+        auto& conns = node.GetAllInput()[node::Grid::ID_CHILDREN]->GetConnecting();
+        if (!conns.empty())
+        {
+            auto& node = conns[0]->GetFrom()->GetParent();
+            if (node.get_type() == rttr::type::get<bp::node::Hub>())
+            {
+                auto& hub = static_cast<const bp::node::Hub&>(node);
+                for (auto& input : hub.GetAllInput()) {
+                    for (auto& conn : input->GetConnecting()) {
+                        auto& from_node = conn->GetFrom()->GetParent();
+                        if (auto obj = CreateObject(from_node)) {
+                            object->AddObject(std::move(obj));
+                        }
+                    }
+                }
+            }
+        }
+
         object->SetupCells();
 
         dst_object = std::move(object);
@@ -542,18 +604,119 @@ Evaluator::CreateObject(const bp::Node& node)
 
         dst_object = std::move(object);
     }
+    else if (object_type == rttr::type::get<node::Torus>())
+    {
+        auto& src_object = static_cast<const node::Torus&>(node);
+        auto object = std::make_unique<rt::Torus>(
+            src_object.swept_radius, src_object.tube_radius
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::OpenCone>())
+    {
+        auto& src_object = static_cast<const node::OpenCone&>(node);
+        auto object = std::make_unique<rt::OpenCone>(
+            src_object.height, src_object.radius
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::ConvexPartSphere>())
+    {
+        auto& src_object = static_cast<const node::ConvexPartSphere&>(node);
+        auto center = to_rt_p3d(src_object.center);
+        auto object = std::make_unique<rt::ConvexPartSphere>(
+            center, src_object.radius, src_object.azimuth_min, src_object.azimuth_max, src_object.polar_min, src_object.polar_max
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::FlatRimmedBowl>())
+    {
+        auto& src_object = static_cast<const node::FlatRimmedBowl&>(node);
+        auto object = std::make_unique<rt::FlatRimmedBowl>();
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::RoundRimmedBowl>())
+    {
+        auto& src_object = static_cast<const node::RoundRimmedBowl&>(node);
+        auto object = std::make_unique<rt::RoundRimmedBowl>(
+            src_object.inner_radius, src_object.outer_radius, src_object.openning_angle
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::ThickRing>())
+    {
+        auto& src_object = static_cast<const node::ThickRing&>(node);
+        auto object = std::make_unique<rt::ThickRing>(
+            src_object.bottom, src_object.top, src_object.inner_radius, src_object.outer_radius
+        );
+
+        auto& conns_b = node.GetAllInput()[node::ThickRing::ID_BOTTOM_MATERIAL]->GetConnecting();
+        if (!conns_b.empty()) {
+            object->SetBottomMaterial(CreateMaterial(conns_b[0]->GetFrom()->GetParent()));
+        }
+        auto& conns_t = node.GetAllInput()[node::ThickRing::ID_TOP_MATERIAL]->GetConnecting();
+        if (!conns_t.empty()) {
+            object->SetTopMaterial(CreateMaterial(conns_t[0]->GetFrom()->GetParent()));
+        }
+        auto& conns_iw = node.GetAllInput()[node::ThickRing::ID_INNER_WALL_MATERIAL]->GetConnecting();
+        if (!conns_iw.empty()) {
+            object->SetInnerWallMaterial(CreateMaterial(conns_iw[0]->GetFrom()->GetParent()));
+        }
+        auto& conns_ow = node.GetAllInput()[node::ThickRing::ID_OUTER_WALL_MATERIAL]->GetConnecting();
+        if (!conns_ow.empty()) {
+            object->SetOuterWallMaterial(CreateMaterial(conns_ow[0]->GetFrom()->GetParent()));
+        }
+
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::BeveledCylinder>())
+    {
+        auto& src_object = static_cast<const node::BeveledCylinder&>(node);
+        auto object = std::make_unique<rt::BeveledCylinder>(
+            src_object.bottom, src_object.top, src_object.radius, src_object.bevel_radius
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::BeveledRing>())
+    {
+        auto& src_object = static_cast<const node::BeveledRing&>(node);
+        auto object = std::make_unique<rt::BeveledRing>(
+            src_object.bottom, src_object.top, src_object.inner_radius, src_object.outer_radius, src_object.bevel_radius
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::BeveledBox>())
+    {
+        auto& src_object = static_cast<const node::BeveledBox&>(node);
+        auto object = std::make_unique<rt::BeveledBox>(
+            to_rt_p3d(src_object.bottom), to_rt_p3d(src_object.top), src_object.bevel_radius
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::BeveledWedge>())
+    {
+        auto& src_object = static_cast<const node::BeveledWedge&>(node);
+        auto object = std::make_unique<rt::BeveledWedge>(
+            src_object.min_y, src_object.max_y, src_object.inner_radius, src_object.outer_radius,
+            src_object.bevel_radius, src_object.min_azimuth, src_object.max_azimuth
+        );
+        dst_object = std::move(object);
+    }
     else
     {
         assert(0);
     }
 
     // material
-    auto& material_conns = node.GetAllInput()[0]->GetConnecting();
-    if (!material_conns.empty())
+    if (node.get_type() != rttr::type::get<node::Grid>())
     {
-        auto dst_material = CreateMaterial(material_conns[0]->GetFrom()->GetParent());
-        if (dst_material) {
-            dst_object->SetMaterial(dst_material);
+        auto& material_conns = node.GetAllInput()[0]->GetConnecting();
+        if (!material_conns.empty())
+        {
+            auto dst_material = CreateMaterial(material_conns[0]->GetFrom()->GetParent());
+            if (dst_material) {
+                dst_object->SetMaterial(dst_material);
+            }
         }
     }
 
@@ -759,6 +922,14 @@ Evaluator::CreateCamera(const bp::Node& node)
 
         dst_camera = std::move(camera);
     }
+    else if (camera_type == rttr::type::get<node::Orthographic>())
+    {
+        auto& src_camera = static_cast<const node::Orthographic&>(node);
+        auto camera = std::make_unique<rt::Orthographic>();
+        camera->SetViewDistance(src_camera.dis);
+        camera->SetZoomFactor(src_camera.zoom);
+        dst_camera = std::move(camera);
+    }
     else
     {
         assert(0);
@@ -807,6 +978,22 @@ Evaluator::CreateTexture(const bp::Node& node)
         auto image = std::make_shared<rt::Image>();
         image->ReadPPMFile(src_tex.filepath.c_str());
         tex->SetImage(image);
+
+        dst_tex = tex;
+    }
+    else if (tex_type == rttr::type::get<node::ConeChecker>())
+    {
+        auto& src_tex = static_cast<const node::ConeChecker&>(node);
+        auto tex = std::make_shared<rt::ConeChecker>();
+
+        tex->SetNumHorizontalCheckers(src_tex.num_horizontal_checkers);
+        tex->SetNumVerticalCheckers(src_tex.num_vertical_checkers);
+        tex->SetHorizontalLineWidth(src_tex.horizontal_line_width);
+        tex->SetVerticalLineWidth(src_tex.vertical_line_width);
+
+        tex->SetColor1(to_rt_color(src_tex.color1));
+        tex->SetColor2(to_rt_color(src_tex.color2));
+        tex->SetLineColor(to_rt_color(src_tex.line_color));
 
         dst_tex = tex;
     }

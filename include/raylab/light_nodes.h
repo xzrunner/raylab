@@ -120,5 +120,18 @@ public:
 
 }; // EnvironmentLight
 
+class FakeSphericalLight : public Light
+{
+public:
+    FakeSphericalLight() : Light("FakeSphericalLight") {}
+
+    float scale_radiance       = 1.0f;
+    float jitter_amount        = 0;
+    bool  distance_attenuation = false;
+
+    RTTR_ENABLE(Light)
+
+}; // FakeSphericalLight
+
 }
 }

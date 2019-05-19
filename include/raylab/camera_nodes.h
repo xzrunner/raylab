@@ -116,5 +116,17 @@ public:
 
 }; // Stereo
 
+class Orthographic : public Camera
+{
+public:
+    Orthographic() : Camera("Orthographic") {}
+
+    float dis  = 0;
+    float zoom = 1.0f;
+
+    RTTR_ENABLE(Camera)
+
+}; // Orthographic
+
 }
 }

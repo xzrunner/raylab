@@ -43,5 +43,14 @@ public:
 
 }; // AreaLighting
 
+class FirstHit : public Tracer
+{
+public:
+    FirstHit() : Tracer("FirstHit") {}
+
+    RTTR_ENABLE(Tracer)
+
+}; // FirstHit
+
 }
 }
