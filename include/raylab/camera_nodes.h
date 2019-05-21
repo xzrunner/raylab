@@ -100,7 +100,7 @@ public:
         Parallel,
         Transverse
     };
-    ViewingType viewing_type;
+    ViewingType viewing_type = ViewingType::Parallel;
 
     int pixel_gap = 0;
 

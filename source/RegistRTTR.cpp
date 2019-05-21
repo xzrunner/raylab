@@ -947,8 +947,18 @@ rttr::registration::class_<raylab::node::SphericalMap>("raylab::SphericalMap")
     .constructor<>()
 ;
 
+rttr::registration::enumeration<raylab::node::LightProbe::MapType>("rlab_lightprobe_map_type")
+(
+	rttr::value("regular",   raylab::node::LightProbe::MapType::Regular),
+    rttr::value("panoramic", raylab::node::LightProbe::MapType::Panoramic)
+);
+
 rttr::registration::class_<raylab::node::LightProbe>("raylab::LightProbe")
     .constructor<>()
+    .property("mapping_type", &raylab::node::LightProbe::mapping_type)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Mapping Type"))
+    )
 ;
 
 }

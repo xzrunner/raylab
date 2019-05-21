@@ -37,6 +37,13 @@ class LightProbe : public Mapping
 public:
     LightProbe() : Mapping("LightProbe") {}
 
+    enum class MapType
+    {
+        Regular,
+        Panoramic
+    };
+    MapType mapping_type = MapType::Regular;
+
     RTTR_ENABLE(Mapping)
 
 }; // LightProbe
