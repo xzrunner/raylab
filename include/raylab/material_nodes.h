@@ -139,5 +139,19 @@ public:
 
 }; // SV_Emissive
 
+class GlossyReflector : public Phong
+{
+public:
+    GlossyReflector() : Phong("GlossyReflector") {}
+
+    float      kr  = 0.0f;
+    pt0::Color cr  = pt0::Color(255, 255, 255);
+
+    int        num_samples = 0;
+
+    RTTR_ENABLE(Phong)
+
+}; // GlossyReflector
+
 }
 }

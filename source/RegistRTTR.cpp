@@ -261,6 +261,10 @@ rttr::registration::class_<raylab::node::Whitted>("raylab::Whitted")
     .constructor<>()
 ;
 
+rttr::registration::class_<raylab::node::PathTrace>("raylab::PathTrace")
+    .constructor<>()
+;
+
 // Object
 
 rttr::registration::class_<raylab::node::Box>("raylab::Box")
@@ -691,6 +695,34 @@ rttr::registration::class_<raylab::node::BeveledWedge>("raylab::BeveledWedge")
     )
 ;
 
+rttr::registration::class_<raylab::node::SolidCone>("raylab::SolidCone")
+    .constructor<>()
+    .property("radius", &raylab::node::SolidCone::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+    .property("height", &raylab::node::SolidCone::height)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Height"))
+    )
+;
+
+rttr::registration::class_<raylab::node::OpenCylinder>("raylab::OpenCylinder")
+    .constructor<>()
+    .property("bottom", &raylab::node::OpenCylinder::bottom)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bottom"))
+    )
+    .property("top", &raylab::node::OpenCylinder::top)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Top"))
+    )
+    .property("radius", &raylab::node::OpenCylinder::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+;
+
 // Material
 
 rttr::registration::class_<raylab::node::Matte>("raylab::Matte")
@@ -782,6 +814,22 @@ rttr::registration::class_<raylab::node::SV_Emissive>("raylab::SV_Emissive")
     .property("color", &raylab::node::SV_Emissive::color)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color"))
+    )
+;
+
+rttr::registration::class_<raylab::node::GlossyReflector>("raylab::GlossyReflector")
+    .constructor<>()
+    .property("kr", &raylab::node::GlossyReflector::kr)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("kr"))
+    )
+    .property("cr", &raylab::node::GlossyReflector::cr)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("cr"))
+    )
+    .property("num_samples", &raylab::node::GlossyReflector::num_samples)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Num Samples"))
     )
 ;
 

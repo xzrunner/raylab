@@ -434,5 +434,30 @@ public:
 
 }; // BeveledWedge
 
+class SolidCone : public Object
+{
+public:
+    SolidCone() : Object("SolidCone") {}
+
+    float radius = 1;
+    float height = 2;
+
+    RTTR_ENABLE(Object)
+
+}; // SolidCone
+
+class OpenCylinder : public Object
+{
+public:
+    OpenCylinder() : Object("OpenCylinder") {}
+
+    float bottom = -1;
+    float top    = 1;
+    float radius = 1;
+
+    RTTR_ENABLE(Object)
+
+}; // OpenCylinder
+
 }
 }

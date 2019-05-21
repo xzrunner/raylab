@@ -28,6 +28,7 @@
 #include <raytracing/tracer/AreaLighting.h>
 #include <raytracing/tracer/FirstHit.h>
 #include <raytracing/tracer/Whitted.h>
+#include <raytracing/tracer/PathTrace.h>
 #include <raytracing/cameras/Pinhole.h>
 #include <raytracing/cameras/ThinLens.h>
 #include <raytracing/cameras/FishEye.h>
@@ -57,12 +58,15 @@
 #include <raytracing/objects/BeveledRing.h>
 #include <raytracing/objects/BeveledBox.h>
 #include <raytracing/objects/BeveledWedge.h>
+#include <raytracing/objects/SolidCone.h>
+#include <raytracing/objects/OpenCylinder.h>
 #include <raytracing/materials/Matte.h>
 #include <raytracing/materials/SV_Matte.h>
 #include <raytracing/materials/Emissive.h>
 #include <raytracing/materials/Phong.h>
 #include <raytracing/materials/Reflective.h>
 #include <raytracing/materials/SV_Emissive.h>
+#include <raytracing/materials/GlossyReflector.h>
 #include <raytracing/texture/Checker3D.h>
 #include <raytracing/texture/ImageTexture.h>
 #include <raytracing/texture/Image.h>
@@ -372,6 +376,12 @@ Evaluator::CreateTracer(const bp::Node& node, rt::World& dst)
     {
         auto& src_tracer = static_cast<const node::Whitted&>(node);
         auto tracer = std::make_unique<rt::Whitted>(dst);
+        dst_tracer = std::move(tracer);
+    }
+    else if (tracer_type == rttr::type::get<node::PathTrace>())
+    {
+        auto& src_tracer = static_cast<const node::PathTrace&>(node);
+        auto tracer = std::make_unique<rt::PathTrace>(dst);
         dst_tracer = std::move(tracer);
     }
     else
@@ -734,6 +744,18 @@ Evaluator::CreateObject(const bp::Node& node)
         );
         dst_object = std::move(object);
     }
+    else if (object_type == rttr::type::get<node::SolidCone>())
+    {
+        auto& src_object = static_cast<const node::SolidCone&>(node);
+        auto object = std::make_unique<rt::SolidCone>(src_object.radius, src_object.height);
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::OpenCylinder>())
+    {
+        auto& src_object = static_cast<const node::OpenCylinder&>(node);
+        auto object = std::make_unique<rt::OpenCylinder>(src_object.bottom, src_object.top, src_object.radius);
+        dst_object = std::move(object);
+    }
     else
     {
         assert(0);
@@ -871,6 +893,25 @@ Evaluator::CreateMaterial(const bp::Node& node)
         if (!conns.empty()) {
             material->SetTexture(CreateTexture(conns[0]->GetFrom()->GetParent()));
         }
+
+        dst_material = material;
+    }
+    else if (material_type == rttr::type::get<node::GlossyReflector>())
+    {
+        auto& src_material = static_cast<const node::GlossyReflector&>(node);
+        auto material = std::make_shared<rt::GlossyReflector>();
+
+        // fixme: copy from phong
+        material->SetKa(src_material.ka);
+        material->SetKd(src_material.kd);
+        material->SetKs(src_material.ks);
+        material->SetCd(to_rt_color(src_material.cd));
+        material->SetCs(to_rt_color(src_material.cs));
+        material->SetExp(src_material.exp);
+
+        material->SetKr(src_material.kr);
+        material->SetCr(to_rt_color(src_material.cr));
+        material->SetSamples(src_material.num_samples, src_material.exp);
 
         dst_material = material;
     }
@@ -1166,6 +1207,17 @@ Evaluator::CreateMapping(const bp::Node& node)
     {
         auto& src_mapping = static_cast<const node::LightProbe&>(node);
         auto mapping = std::make_shared<rt::LightProbe>();
+
+        switch (src_mapping.mapping_type)
+        {
+        case node::LightProbe::MapType::Regular:
+            mapping->SetMapType(rt::LightProbe::MapType::Regular);
+            break;
+        case node::LightProbe::MapType::Panoramic:
+            mapping->SetMapType(rt::LightProbe::MapType::Panoramic);
+            break;
+        }
+
         dst_mapping = mapping;
     }
 

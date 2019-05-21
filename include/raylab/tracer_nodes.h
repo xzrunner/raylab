@@ -61,5 +61,14 @@ public:
 
 }; // Whitted
 
+class PathTrace : public Tracer
+{
+public:
+    PathTrace() : Tracer("PathTrace") {}
+
+    RTTR_ENABLE(Tracer)
+
+}; // PathTrace
+
 }
 }
