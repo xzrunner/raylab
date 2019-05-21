@@ -773,6 +773,18 @@ rttr::registration::class_<raylab::node::Reflective>("raylab::Reflective")
     )
 ;
 
+rttr::registration::class_<raylab::node::SV_Emissive>("raylab::SV_Emissive")
+    .constructor<>()
+    .property("radiance_scale_factor", &raylab::node::SV_Emissive::radiance_scale_factor)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("RadianceScaleFactor"))
+    )
+    .property("color", &raylab::node::SV_Emissive::color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color"))
+    )
+;
+
 // texture
 
 rttr::registration::class_<raylab::node::Checker3D>("raylab::Checker3D")
@@ -852,6 +864,38 @@ rttr::registration::class_<raylab::node::PlaneChecker>("raylab::PlaneChecker")
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color2"))
     )
     .property("line_color", &raylab::node::PlaneChecker::line_color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("LineColor"))
+    )
+;
+
+rttr::registration::class_<raylab::node::SphereChecker>("raylab::SphereChecker")
+    .constructor<>()
+    .property("num_horizontal_checkers", &raylab::node::SphereChecker::num_horizontal_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("NumHorizontalCheckers"))
+    )
+    .property("num_vertical_checkers", &raylab::node::SphereChecker::num_vertical_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("NumVerticalCheckers"))
+    )
+    .property("horizontal_line_width", &raylab::node::SphereChecker::horizontal_line_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("HorizontalLineWidth"))
+    )
+    .property("vertical_line_width", &raylab::node::SphereChecker::vertical_line_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("VerticalLineWidth"))
+    )
+    .property("color1", &raylab::node::SphereChecker::color1)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color1"))
+    )
+    .property("color2", &raylab::node::SphereChecker::color2)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color2"))
+    )
+    .property("line_color", &raylab::node::SphereChecker::line_color)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("LineColor"))
     )

@@ -62,11 +62,13 @@
 #include <raytracing/materials/Emissive.h>
 #include <raytracing/materials/Phong.h>
 #include <raytracing/materials/Reflective.h>
+#include <raytracing/materials/SV_Emissive.h>
 #include <raytracing/texture/Checker3D.h>
 #include <raytracing/texture/ImageTexture.h>
 #include <raytracing/texture/Image.h>
 #include <raytracing/texture/ConeChecker.h>
 #include <raytracing/texture/PlaneChecker.h>
+#include <raytracing/texture/SphereChecker.h>
 #include <raytracing/brdfs/PerfectSpecular.h>
 #include <raytracing/samplers/Jittered.h>
 #include <raytracing/samplers/MultiJittered.h>
@@ -857,6 +859,21 @@ Evaluator::CreateMaterial(const bp::Node& node)
 
         dst_material = material;
     }
+    else if (material_type == rttr::type::get<node::SV_Emissive>())
+    {
+        auto& src_material = static_cast<const node::SV_Emissive&>(node);
+        auto material = std::make_shared<rt::SV_Emissive>();
+
+        material->SetRadianceScaleFactor(src_material.radiance_scale_factor);
+        material->SetColor(to_rt_color(src_material.color));
+
+        auto& conns = src_material.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            material->SetTexture(CreateTexture(conns[0]->GetFrom()->GetParent()));
+        }
+
+        dst_material = material;
+    }
     else
     {
         assert(0);
@@ -1038,6 +1055,22 @@ Evaluator::CreateTexture(const bp::Node& node)
         tex->SetColor1(to_rt_color(src_tex.color1));
         tex->SetColor2(to_rt_color(src_tex.color2));
         tex->SetOutlineColor(to_rt_color(src_tex.line_color));
+
+        dst_tex = tex;
+    }
+    else if (tex_type == rttr::type::get<node::SphereChecker>())
+    {
+        auto& src_tex = static_cast<const node::SphereChecker&>(node);
+        auto tex = std::make_shared<rt::SphereChecker>();
+
+        tex->SetNumHorizontalCheckers(src_tex.num_horizontal_checkers);
+        tex->SetNumVerticalCheckers(src_tex.num_vertical_checkers);
+        tex->SetHorizontalLineWidth(src_tex.horizontal_line_width);
+        tex->SetVerticalLineWidth(src_tex.vertical_line_width);
+
+        tex->SetColor1(to_rt_color(src_tex.color1));
+        tex->SetColor2(to_rt_color(src_tex.color2));
+        tex->SetLineColor(to_rt_color(src_tex.line_color));
 
         dst_tex = tex;
     }

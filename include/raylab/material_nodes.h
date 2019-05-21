@@ -121,5 +121,23 @@ public:
 
 }; // Reflective
 
+class SV_Emissive : public Material
+{
+public:
+    SV_Emissive()
+        : Material("SV_Emissive")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_TEXTURE, "tex", *this));
+
+        Layout();
+    }
+
+    float radiance_scale_factor = 0.0f;
+    pt0::Color color;
+
+    RTTR_ENABLE(Material)
+
+}; // SV_Emissive
+
 }
 }
