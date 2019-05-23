@@ -70,5 +70,14 @@ public:
 
 }; // PathTrace
 
+class GlobalTrace : public Tracer
+{
+public:
+    GlobalTrace() : Tracer("GlobalTrace") {}
+
+    RTTR_ENABLE(Tracer)
+
+}; // GlobalTrace
+
 }
 }

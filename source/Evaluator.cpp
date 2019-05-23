@@ -29,6 +29,7 @@
 #include <raytracing/tracer/FirstHit.h>
 #include <raytracing/tracer/Whitted.h>
 #include <raytracing/tracer/PathTrace.h>
+#include <raytracing/tracer/GlobalTrace.h>
 #include <raytracing/cameras/Pinhole.h>
 #include <raytracing/cameras/ThinLens.h>
 #include <raytracing/cameras/FishEye.h>
@@ -60,6 +61,7 @@
 #include <raytracing/objects/BeveledWedge.h>
 #include <raytracing/objects/SolidCone.h>
 #include <raytracing/objects/OpenCylinder.h>
+#include <raytracing/objects/ConcavePartCylinder.h>
 #include <raytracing/materials/Matte.h>
 #include <raytracing/materials/SV_Matte.h>
 #include <raytracing/materials/Emissive.h>
@@ -67,6 +69,8 @@
 #include <raytracing/materials/Reflective.h>
 #include <raytracing/materials/SV_Emissive.h>
 #include <raytracing/materials/GlossyReflector.h>
+#include <raytracing/materials/Transparent.h>
+#include <raytracing/materials/Dielectric.h>
 #include <raytracing/texture/Checker3D.h>
 #include <raytracing/texture/ImageTexture.h>
 #include <raytracing/texture/Image.h>
@@ -382,6 +386,12 @@ Evaluator::CreateTracer(const bp::Node& node, rt::World& dst)
     {
         auto& src_tracer = static_cast<const node::PathTrace&>(node);
         auto tracer = std::make_unique<rt::PathTrace>(dst);
+        dst_tracer = std::move(tracer);
+    }
+    else if (tracer_type == rttr::type::get<node::GlobalTrace>())
+    {
+        auto& src_tracer = static_cast<const node::GlobalTrace&>(node);
+        auto tracer = std::make_unique<rt::GlobalTrace>(dst);
         dst_tracer = std::move(tracer);
     }
     else
@@ -756,6 +766,15 @@ Evaluator::CreateObject(const bp::Node& node)
         auto object = std::make_unique<rt::OpenCylinder>(src_object.bottom, src_object.top, src_object.radius);
         dst_object = std::move(object);
     }
+    else if (object_type == rttr::type::get<node::ConcavePartCylinder>())
+    {
+        auto& src_object = static_cast<const node::ConcavePartCylinder&>(node);
+        auto object = std::make_unique<rt::ConcavePartCylinder>(
+            src_object.bottom, src_object.top, src_object.radius,
+            src_object.polar_min, src_object.polar_max
+        );
+        dst_object = std::move(object);
+    }
     else
     {
         assert(0);
@@ -912,6 +931,45 @@ Evaluator::CreateMaterial(const bp::Node& node)
         material->SetKr(src_material.kr);
         material->SetCr(to_rt_color(src_material.cr));
         material->SetSamples(src_material.num_samples, src_material.exp);
+
+        dst_material = material;
+    }
+    else if (material_type == rttr::type::get<node::Transparent>())
+    {
+        auto& src_material = static_cast<const node::Transparent&>(node);
+        auto material = std::make_shared<rt::Transparent>();
+
+        // fixme: copy from phong
+        material->SetKa(src_material.ka);
+        material->SetKd(src_material.kd);
+        material->SetKs(src_material.ks);
+        material->SetCd(to_rt_color(src_material.cd));
+        material->SetCs(to_rt_color(src_material.cs));
+        material->SetExp(src_material.exp);
+
+        material->SetIor(src_material.ior);
+        material->SetKr(src_material.kr);
+        material->SetKt(src_material.kt);
+
+        dst_material = material;
+    }
+    else if (material_type == rttr::type::get<node::Dielectric>())
+    {
+        auto& src_material = static_cast<const node::Dielectric&>(node);
+        auto material = std::make_shared<rt::Dielectric>();
+
+        // fixme: copy from phong
+        material->SetKa(src_material.ka);
+        material->SetKd(src_material.kd);
+        material->SetKs(src_material.ks);
+        material->SetCd(to_rt_color(src_material.cd));
+        material->SetCs(to_rt_color(src_material.cs));
+        material->SetExp(src_material.exp);
+
+        material->SetEtaIn(src_material.eta_in);
+        material->SetEtaOut(src_material.eta_out);
+        material->SetCfIn(to_rt_color(src_material.cf_in));
+        material->SetCfOut(to_rt_color(src_material.cf_out));
 
         dst_material = material;
     }

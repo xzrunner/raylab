@@ -153,5 +153,32 @@ public:
 
 }; // GlossyReflector
 
+class Transparent : public Phong
+{
+public:
+    Transparent() : Phong("Transparent") {}
+
+    float ior = 0.0f;
+    float kr  = 0.0f;
+    float kt  = 0.0f;
+
+    RTTR_ENABLE(Phong)
+
+}; // Transparent
+
+class Dielectric : public Phong
+{
+public:
+    Dielectric() : Phong("Dielectric") {}
+
+    float eta_in  = 0.0f;
+    float eta_out = 0.0f;
+    pt0::Color cf_in;
+    pt0::Color cf_out;
+
+    RTTR_ENABLE(Phong)
+
+}; // Dielectric
+
 }
 }

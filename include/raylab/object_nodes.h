@@ -5,6 +5,8 @@
 
 #include <blueprint/Pin.h>
 
+#include <sm_const.h>
+
 namespace raylab
 {
 namespace node
@@ -458,6 +460,22 @@ public:
     RTTR_ENABLE(Object)
 
 }; // OpenCylinder
+
+class ConcavePartCylinder : public Object
+{
+public:
+    ConcavePartCylinder() : Object("ConcavePartCylinder") {}
+
+    float bottom     = -1.0;       // bottom y value
+    float top        = 1.0;        // top y value
+    float radius     = 1.0;        // radius
+    float inv_radius = 1.0;        // one over the radius
+    float polar_min  = 0.0;
+    float polar_max  = SM_TWO_PI;
+
+    RTTR_ENABLE(Object)
+
+}; // ConcavePartCylinder
 
 }
 }

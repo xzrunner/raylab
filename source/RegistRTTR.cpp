@@ -265,6 +265,10 @@ rttr::registration::class_<raylab::node::PathTrace>("raylab::PathTrace")
     .constructor<>()
 ;
 
+rttr::registration::class_<raylab::node::GlobalTrace>("raylab::GlobalTrace")
+    .constructor<>()
+;
+
 // Object
 
 rttr::registration::class_<raylab::node::Box>("raylab::Box")
@@ -723,6 +727,30 @@ rttr::registration::class_<raylab::node::OpenCylinder>("raylab::OpenCylinder")
     )
 ;
 
+rttr::registration::class_<raylab::node::ConcavePartCylinder>("raylab::ConcavePartCylinder")
+    .constructor<>()
+    .property("bottom", &raylab::node::ConcavePartCylinder::bottom)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bottom"))
+    )
+    .property("top", &raylab::node::ConcavePartCylinder::top)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Top"))
+    )
+    .property("radius", &raylab::node::ConcavePartCylinder::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+    .property("polar_min", &raylab::node::ConcavePartCylinder::polar_min)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Polar Min"))
+    )
+    .property("polar_max", &raylab::node::ConcavePartCylinder::polar_max)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Polar Max"))
+    )
+;
+
 // Material
 
 rttr::registration::class_<raylab::node::Matte>("raylab::Matte")
@@ -830,6 +858,42 @@ rttr::registration::class_<raylab::node::GlossyReflector>("raylab::GlossyReflect
     .property("num_samples", &raylab::node::GlossyReflector::num_samples)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Num Samples"))
+    )
+;
+
+rttr::registration::class_<raylab::node::Transparent>("raylab::Transparent")
+    .constructor<>()
+    .property("ior", &raylab::node::Transparent::ior)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("ior"))
+    )
+    .property("kr", &raylab::node::Transparent::kr)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("kr"))
+    )
+    .property("kt", &raylab::node::Transparent::kt)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("kt"))
+    )
+;
+
+rttr::registration::class_<raylab::node::Dielectric>("raylab::Dielectric")
+    .constructor<>()
+    .property("eta_in", &raylab::node::Dielectric::eta_in)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("EtaIn"))
+    )
+    .property("eta_out", &raylab::node::Dielectric::eta_out)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("EtaOut"))
+    )
+    .property("cf_in", &raylab::node::Dielectric::cf_in)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("CfIn"))
+    )
+    .property("cf_out", &raylab::node::Dielectric::cf_out)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("CfOut"))
     )
 ;
 
