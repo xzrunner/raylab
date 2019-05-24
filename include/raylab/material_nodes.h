@@ -86,7 +86,7 @@ class Emissive : public Material
 public:
     Emissive() : Material("Emissive") {}
 
-    float radiance_scale_factor = 0.0f;
+    float radiance_scale_factor = 1.0f;
     pt0::Color color;
 
     RTTR_ENABLE(Material)
@@ -103,7 +103,7 @@ public:
     float ks = 0.0f;
     pt0::Color cd;
     pt0::Color cs = pt0::Color(1.0f, 1.0f, 1.0f);
-    float exp = 0.0f;
+    float exp = 1.0f;
 
     RTTR_ENABLE(Material)
 
@@ -115,7 +115,7 @@ public:
     Reflective() : Phong("Reflective") {}
 
     float      kr = 0.0f;
-    pt0::Color cr;
+    pt0::Color cr = pt0::Color(1.0f, 1.0f, 1.0f);
 
     RTTR_ENABLE(Phong)
 
@@ -132,7 +132,7 @@ public:
         Layout();
     }
 
-    float radiance_scale_factor = 0.0f;
+    float radiance_scale_factor = 1.0f;
     pt0::Color color;
 
     RTTR_ENABLE(Material)

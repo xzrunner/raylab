@@ -24,7 +24,7 @@ public:
     PerfectSpecular() : BRDF("PerfectSpecular") {}
 
     float      kr = 0.0f;
-    pt0::Color cr;
+    pt0::Color cr = pt0::Color(1.0f, 1.0f, 1.0f);
 
     RTTR_ENABLE(BRDF)
 
