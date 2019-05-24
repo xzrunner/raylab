@@ -44,22 +44,22 @@ private:
     static std::unique_ptr<rt::Object>
         CreateObject(const bp::Node& node);
 
-    static std::shared_ptr<rt::Material>
+    static std::unique_ptr<rt::Material>
         CreateMaterial(const bp::Node& node);
 
     static std::unique_ptr<rt::Camera>
         CreateCamera(const bp::Node& node);
 
-    static std::shared_ptr<rt::Texture>
+    static std::unique_ptr<rt::Texture>
         CreateTexture(const bp::Node& node);
 
-    static std::shared_ptr<rt::BRDF>
+    static std::unique_ptr<rt::BRDF>
         CreateBRDF(const bp::Node& node);
 
-    static std::shared_ptr<rt::Sampler>
+    static std::unique_ptr<rt::Sampler>
         CreateSampler(const bp::Node& node);
 
-    static std::shared_ptr<rt::Mapping>
+    static std::unique_ptr<rt::Mapping>
         CreateMapping(const bp::Node& node);
 
     static float CalcFloat(const bp::Connecting& conn);

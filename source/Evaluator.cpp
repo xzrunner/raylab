@@ -71,6 +71,7 @@
 #include <raytracing/materials/GlossyReflector.h>
 #include <raytracing/materials/Transparent.h>
 #include <raytracing/materials/Dielectric.h>
+#include <raytracing/materials/SphereMaterials.h>
 #include <raytracing/texture/Checker3D.h>
 #include <raytracing/texture/ImageTexture.h>
 #include <raytracing/texture/Image.h>
@@ -301,7 +302,7 @@ Evaluator::CreateLight(const bp::Node& node)
 
         auto& conns = node.GetAllInput()[0]->GetConnecting();
         if (!conns.empty()) {
-            auto sampler = CreateSampler(conns[0]->GetFrom()->GetParent());
+            std::shared_ptr<rt::Sampler> sampler = CreateSampler(conns[0]->GetFrom()->GetParent());
             if (sampler) {
                 light->SetSampler(sampler);
             }
@@ -316,7 +317,7 @@ Evaluator::CreateLight(const bp::Node& node)
 
         auto& samp_conns = node.GetAllInput()[node::EnvironmentLight::ID_SAMPLER]->GetConnecting();
         if (!samp_conns.empty()) {
-            auto sampler = CreateSampler(samp_conns[0]->GetFrom()->GetParent());
+            std::shared_ptr<rt::Sampler> sampler = CreateSampler(samp_conns[0]->GetFrom()->GetParent());
             if (sampler) {
                 light->SetSampler(sampler);
             }
@@ -324,7 +325,7 @@ Evaluator::CreateLight(const bp::Node& node)
 
         auto& mat_conns = node.GetAllInput()[node::EnvironmentLight::ID_MATERIAL]->GetConnecting();
         if (!mat_conns.empty()) {
-            auto material = CreateMaterial(mat_conns[0]->GetFrom()->GetParent());
+            std::shared_ptr<rt::Material> material = CreateMaterial(mat_conns[0]->GetFrom()->GetParent());
             if (material) {
                 light->SetMaterial(material);
             }
@@ -451,7 +452,8 @@ Evaluator::CreateObject(const bp::Node& node)
 
         auto& conns_sampler = node.GetAllInput()[node::Rectangle::ID_SAMPLER]->GetConnecting();
         if (!conns_sampler.empty()) {
-            if (auto sampler = CreateSampler(conns_sampler[0]->GetFrom()->GetParent())) {
+            if (std::shared_ptr<rt::Sampler> sampler =
+                CreateSampler(conns_sampler[0]->GetFrom()->GetParent())) {
                 object->SetSampler(sampler);
             }
         }
@@ -786,7 +788,7 @@ Evaluator::CreateObject(const bp::Node& node)
         auto& material_conns = node.GetAllInput()[0]->GetConnecting();
         if (!material_conns.empty())
         {
-            auto dst_material = CreateMaterial(material_conns[0]->GetFrom()->GetParent());
+            std::shared_ptr<rt::Material> dst_material = CreateMaterial(material_conns[0]->GetFrom()->GetParent());
             if (dst_material) {
                 dst_object->SetMaterial(dst_material);
             }
@@ -796,16 +798,16 @@ Evaluator::CreateObject(const bp::Node& node)
     return dst_object;
 }
 
-std::shared_ptr<rt::Material>
+std::unique_ptr<rt::Material>
 Evaluator::CreateMaterial(const bp::Node& node)
 {
-    std::shared_ptr<rt::Material> dst_material = nullptr;
+    std::unique_ptr<rt::Material> dst_material = nullptr;
 
     auto material_type = node.get_type();
     if (material_type == rttr::type::get<node::Matte>())
     {
         auto& src_material = static_cast<const node::Matte&>(node);
-        auto material = std::make_shared<rt::Matte>();
+        auto material = std::make_unique<rt::Matte>();
 
         auto& inputs = node.GetAllInput();
 
@@ -825,12 +827,12 @@ Evaluator::CreateMaterial(const bp::Node& node)
         material->SetKd(kd);
         material->SetCd(to_rt_color(src_material.cd));
 
-        dst_material = material;
+        dst_material = std::move(material);
     }
     else if (material_type == rttr::type::get<node::SV_Matte>())
     {
         auto& src_material = static_cast<const node::SV_Matte&>(node);
-        auto material = std::make_shared<rt::SV_Matte>();
+        auto material = std::make_unique<rt::SV_Matte>();
 
         auto& inputs = node.GetAllInput();
 
@@ -856,22 +858,22 @@ Evaluator::CreateMaterial(const bp::Node& node)
         material->SetKd(kd);
         material->SetCd(tex);
 
-        dst_material = material;
+        dst_material = std::move(material);
     }
     else if (material_type == rttr::type::get<node::Emissive>())
     {
         auto& src_material = static_cast<const node::Emissive&>(node);
-        auto material = std::make_shared<rt::Emissive>();
+        auto material = std::make_unique<rt::Emissive>();
 
         material->SetRadianceScaleFactor(src_material.radiance_scale_factor);
-        material->SetColor(to_rt_color(src_material.color));
+        material->SetCe(to_rt_color(src_material.color));
 
-        dst_material = material;
+        dst_material = std::move(material);
     }
     else if (material_type == rttr::type::get<node::Phong>())
     {
         auto& src_material = static_cast<const node::Phong&>(node);
-        auto material = std::make_shared<rt::Phong>();
+        auto material = std::make_unique<rt::Phong>();
 
         material->SetKa(src_material.ka);
         material->SetKd(src_material.kd);
@@ -880,12 +882,12 @@ Evaluator::CreateMaterial(const bp::Node& node)
         material->SetCs(to_rt_color(src_material.cs));
         material->SetExp(src_material.exp);
 
-        dst_material = material;
+        dst_material = std::move(material);
     }
     else if (material_type == rttr::type::get<node::Reflective>())
     {
         auto& src_material = static_cast<const node::Reflective&>(node);
-        auto material = std::make_shared<rt::Reflective>();
+        auto material = std::make_unique<rt::Reflective>();
 
         // fixme: copy from phong
         material->SetKa(src_material.ka);
@@ -898,27 +900,27 @@ Evaluator::CreateMaterial(const bp::Node& node)
         material->SetKr(src_material.kr);
         material->SetCr(to_rt_color(src_material.cr));
 
-        dst_material = material;
+        dst_material = std::move(material);
     }
     else if (material_type == rttr::type::get<node::SV_Emissive>())
     {
         auto& src_material = static_cast<const node::SV_Emissive&>(node);
-        auto material = std::make_shared<rt::SV_Emissive>();
+        auto material = std::make_unique<rt::SV_Emissive>();
 
         material->SetRadianceScaleFactor(src_material.radiance_scale_factor);
-        material->SetColor(to_rt_color(src_material.color));
+        material->SetCe(to_rt_color(src_material.color));
 
         auto& conns = src_material.GetAllInput()[0]->GetConnecting();
         if (!conns.empty()) {
             material->SetTexture(CreateTexture(conns[0]->GetFrom()->GetParent()));
         }
 
-        dst_material = material;
+        dst_material = std::move(material);
     }
     else if (material_type == rttr::type::get<node::GlossyReflector>())
     {
         auto& src_material = static_cast<const node::GlossyReflector&>(node);
-        auto material = std::make_shared<rt::GlossyReflector>();
+        auto material = std::make_unique<rt::GlossyReflector>();
 
         // fixme: copy from phong
         material->SetKa(src_material.ka);
@@ -932,12 +934,12 @@ Evaluator::CreateMaterial(const bp::Node& node)
         material->SetCr(to_rt_color(src_material.cr));
         material->SetSamples(src_material.num_samples, src_material.exp);
 
-        dst_material = material;
+        dst_material = std::move(material);
     }
     else if (material_type == rttr::type::get<node::Transparent>())
     {
         auto& src_material = static_cast<const node::Transparent&>(node);
-        auto material = std::make_shared<rt::Transparent>();
+        auto material = std::make_unique<rt::Transparent>();
 
         // fixme: copy from phong
         material->SetKa(src_material.ka);
@@ -951,12 +953,12 @@ Evaluator::CreateMaterial(const bp::Node& node)
         material->SetKr(src_material.kr);
         material->SetKt(src_material.kt);
 
-        dst_material = material;
+        dst_material = std::move(material);
     }
     else if (material_type == rttr::type::get<node::Dielectric>())
     {
         auto& src_material = static_cast<const node::Dielectric&>(node);
-        auto material = std::make_shared<rt::Dielectric>();
+        auto material = std::make_unique<rt::Dielectric>();
 
         // fixme: copy from phong
         material->SetKa(src_material.ka);
@@ -971,7 +973,37 @@ Evaluator::CreateMaterial(const bp::Node& node)
         material->SetCfIn(to_rt_color(src_material.cf_in));
         material->SetCfOut(to_rt_color(src_material.cf_out));
 
-        dst_material = material;
+        dst_material = std::move(material);
+    }
+    else if (material_type == rttr::type::get<node::SphereMaterials>())
+    {
+        auto& src_material = static_cast<const node::SphereMaterials&>(node);
+        auto material = std::make_unique<rt::SphereMaterials>();
+
+        material->SetNumHorizontal(src_material.num_horizontal_checkers);
+        material->SetNumVertical(src_material.num_vertical_checkers);
+
+        material->SetHoriLineWidth(src_material.horizontal_line_width);
+        material->SetVertLineWidth(src_material.vertical_line_width);
+
+        material->SetChecker1Color(to_rt_color(src_material.color1));
+        material->SetChecker2Color(to_rt_color(src_material.color2));
+        material->SetLineColor(to_rt_color(src_material.line_color));
+
+        auto& c1_conns = src_material.GetAllInput()[node::SphereMaterials::ID_CHECKER1_MATERIAL]->GetConnecting();
+        if (!c1_conns.empty()) {
+            material->SetChecker1Material(CreateMaterial(c1_conns[0]->GetFrom()->GetParent()));
+        }
+        auto& c2_conns = src_material.GetAllInput()[node::SphereMaterials::ID_CHECKER2_MATERIAL]->GetConnecting();
+        if (!c2_conns.empty()) {
+            material->SetChecker2Material(CreateMaterial(c2_conns[0]->GetFrom()->GetParent()));
+        }
+        auto& line_conns = src_material.GetAllInput()[node::SphereMaterials::ID_LINE_MATERIAL]->GetConnecting();
+        if (!line_conns.empty()) {
+            material->SetLineMaterial(CreateMaterial(line_conns[0]->GetFrom()->GetParent()));
+        }
+
+        dst_material = std::move(material);
     }
     else
     {
@@ -1007,7 +1039,7 @@ Evaluator::CreateCamera(const bp::Node& node)
 
         auto& conns = node.GetAllInput()[0]->GetConnecting();
         if (!conns.empty()) {
-            auto sampler = CreateSampler(conns[0]->GetFrom()->GetParent());
+            std::shared_ptr<rt::Sampler> sampler = CreateSampler(conns[0]->GetFrom()->GetParent());
             if (sampler) {
                 camera->SetSampler(sampler);
             }
@@ -1094,27 +1126,27 @@ Evaluator::CreateCamera(const bp::Node& node)
     return dst_camera;
 }
 
-std::shared_ptr<rt::Texture>
+std::unique_ptr<rt::Texture>
 Evaluator::CreateTexture(const bp::Node& node)
 {
-    std::shared_ptr<rt::Texture> dst_tex = nullptr;
+    std::unique_ptr<rt::Texture> dst_tex = nullptr;
 
     auto tex_type = node.get_type();
     if (tex_type == rttr::type::get<node::Checker3D>())
     {
         auto& src_tex = static_cast<const node::Checker3D&>(node);
-        auto tex = std::make_shared<rt::Checker3D>();
+        auto tex = std::make_unique<rt::Checker3D>();
 
         tex->SetColor1(to_rt_color(src_tex.col0));
         tex->SetColor2(to_rt_color(src_tex.col1));
         tex->SetSize(src_tex.size);
 
-        dst_tex = tex;
+        dst_tex = std::move(tex);
     }
     else if (tex_type == rttr::type::get<node::ImageTexture>())
     {
         auto& src_tex = static_cast<const node::ImageTexture&>(node);
-        auto tex = std::make_shared<rt::ImageTexture>();
+        auto tex = std::make_unique<rt::ImageTexture>();
 
         auto& conns = node.GetAllInput()[0]->GetConnecting();
         if (!conns.empty()) {
@@ -1125,12 +1157,12 @@ Evaluator::CreateTexture(const bp::Node& node)
         image->ReadPPMFile(src_tex.filepath.c_str());
         tex->SetImage(image);
 
-        dst_tex = tex;
+        dst_tex = std::move(tex);
     }
     else if (tex_type == rttr::type::get<node::ConeChecker>())
     {
         auto& src_tex = static_cast<const node::ConeChecker&>(node);
-        auto tex = std::make_shared<rt::ConeChecker>();
+        auto tex = std::make_unique<rt::ConeChecker>();
 
         tex->SetNumHorizontalCheckers(src_tex.num_horizontal_checkers);
         tex->SetNumVerticalCheckers(src_tex.num_vertical_checkers);
@@ -1141,12 +1173,12 @@ Evaluator::CreateTexture(const bp::Node& node)
         tex->SetColor2(to_rt_color(src_tex.color2));
         tex->SetLineColor(to_rt_color(src_tex.line_color));
 
-        dst_tex = tex;
+        dst_tex = std::move(tex);
     }
     else if (tex_type == rttr::type::get<node::PlaneChecker>())
     {
         auto& src_tex = static_cast<const node::PlaneChecker&>(node);
-        auto tex = std::make_shared<rt::PlaneChecker>();
+        auto tex = std::make_unique<rt::PlaneChecker>();
 
         tex->SetOutlineWidth(src_tex.outline_width);
         tex->SetSize(src_tex.size);
@@ -1155,12 +1187,12 @@ Evaluator::CreateTexture(const bp::Node& node)
         tex->SetColor2(to_rt_color(src_tex.color2));
         tex->SetOutlineColor(to_rt_color(src_tex.line_color));
 
-        dst_tex = tex;
+        dst_tex = std::move(tex);
     }
     else if (tex_type == rttr::type::get<node::SphereChecker>())
     {
         auto& src_tex = static_cast<const node::SphereChecker&>(node);
-        auto tex = std::make_shared<rt::SphereChecker>();
+        auto tex = std::make_unique<rt::SphereChecker>();
 
         tex->SetNumHorizontalCheckers(src_tex.num_horizontal_checkers);
         tex->SetNumVerticalCheckers(src_tex.num_vertical_checkers);
@@ -1171,36 +1203,36 @@ Evaluator::CreateTexture(const bp::Node& node)
         tex->SetColor2(to_rt_color(src_tex.color2));
         tex->SetLineColor(to_rt_color(src_tex.line_color));
 
-        dst_tex = tex;
+        dst_tex = std::move(tex);
     }
 
     return dst_tex;
 }
 
-std::shared_ptr<rt::BRDF>
+std::unique_ptr<rt::BRDF>
 Evaluator::CreateBRDF(const bp::Node& node)
 {
-    std::shared_ptr<rt::BRDF> dst_brdf = nullptr;
+    std::unique_ptr<rt::BRDF> dst_brdf = nullptr;
 
     auto tex_type = node.get_type();
     if (tex_type == rttr::type::get<node::PerfectSpecular>())
     {
         auto& src_brdf = static_cast<const node::PerfectSpecular&>(node);
-        auto brdf = std::make_shared<rt::PerfectSpecular>();
+        auto brdf = std::make_unique<rt::PerfectSpecular>();
 
         brdf->SetKr(src_brdf.kr);
         brdf->SetCr(to_rt_color(src_brdf.cr));
 
-        dst_brdf = brdf;
+        dst_brdf = std::move(brdf);
     }
 
     return dst_brdf;
 }
 
-std::shared_ptr<rt::Sampler>
+std::unique_ptr<rt::Sampler>
 Evaluator::CreateSampler(const bp::Node& node)
 {
-    std::shared_ptr<rt::Sampler> dst_sampler = nullptr;
+    std::unique_ptr<rt::Sampler> dst_sampler = nullptr;
 
     int num_samples = 0;
     auto& conns = node.GetAllInput()[0]->GetConnecting();
@@ -1215,8 +1247,8 @@ Evaluator::CreateSampler(const bp::Node& node)
         if (num_samples == 0) {
             num_samples = src_sampler.num_samples;
         }
-        auto sampler = std::make_shared<rt::Jittered>(num_samples);
-        dst_sampler = sampler;
+        auto sampler = std::make_unique<rt::Jittered>(num_samples);
+        dst_sampler = std::move(sampler);
     }
     else if (sampler_type == rttr::type::get<node::MultiJittered>())
     {
@@ -1224,8 +1256,8 @@ Evaluator::CreateSampler(const bp::Node& node)
         if (num_samples == 0) {
             num_samples = src_sampler.num_samples;
         }
-        auto sampler = std::make_shared<rt::MultiJittered>(num_samples);
-        dst_sampler = sampler;
+        auto sampler = std::make_unique<rt::MultiJittered>(num_samples);
+        dst_sampler = std::move(sampler);
     }
     else if (sampler_type == rttr::type::get<node::Regular>())
     {
@@ -1233,8 +1265,8 @@ Evaluator::CreateSampler(const bp::Node& node)
         if (num_samples == 0) {
             num_samples = src_sampler.num_samples;
         }
-        auto sampler = std::make_shared<rt::Regular>(num_samples);
-        dst_sampler = sampler;
+        auto sampler = std::make_unique<rt::Regular>(num_samples);
+        dst_sampler = std::move(sampler);
     }
     else if (sampler_type == rttr::type::get<node::PureRandom>())
     {
@@ -1242,29 +1274,29 @@ Evaluator::CreateSampler(const bp::Node& node)
         if (num_samples == 0) {
             num_samples = src_sampler.num_samples;
         }
-        auto sampler = std::make_shared<rt::PureRandom>(num_samples);
-        dst_sampler = sampler;
+        auto sampler = std::make_unique<rt::PureRandom>(num_samples);
+        dst_sampler = std::move(sampler);
     }
 
     return dst_sampler;
 }
 
-std::shared_ptr<rt::Mapping>
+std::unique_ptr<rt::Mapping>
 Evaluator::CreateMapping(const bp::Node& node)
 {
-    std::shared_ptr<rt::Mapping> dst_mapping = nullptr;
+    std::unique_ptr<rt::Mapping> dst_mapping = nullptr;
 
     auto mapping_type = node.get_type();
     if (mapping_type == rttr::type::get<node::SphericalMap>())
     {
         auto& src_mapping = static_cast<const node::SphericalMap&>(node);
-        auto mapping = std::make_shared<rt::SphericalMap>();
-        dst_mapping = mapping;
+        auto mapping = std::make_unique<rt::SphericalMap>();
+        dst_mapping = std::move(mapping);
     }
     else if (mapping_type == rttr::type::get<node::LightProbe>())
     {
         auto& src_mapping = static_cast<const node::LightProbe&>(node);
-        auto mapping = std::make_shared<rt::LightProbe>();
+        auto mapping = std::make_unique<rt::LightProbe>();
 
         switch (src_mapping.mapping_type)
         {
@@ -1276,7 +1308,7 @@ Evaluator::CreateMapping(const bp::Node& node)
             break;
         }
 
-        dst_mapping = mapping;
+        dst_mapping = std::move(mapping);
     }
 
     return dst_mapping;
