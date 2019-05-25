@@ -16,6 +16,7 @@ namespace rt
     class BRDF;
     class Sampler;
     class Mapping;
+    class LatticeNoise;
 }
 
 namespace bp
@@ -61,6 +62,9 @@ private:
 
     static std::unique_ptr<rt::Mapping>
         CreateMapping(const bp::Node& node);
+
+    static std::unique_ptr<rt::LatticeNoise>
+        CreateNoise(const bp::Node& node);
 
     static float CalcFloat(const bp::Connecting& conn);
     static sm::vec3 CalcFloat3(const bp::Connecting& conn);

@@ -8,6 +8,7 @@
 #include "raylab/brdf_nodes.h"
 #include "raylab/sampler_nodes.h"
 #include "raylab/mapping_nodes.h"
+#include "raylab/noise_nodes.h"
 
 #include <ee0/ReflectPropTypes.h>
 
@@ -559,6 +560,34 @@ rttr::registration::class_<raylab::node::ConvexPartSphere>("raylab::ConvexPartSp
     )
 ;
 
+rttr::registration::class_<raylab::node::ConcavePartSphere>("raylab::ConcavePartSphere")
+    .constructor<>()
+    .property("center", &raylab::node::ConcavePartSphere::center)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Center"))
+    )
+    .property("radius", &raylab::node::ConcavePartSphere::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+    .property("azimuth_min", &raylab::node::ConcavePartSphere::azimuth_min)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Azimuth Min"))
+    )
+    .property("azimuth_max", &raylab::node::ConcavePartSphere::azimuth_max)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Azimuth Max"))
+    )
+    .property("polar_min", &raylab::node::ConcavePartSphere::polar_min)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Polar Min"))
+    )
+    .property("polar_max", &raylab::node::ConcavePartSphere::polar_max)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Polar Max"))
+    )
+;
+
 rttr::registration::class_<raylab::node::FlatRimmedBowl>("raylab::FlatRimmedBowl")
     .constructor<>()
     .property("inner_radius", &raylab::node::FlatRimmedBowl::inner_radius)
@@ -751,6 +780,74 @@ rttr::registration::class_<raylab::node::ConcavePartCylinder>("raylab::ConcavePa
     )
 ;
 
+rttr::registration::class_<raylab::node::FishBowl>("raylab::FishBowl")
+    .constructor<>()
+    .property("inner_radius", &raylab::node::FishBowl::inner_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Inner Radius"))
+    )
+    .property("glass_thickness", &raylab::node::FishBowl::glass_thickness)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Glass Thickness"))
+    )
+    .property("water_depth", &raylab::node::FishBowl::water_depth)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Water Depth"))
+    )
+    .property("meniscus_radius", &raylab::node::FishBowl::meniscus_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Meniscus Radius"))
+    )
+    .property("opening_angle", &raylab::node::FishBowl::opening_angle)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Opening Angle"))
+    )
+;
+
+rttr::registration::class_<raylab::node::GlassOfWater>("raylab::GlassOfWater")
+    .constructor<>()
+    .property("height", &raylab::node::GlassOfWater::height)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Height"))
+    )
+    .property("inner_radius", &raylab::node::GlassOfWater::inner_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Inner Radius"))
+    )
+    .property("wall_thickness", &raylab::node::GlassOfWater::wall_thickness)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Wall Thickness"))
+    )
+    .property("base_thickness", &raylab::node::GlassOfWater::base_thickness)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Base Thickness"))
+    )
+    .property("water_height", &raylab::node::GlassOfWater::water_height)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Water Height"))
+    )
+    .property("meniscus_radius", &raylab::node::GlassOfWater::meniscus_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Meniscus Radius"))
+    )
+;
+
+rttr::registration::class_<raylab::node::CutCube>("raylab::CutCube")
+    .constructor<>()
+    .property("p0", &raylab::node::CutCube::p0)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("P0"))
+    )
+    .property("p1", &raylab::node::CutCube::p1)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("P1"))
+    )
+    .property("radius", &raylab::node::CutCube::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+;
+
 // Material
 
 rttr::registration::class_<raylab::node::Matte>("raylab::Matte")
@@ -897,6 +994,58 @@ rttr::registration::class_<raylab::node::Dielectric>("raylab::Dielectric")
     )
 ;
 
+rttr::registration::class_<raylab::node::SphereMaterials>("raylab::SphereMaterials")
+    .constructor<>()
+    .property("num_hori_checkers", &raylab::node::SphereMaterials::num_horizontal_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Num Hori Checkers"))
+    )
+    .property("num_vert_checkers", &raylab::node::SphereMaterials::num_vertical_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Num Vert Checkers"))
+    )
+    .property("hori_line_width", &raylab::node::SphereMaterials::horizontal_line_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Hori Line Width"))
+    )
+    .property("vert_line_width", &raylab::node::SphereMaterials::vertical_line_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Vert Line Width"))
+    )
+    .property("color1", &raylab::node::SphereMaterials::color1)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color1"))
+    )
+    .property("color2", &raylab::node::SphereMaterials::color2)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color2"))
+    )
+    .property("line_color", &raylab::node::SphereMaterials::line_color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Line Color"))
+    )
+;
+
+rttr::registration::class_<raylab::node::SV_Phong>("raylab::SV_Phong")
+    .constructor<>()
+    .property("ka", &raylab::node::SV_Phong::ka)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("ka"))
+    )
+    .property("kd", &raylab::node::SV_Phong::kd)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("kd"))
+    )
+    .property("ks", &raylab::node::SV_Phong::ks)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("ks"))
+    )
+    .property("exp", &raylab::node::SV_Phong::exp)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("exp"))
+    )
+;
+
 // texture
 
 rttr::registration::class_<raylab::node::Checker3D>("raylab::Checker3D")
@@ -1013,6 +1162,96 @@ rttr::registration::class_<raylab::node::SphereChecker>("raylab::SphereChecker")
     )
 ;
 
+rttr::registration::class_<raylab::node::ConstantColor>("raylab::ConstantColor")
+    .constructor<>()
+    .property("color", &raylab::node::ConstantColor::color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color"))
+    )
+;
+
+rttr::registration::class_<raylab::node::WrappedFBmTexture>("raylab::WrappedFBmTexture")
+    .constructor<>()
+    .property("max_value", &raylab::node::WrappedFBmTexture::max_value)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Max Value"))
+    )
+    .property("min_value", &raylab::node::WrappedFBmTexture::min_value)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Min Value"))
+    )
+    .property("expansion_number", &raylab::node::WrappedFBmTexture::expansion_number)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Expansion Number"))
+    )
+    .property("color", &raylab::node::WrappedFBmTexture::color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color"))
+    )
+;
+
+rttr::registration::class_<raylab::node::RampFBmTexture>("raylab::RampFBmTexture")
+    .constructor<>()
+    .property("filepath", &raylab::node::RampFBmTexture::filepath)
+    (
+        rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Filepath")),
+        rttr::metadata(js::RTTR::FilePathTag(), true),
+        rttr::metadata(ee0::PropOpenFileTag(), ee0::PropOpenFile("*.ppm"))
+    )
+    .property("num_octaves", &raylab::node::RampFBmTexture::num_octaves)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Num Octaves"))
+    )
+    .property("fbm_amount", &raylab::node::RampFBmTexture::fbm_amount)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Fbm Amount"))
+    )
+;
+
+rttr::registration::class_<raylab::node::TextureInstance>("raylab::TextureInstance")
+    .constructor<>()
+    .property("scale", &raylab::node::TextureInstance::scale)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Scale"))
+    )
+    .property("rotate", &raylab::node::TextureInstance::rotate)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Rotate"))
+    )
+    .property("translate", &raylab::node::TextureInstance::translate)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Translate"))
+    )
+;
+
+rttr::registration::class_<raylab::node::Wood>("raylab::Wood")
+    .constructor<>()
+    .property("light", &raylab::node::Wood::light)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Light"))
+    )
+    .property("dark", &raylab::node::Wood::dark)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Dark"))
+    )
+;
+
+rttr::registration::class_<raylab::node::TurbulenceTexture>("raylab::TurbulenceTexture")
+    .constructor<>()
+    .property("color", &raylab::node::TurbulenceTexture::color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color"))
+    )
+    .property("min_val", &raylab::node::TurbulenceTexture::min_val)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Min Value"))
+    )
+    .property("max_val", &raylab::node::TurbulenceTexture::max_val)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Max Value"))
+    )
+;
+
 // brdf
 
 rttr::registration::class_<raylab::node::PerfectSpecular>("raylab::PerfectSpecular")
@@ -1071,6 +1310,40 @@ rttr::registration::class_<raylab::node::LightProbe>("raylab::LightProbe")
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Mapping Type"))
     )
+;
+
+rttr::registration::class_<raylab::node::SquareMap>("raylab::SquareMap")
+    .constructor<>()
+;
+
+rttr::registration::class_<raylab::node::CylindricalMap>("raylab::CylindricalMap")
+    .constructor<>()
+;
+
+// noise
+
+rttr::registration::class_<raylab::node::LatticeNoise>("raylab::LatticeNoise")
+    .constructor<const std::string&>()
+    .property("octaves", &raylab::node::LatticeNoise::octaves)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Octaves"))
+    )
+    .property("lacunarity", &raylab::node::LatticeNoise::lacunarity)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Lacunarity"))
+    )
+    .property("gain", &raylab::node::LatticeNoise::gain)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Gain"))
+    )
+;
+
+rttr::registration::class_<raylab::node::LinearNoise>("raylab::LinearNoise")
+    .constructor<>()
+;
+
+rttr::registration::class_<raylab::node::CubicNoise>("raylab::CubicNoise")
+    .constructor<>()
 ;
 
 }

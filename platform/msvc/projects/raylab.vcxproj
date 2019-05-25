@@ -18,6 +18,7 @@
     <ClInclude Include="..\..\..\include\raylab\mapping_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\material_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\Node.h" />
+    <ClInclude Include="..\..\..\include\raylab\noise_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\object_nodes.h" />
     <ClInclude Include="..\..\..\include\raylab\PinCallback.h" />
     <ClInclude Include="..\..\..\include\raylab\PinType.h" />

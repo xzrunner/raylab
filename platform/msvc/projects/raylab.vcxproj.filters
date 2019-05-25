@@ -71,6 +71,9 @@
     <ClInclude Include="..\..\..\include\raylab\mapping_nodes.h">
       <Filter>dataset\nodes</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\raylab\noise_nodes.h">
+      <Filter>dataset\nodes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="tools">

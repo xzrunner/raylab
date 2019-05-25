@@ -20,6 +20,7 @@ const pt0::Color COL_SAMPLER    = pt0::Color(255, 139, 139);
 const pt0::Color COL_TEXTURE    = pt0::Color(148, 129, 230);
 const pt0::Color COL_TRACER     = pt0::Color(148, 239, 230);
 const pt0::Color COL_MAPPING    = pt0::Color(230, 148, 239);
+const pt0::Color COL_NOISE      = pt0::Color(132, 231, 228);
 
 const pt0::Color COL_VIEW_PLANE = pt0::Color(148, 129, 148);
 const pt0::Color COL_WORLD      = pt0::Color(148, 255, 148);
@@ -58,6 +59,8 @@ const pt0::Color& get_color_func(int type)
         return COL_TRACER;
     case raylab::PIN_MAPPING:
         return COL_MAPPING;
+    case raylab::PIN_NOISE:
+        return COL_NOISE;
 
     case raylab::PIN_VIEW_PLANE:
         return COL_VIEW_PLANE;

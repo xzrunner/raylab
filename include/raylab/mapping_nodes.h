@@ -48,5 +48,23 @@ public:
 
 }; // LightProbe
 
+class SquareMap : public Mapping
+{
+public:
+    SquareMap() : Mapping("SquareMap") {}
+
+    RTTR_ENABLE(Mapping)
+
+}; // SquareMap
+
+class CylindricalMap : public Mapping
+{
+public:
+    CylindricalMap() : Mapping("CylindricalMap") {}
+
+    RTTR_ENABLE(Mapping)
+
+}; // CylindricalMap
+
 }
 }

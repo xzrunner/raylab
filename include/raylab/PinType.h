@@ -14,6 +14,7 @@ enum PinType
     PIN_TEXTURE,
     PIN_TRACER,
     PIN_MAPPING,
+    PIN_NOISE,
 
     PIN_VIEW_PLANE,
     PIN_WORLD,

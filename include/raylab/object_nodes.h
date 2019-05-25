@@ -75,8 +75,9 @@ public:
         Layout();
     }
 
-    sm::vec3 p0;
-    sm::vec3 a, b;
+    sm::vec3 p0     = sm::vec3(-1, 0, -1);
+    sm::vec3 a      = sm::vec3(0, 0, 2);
+    sm::vec3 b      = sm::vec3(2, 0, 0);
     sm::vec3 normal = sm::vec3(0, 1, 0);
 
     enum InputID
@@ -321,6 +322,22 @@ public:
 
 }; // ConvexPartSphere
 
+class ConcavePartSphere : public Object
+{
+public:
+    ConcavePartSphere() : Object("ConcavePartSphere") {}
+
+    sm::vec3 center;
+    float radius      = 1.0f;
+    float azimuth_min = 0;
+    float azimuth_max = 360;
+    float polar_min   = 0;
+    float polar_max   = 180;
+
+    RTTR_ENABLE(Object)
+
+}; // ConcavePartSphere
+
 class FlatRimmedBowl : public Object
 {
 public:
@@ -476,6 +493,81 @@ public:
     RTTR_ENABLE(Object)
 
 }; // ConcavePartCylinder
+
+class FishBowl : public Object
+{
+public:
+    FishBowl()
+        : Object("FishBowl")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, ID_GLASS_AIR_MATERIAL,   PIN_MATERIAL, "Glass Air Material", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_WATER_AIR_MATERIAL,   PIN_MATERIAL, "Water Air Material", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_WATER_GLASS_MATERIAL, PIN_MATERIAL, "Water Glass Material", *this));
+
+        Layout();
+    }
+
+    float inner_radius    = 1.0f;	// radius of the inside glass surface
+    float glass_thickness = 0.1f;
+    float water_depth     = 1.25f; 	// measured from the bottom of the water-glass boundary
+    float meniscus_radius = 0.05f;
+    float opening_angle   = 90;		// specifies how wide the opening is at the top (alpha in Figure 28.40(a))
+
+    enum InputID
+    {
+        ID_GLASS_AIR_MATERIAL   = 1,
+        ID_WATER_AIR_MATERIAL   = 2,
+        ID_WATER_GLASS_MATERIAL = 3,
+    };
+
+    RTTR_ENABLE(Object)
+
+}; // FishBowl
+
+class GlassOfWater : public Object
+{
+public:
+    GlassOfWater()
+        : Object("GlassOfWater")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, ID_GLASS_AIR_MATERIAL,   PIN_MATERIAL, "Glass Air Material", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_WATER_AIR_MATERIAL,   PIN_MATERIAL, "Water Air Material", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_WATER_GLASS_MATERIAL, PIN_MATERIAL, "Water Glass Material", *this));
+
+        Layout();
+    }
+
+    float height          = 2.0f;   // total height
+    float inner_radius    = 0.9f;	// inner radius of glass, outer radius of water
+    float wall_thickness  = 0.1f;	// thickness of the glass wall
+    float base_thickness  = 0.3f;	// thickness of the glass base
+    float water_height    = 1.5f;	// height of water from bottom of glass base on (x, z) plane
+    float meniscus_radius = 0.1f;
+
+    enum InputID
+    {
+        ID_GLASS_AIR_MATERIAL   = 1,
+        ID_WATER_AIR_MATERIAL   = 2,
+        ID_WATER_GLASS_MATERIAL = 3,
+    };
+
+    RTTR_ENABLE(Object)
+
+}; // GlassOfWater
+
+class CutCube : public Object
+{
+public:
+    CutCube() : Object("CutCube") {}
+
+    sm::vec3 p0 = sm::vec3(-1, -1, -1);
+    sm::vec3 p1 = sm::vec3(1, 1, 1);
+
+    float radius = 1.0f;
+
+    RTTR_ENABLE(Object)
+
+}; // CutCube
 
 }
 }

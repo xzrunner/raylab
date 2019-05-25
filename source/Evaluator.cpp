@@ -9,6 +9,7 @@
 #include "raylab/brdf_nodes.h"
 #include "raylab/sampler_nodes.h"
 #include "raylab/mapping_nodes.h"
+#include "raylab/noise_nodes.h"
 
 #include <blueprint/Connecting.h>
 #include <blueprint/node/Hub.h>
@@ -52,6 +53,7 @@
 #include <raytracing/objects/Torus.h>
 #include <raytracing/objects/OpenCone.h>
 #include <raytracing/objects/ConvexPartSphere.h>
+#include <raytracing/objects/ConcavePartSphere.h>
 #include <raytracing/objects/FlatRimmedBowl.h>
 #include <raytracing/objects/RoundRimmedBowl.h>
 #include <raytracing/objects/ThickRing.h>
@@ -62,6 +64,9 @@
 #include <raytracing/objects/SolidCone.h>
 #include <raytracing/objects/OpenCylinder.h>
 #include <raytracing/objects/ConcavePartCylinder.h>
+#include <raytracing/objects/FishBowl.h>
+#include <raytracing/objects/GlassOfWater.h>
+#include <raytracing/objects/CutCube.h>
 #include <raytracing/materials/Matte.h>
 #include <raytracing/materials/SV_Matte.h>
 #include <raytracing/materials/Emissive.h>
@@ -72,12 +77,19 @@
 #include <raytracing/materials/Transparent.h>
 #include <raytracing/materials/Dielectric.h>
 #include <raytracing/materials/SphereMaterials.h>
+#include <raytracing/materials/SV_Phong.h>
 #include <raytracing/texture/Checker3D.h>
 #include <raytracing/texture/ImageTexture.h>
 #include <raytracing/texture/Image.h>
 #include <raytracing/texture/ConeChecker.h>
 #include <raytracing/texture/PlaneChecker.h>
 #include <raytracing/texture/SphereChecker.h>
+#include <raytracing/texture/ConstantColor.h>
+#include <raytracing/texture/WrappedFBmTexture.h>
+#include <raytracing/texture/RampFBmTexture.h>
+#include <raytracing/texture/TextureInstance.h>
+#include <raytracing/texture/Wood.h>
+#include <raytracing/texture/TurbulenceTexture.h>
 #include <raytracing/brdfs/PerfectSpecular.h>
 #include <raytracing/samplers/Jittered.h>
 #include <raytracing/samplers/MultiJittered.h>
@@ -85,6 +97,10 @@
 #include <raytracing/samplers/PureRandom.h>
 #include <raytracing/mapping/SphericalMap.h>
 #include <raytracing/mapping/LightProbe.h>
+#include <raytracing/mapping/SquareMap.h>
+#include <raytracing/mapping/CylindricalMap.h>
+#include <raytracing/noise/LinearNoise.h>
+#include <raytracing/noise/CubicNoise.h>
 
 #include <boost/filesystem.hpp>
 
@@ -683,6 +699,15 @@ Evaluator::CreateObject(const bp::Node& node)
         );
         dst_object = std::move(object);
     }
+    else if (object_type == rttr::type::get<node::ConcavePartSphere>())
+    {
+        auto& src_object = static_cast<const node::ConcavePartSphere&>(node);
+        auto center = to_rt_p3d(src_object.center);
+        auto object = std::make_unique<rt::ConcavePartSphere>(
+            center, src_object.radius, src_object.azimuth_min, src_object.azimuth_max, src_object.polar_min, src_object.polar_max
+        );
+        dst_object = std::move(object);
+    }
     else if (object_type == rttr::type::get<node::FlatRimmedBowl>())
     {
         auto& src_object = static_cast<const node::FlatRimmedBowl&>(node);
@@ -774,6 +799,32 @@ Evaluator::CreateObject(const bp::Node& node)
         auto object = std::make_unique<rt::ConcavePartCylinder>(
             src_object.bottom, src_object.top, src_object.radius,
             src_object.polar_min, src_object.polar_max
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::FishBowl>())
+    {
+        auto& src_object = static_cast<const node::FishBowl&>(node);
+        auto object = std::make_unique<rt::FishBowl>(
+            src_object.inner_radius, src_object.glass_thickness, src_object.water_depth,
+            src_object.meniscus_radius, src_object.opening_angle
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::GlassOfWater>())
+    {
+        auto& src_object = static_cast<const node::GlassOfWater&>(node);
+        auto object = std::make_unique<rt::GlassOfWater>(
+            src_object.height, src_object.inner_radius, src_object.wall_thickness,
+            src_object.base_thickness, src_object.water_height, src_object.meniscus_radius
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::CutCube>())
+    {
+        auto& src_object = static_cast<const node::CutCube&>(node);
+        auto object = std::make_unique<rt::CutCube>(
+            to_rt_p3d(src_object.p0), to_rt_p3d(src_object.p1), src_object.radius
         );
         dst_object = std::move(object);
     }
@@ -1005,6 +1056,27 @@ Evaluator::CreateMaterial(const bp::Node& node)
 
         dst_material = std::move(material);
     }
+    else if (material_type == rttr::type::get<node::SV_Phong>())
+    {
+        auto& src_material = static_cast<const node::SV_Phong&>(node);
+        auto material = std::make_unique<rt::SV_Phong>();
+
+        material->SetKa(src_material.ka);
+        material->SetKd(src_material.kd);
+        material->SetKs(src_material.ks);
+        material->SetExp(src_material.exp);
+
+        auto& cd_conns = src_material.GetAllInput()[node::SV_Phong::ID_CD_TEXTURE]->GetConnecting();
+        if (!cd_conns.empty()) {
+            material->SetCd(CreateTexture(cd_conns[0]->GetFrom()->GetParent()));
+        }
+        auto& cs_conns = src_material.GetAllInput()[node::SV_Phong::ID_CS_TEXTURE]->GetConnecting();
+        if (!cs_conns.empty()) {
+            material->SetCs(CreateTexture(cs_conns[0]->GetFrom()->GetParent()));
+        }
+
+        dst_material = std::move(material);
+    }
     else
     {
         assert(0);
@@ -1205,6 +1277,97 @@ Evaluator::CreateTexture(const bp::Node& node)
 
         dst_tex = std::move(tex);
     }
+    else if (tex_type == rttr::type::get<node::ConstantColor>())
+    {
+        auto& src_tex = static_cast<const node::ConstantColor&>(node);
+        auto tex = std::make_unique<rt::ConstantColor>();
+
+        tex->SetColor(to_rt_color(src_tex.color));
+
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::WrappedFBmTexture>())
+    {
+        auto& src_tex = static_cast<const node::WrappedFBmTexture&>(node);
+        auto tex = std::make_unique<rt::WrappedFBmTexture>(
+            src_tex.min_value, src_tex.max_value, src_tex.expansion_number
+        );
+
+        tex->SetColor(to_rt_color(src_tex.color));
+
+        auto& conns = node.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            tex->SetNoise(CreateNoise(conns[0]->GetFrom()->GetParent()));
+        }
+
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::RampFBmTexture>())
+    {
+        auto& src_tex = static_cast<const node::RampFBmTexture&>(node);
+
+        auto image = std::make_shared<rt::Image>();
+        image->ReadPPMFile(src_tex.filepath.c_str());
+        auto tex = std::make_unique<rt::RampFBmTexture>(
+            image, src_tex.num_octaves, src_tex.fbm_amount
+        );
+
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::TextureInstance>())
+    {
+        auto& src_tex = static_cast<const node::TextureInstance&>(node);
+        auto tex = std::make_unique<rt::TextureInstance>();
+
+        auto& conns = node.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            tex->SetTexture(CreateTexture(conns[0]->GetFrom()->GetParent()));
+        }
+
+        if (src_tex.scale != sm::vec3(1, 1, 1)) {
+            tex->Scale(to_rt_v3d(src_tex.scale));
+        }
+        if (src_tex.rotate != sm::vec3(0, 0, 0))
+        {
+            if (src_tex.rotate.x != 0) {
+                tex->RotateX(src_tex.rotate.x);
+            }
+            if (src_tex.rotate.y != 0) {
+                tex->RotateY(src_tex.rotate.y);
+            }
+            if (src_tex.rotate.z != 0) {
+                tex->RotateZ(src_tex.rotate.z);
+            }
+        }
+        if (src_tex.translate != sm::vec3(0, 0, 0)) {
+            tex->Translate(to_rt_v3d(src_tex.translate));
+        }
+
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::Wood>())
+    {
+        auto& src_tex = static_cast<const node::Wood&>(node);
+        auto tex = std::make_unique<rt::Wood>(
+            to_rt_color(src_tex.light), to_rt_color(src_tex.dark)
+        );
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::TurbulenceTexture>())
+    {
+        auto& src_tex = static_cast<const node::TurbulenceTexture&>(node);
+
+        auto tex = std::make_unique<rt::TurbulenceTexture>(
+            to_rt_color(src_tex.color), src_tex.min_val, src_tex.max_val
+        );
+
+        auto& conns = node.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            tex->SetNoise(CreateNoise(conns[0]->GetFrom()->GetParent()));
+        }
+
+        dst_tex = std::move(tex);
+    }
 
     return dst_tex;
 }
@@ -1310,8 +1473,46 @@ Evaluator::CreateMapping(const bp::Node& node)
 
         dst_mapping = std::move(mapping);
     }
+    else if (mapping_type == rttr::type::get<node::SquareMap>())
+    {
+        auto& src_mapping = static_cast<const node::SquareMap&>(node);
+        auto mapping = std::make_unique<rt::SquareMap>();
+        dst_mapping = std::move(mapping);
+    }
+    else if (mapping_type == rttr::type::get<node::CylindricalMap>())
+    {
+        auto& src_mapping = static_cast<const node::CylindricalMap&>(node);
+        auto mapping = std::make_unique<rt::CylindricalMap>();
+        dst_mapping = std::move(mapping);
+    }
 
     return dst_mapping;
+}
+
+std::unique_ptr<rt::LatticeNoise>
+Evaluator::CreateNoise(const bp::Node& node)
+{
+    std::unique_ptr<rt::LatticeNoise> dst_noise = nullptr;
+
+    auto noise_type = node.get_type();
+    if (noise_type == rttr::type::get<node::LinearNoise>())
+    {
+        auto& src_noise = static_cast<const node::LinearNoise&>(node);
+        auto noise = std::make_unique<rt::LinearNoise>(
+            src_noise.octaves, src_noise.lacunarity, src_noise.gain
+        );
+        dst_noise = std::move(noise);
+    }
+    else if (noise_type == rttr::type::get<node::CubicNoise>())
+    {
+        auto& src_noise = static_cast<const node::CubicNoise&>(node);
+        auto noise = std::make_unique<rt::CubicNoise>(
+            src_noise.octaves, src_noise.lacunarity, src_noise.gain
+        );
+        dst_noise = std::move(noise);
+    }
+
+    return dst_noise;
 }
 
 float Evaluator::CalcFloat(const bp::Connecting& conn)

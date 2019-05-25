@@ -180,5 +180,64 @@ public:
 
 }; // Dielectric
 
+class SphereMaterials : public Material
+{
+public:
+    SphereMaterials()
+        : Material("SphereMaterials")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, ID_CHECKER1_MATERIAL, PIN_MATERIAL, "checker1", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_CHECKER2_MATERIAL, PIN_MATERIAL, "checker2", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_LINE_MATERIAL,     PIN_MATERIAL, "line",     *this));
+
+        Layout();
+    }
+
+    int	  num_horizontal_checkers = 10;	// number of checkers in the horizontal (azithum) direction
+    int   num_vertical_checkers   = 20;	// number of checkers in the vertical (polar) direction
+    float horizontal_line_width   = 0;	// width of the horizontal lines as a fraction of the checker width
+    float vertical_line_width     = 0;	// width of the vertical lines as a fraction of the checker width
+    pt0::Color color1     = pt0::Color(1.0f, 1.0f, 1.0f);	// checker color 1
+    pt0::Color color2     = pt0::Color(0.5f, 0.5f, 0.5f);	// checker color 2
+    pt0::Color line_color = pt0::Color(0, 0, 0);			// the line color
+
+    enum InputID
+    {
+        ID_CHECKER1_MATERIAL = 0,
+        ID_CHECKER2_MATERIAL,
+        ID_LINE_MATERIAL,
+    };
+
+    RTTR_ENABLE(Material)
+
+}; // SphereMaterials
+
+class SV_Phong : public Material
+{
+public:
+    SV_Phong()
+        : Material("SV_Phong")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, ID_CD_TEXTURE, PIN_TEXTURE, "cd", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_CS_TEXTURE, PIN_TEXTURE, "cs", *this));
+
+        Layout();
+    }
+
+    float ka  = 0.0f;
+    float kd  = 0.0f;
+    float ks  = 0.0f;
+    float exp = 1.0f;
+
+    enum InputID
+    {
+        ID_CD_TEXTURE = 0,
+        ID_CS_TEXTURE,
+    };
+
+    RTTR_ENABLE(Material)
+
+}; // SV_Phong
+
 }
 }
