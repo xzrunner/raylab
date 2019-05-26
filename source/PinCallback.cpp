@@ -49,7 +49,7 @@ const pt0::Color& get_color_func(int type)
         return COL_LIGHT;
     case raylab::PIN_MATERIAL:
         return COL_MATERIAL;
-    case raylab::PIN_OBJECT:
+    case raylab::PIN_PRIMITIVE:
         return COL_OBJECT;
     case raylab::PIN_SAMPLER:
         return COL_SAMPLER;

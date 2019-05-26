@@ -9,7 +9,7 @@ namespace rt
     class World;
     class Light;
     class Tracer;
-    class Object;
+    class GeoPrimitive;
     class Material;
     class Camera;
     class Texture;
@@ -42,7 +42,7 @@ private:
     static std::unique_ptr<rt::Tracer>
         CreateTracer(const bp::Node& node, rt::World& dst);
 
-    static std::unique_ptr<rt::Object>
+    static std::unique_ptr<rt::GeoPrimitive>
         CreateObject(const bp::Node& node);
 
     static std::unique_ptr<rt::Material>

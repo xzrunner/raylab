@@ -3,11 +3,11 @@
 #include "raylab/light_nodes.h"
 #include "raylab/camera_nodes.h"
 #include "raylab/tracer_nodes.h"
-#include "raylab/object_nodes.h"
+#include "raylab/primitive_nodes.h"
 #include "raylab/material_nodes.h"
 #include "raylab/sampler_nodes.h"
 #include "raylab/texture_nodes.h"
-#include "raylab/brdf_nodes.h"
+#include "raylab/bxdf_nodes.h"
 #include "raylab/mapping_nodes.h"
 #include "raylab/noise_nodes.h"
 #include "raylab/world_nodes.h"
@@ -70,11 +70,11 @@ void RayLab::InitNodes()
     add_nodes(rttr::type::get<node::Light>().get_derived_classes());
     add_nodes(rttr::type::get<node::Camera>().get_derived_classes());
     add_nodes(rttr::type::get<node::Tracer>().get_derived_classes());
-    add_nodes(rttr::type::get<node::Object>().get_derived_classes());
+    add_nodes(rttr::type::get<node::GeoPrimitive>().get_derived_classes());
     add_nodes(rttr::type::get<node::Material>().get_derived_classes());
     add_nodes(rttr::type::get<node::Sampler>().get_derived_classes());
     add_nodes(rttr::type::get<node::Texture>().get_derived_classes());
-    add_nodes(rttr::type::get<node::BRDF>().get_derived_classes());
+    add_nodes(rttr::type::get<node::BxDF>().get_derived_classes());
     add_nodes(rttr::type::get<node::Mapping>().get_derived_classes());
     add_nodes(rttr::type::get<node::LatticeNoise>().get_derived_classes());
 }

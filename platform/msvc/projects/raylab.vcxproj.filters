@@ -41,9 +41,6 @@
     <ClInclude Include="..\..\..\include\raylab\camera_nodes.h">
       <Filter>dataset\nodes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\raylab\object_nodes.h">
-      <Filter>dataset\nodes</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\raylab\WxPreviewPanel.h">
       <Filter>view</Filter>
     </ClInclude>
@@ -54,9 +51,6 @@
       <Filter>dataset\nodes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\raylab\texture_nodes.h">
-      <Filter>dataset\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\raylab\brdf_nodes.h">
       <Filter>dataset\nodes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\raylab\sampler_nodes.h">
@@ -72,6 +66,12 @@
       <Filter>dataset\nodes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\raylab\noise_nodes.h">
+      <Filter>dataset\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\raylab\primitive_nodes.h">
+      <Filter>dataset\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\raylab\bxdf_nodes.h">
       <Filter>dataset\nodes</Filter>
     </ClInclude>
   </ItemGroup>

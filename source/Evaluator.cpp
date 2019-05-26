@@ -2,11 +2,11 @@
 #include "raylab/light_nodes.h"
 #include "raylab/tracer_nodes.h"
 #include "raylab/camera_nodes.h"
-#include "raylab/object_nodes.h"
+#include "raylab/primitive_nodes.h"
 #include "raylab/world_nodes.h"
 #include "raylab/material_nodes.h"
 #include "raylab/texture_nodes.h"
-#include "raylab/brdf_nodes.h"
+#include "raylab/bxdf_nodes.h"
 #include "raylab/sampler_nodes.h"
 #include "raylab/mapping_nodes.h"
 #include "raylab/noise_nodes.h"
@@ -17,67 +17,67 @@
 #include <blueprint/node/Vector3.h>
 
 #include <raytracing/world/World.h>
-#include <raytracing/lights/Light.h>
-#include <raytracing/lights/Ambient.h>
-#include <raytracing/lights/Directional.h>
-#include <raytracing/lights/PointLight.h>
-#include <raytracing/lights/AreaLight.h>
-#include <raytracing/lights/AmbientOccluder.h>
-#include <raytracing/lights/EnvironmentLight.h>
-#include <raytracing/lights/FakeSphericalLight.h>
+#include <raytracing/light/Light.h>
+#include <raytracing/light/Ambient.h>
+#include <raytracing/light/Directional.h>
+#include <raytracing/light/PointLight.h>
+#include <raytracing/light/AreaLight.h>
+#include <raytracing/light/AmbientOccluder.h>
+#include <raytracing/light/EnvironmentLight.h>
+#include <raytracing/light/FakeSphericalLight.h>
 #include <raytracing/tracer/RayCast.h>
 #include <raytracing/tracer/AreaLighting.h>
 #include <raytracing/tracer/FirstHit.h>
 #include <raytracing/tracer/Whitted.h>
 #include <raytracing/tracer/PathTrace.h>
 #include <raytracing/tracer/GlobalTrace.h>
-#include <raytracing/cameras/Pinhole.h>
-#include <raytracing/cameras/ThinLens.h>
-#include <raytracing/cameras/FishEye.h>
-#include <raytracing/cameras/Spherical.h>
-#include <raytracing/cameras/Stereo.h>
-#include <raytracing/cameras/Orthographic.h>
-#include <raytracing/objects/Box.h>
-#include <raytracing/objects/Sphere.h>
-#include <raytracing/objects/Plane.h>
-#include <raytracing/objects/Rectangle.h>
-#include <raytracing/objects/Triangle.h>
-#include <raytracing/objects/WireframeBox.h>
-#include <raytracing/objects/Instance.h>
-#include <raytracing/objects/Disk.h>
-#include <raytracing/objects/SolidCylinder.h>
-#include <raytracing/objects/ConvexPartCylinder.h>
-#include <raytracing/objects/OpenPartCylinder.h>
-#include <raytracing/objects/Grid.h>
-#include <raytracing/objects/ConcaveSphere.h>
-#include <raytracing/objects/Torus.h>
-#include <raytracing/objects/OpenCone.h>
-#include <raytracing/objects/ConvexPartSphere.h>
-#include <raytracing/objects/ConcavePartSphere.h>
-#include <raytracing/objects/FlatRimmedBowl.h>
-#include <raytracing/objects/RoundRimmedBowl.h>
-#include <raytracing/objects/ThickRing.h>
-#include <raytracing/objects/BeveledCylinder.h>
-#include <raytracing/objects/BeveledRing.h>
-#include <raytracing/objects/BeveledBox.h>
-#include <raytracing/objects/BeveledWedge.h>
-#include <raytracing/objects/SolidCone.h>
-#include <raytracing/objects/OpenCylinder.h>
-#include <raytracing/objects/ConcavePartCylinder.h>
-#include <raytracing/objects/FishBowl.h>
-#include <raytracing/objects/GlassOfWater.h>
-#include <raytracing/objects/CutCube.h>
-#include <raytracing/materials/Matte.h>
-#include <raytracing/materials/SV_Matte.h>
-#include <raytracing/materials/Emissive.h>
-#include <raytracing/materials/Phong.h>
-#include <raytracing/materials/Reflective.h>
-#include <raytracing/materials/SV_Emissive.h>
-#include <raytracing/materials/GlossyReflector.h>
-#include <raytracing/materials/Transparent.h>
-#include <raytracing/materials/Dielectric.h>
-#include <raytracing/materials/SphereMaterials.h>
-#include <raytracing/materials/SV_Phong.h>
+#include <raytracing/camera/Pinhole.h>
+#include <raytracing/camera/ThinLens.h>
+#include <raytracing/camera/FishEye.h>
+#include <raytracing/camera/Spherical.h>
+#include <raytracing/camera/Stereo.h>
+#include <raytracing/camera/Orthographic.h>
+#include <raytracing/primitive/Box.h>
+#include <raytracing/primitive/Sphere.h>
+#include <raytracing/primitive/Plane.h>
+#include <raytracing/primitive/Rectangle.h>
+#include <raytracing/primitive/Triangle.h>
+#include <raytracing/primitive/WireframeBox.h>
+#include <raytracing/primitive/Instance.h>
+#include <raytracing/primitive/Disk.h>
+#include <raytracing/primitive/SolidCylinder.h>
+#include <raytracing/primitive/ConvexPartCylinder.h>
+#include <raytracing/primitive/OpenPartCylinder.h>
+#include <raytracing/primitive/Grid.h>
+#include <raytracing/primitive/ConcaveSphere.h>
+#include <raytracing/primitive/Torus.h>
+#include <raytracing/primitive/OpenCone.h>
+#include <raytracing/primitive/ConvexPartSphere.h>
+#include <raytracing/primitive/ConcavePartSphere.h>
+#include <raytracing/primitive/FlatRimmedBowl.h>
+#include <raytracing/primitive/RoundRimmedBowl.h>
+#include <raytracing/primitive/ThickRing.h>
+#include <raytracing/primitive/BeveledCylinder.h>
+#include <raytracing/primitive/BeveledRing.h>
+#include <raytracing/primitive/BeveledBox.h>
+#include <raytracing/primitive/BeveledWedge.h>
+#include <raytracing/primitive/SolidCone.h>
+#include <raytracing/primitive/OpenCylinder.h>
+#include <raytracing/primitive/ConcavePartCylinder.h>
+#include <raytracing/primitive/FishBowl.h>
+#include <raytracing/primitive/GlassOfWater.h>
+#include <raytracing/primitive/CutCube.h>
+#include <raytracing/material/Matte.h>
+#include <raytracing/material/SV_Matte.h>
+#include <raytracing/material/Emissive.h>
+#include <raytracing/material/Phong.h>
+#include <raytracing/material/Reflective.h>
+#include <raytracing/material/SV_Emissive.h>
+#include <raytracing/material/GlossyReflector.h>
+#include <raytracing/material/Transparent.h>
+#include <raytracing/material/Dielectric.h>
+#include <raytracing/material/SphereMaterials.h>
+#include <raytracing/material/SV_Phong.h>
 #include <raytracing/texture/Checker3D.h>
 #include <raytracing/texture/ImageTexture.h>
 #include <raytracing/texture/Image.h>
@@ -94,11 +94,11 @@
 #include <raytracing/texture/WrappedThreeColors.h>
 #include <raytracing/texture/NestedNoisesTexture.h>
 #include <raytracing/texture/WrappedRamp.h>
-#include <raytracing/brdfs/PerfectSpecular.h>
-#include <raytracing/samplers/Jittered.h>
-#include <raytracing/samplers/MultiJittered.h>
-#include <raytracing/samplers/Regular.h>
-#include <raytracing/samplers/PureRandom.h>
+#include <raytracing/bxdf/PerfectSpecular.h>
+#include <raytracing/sampler/Jittered.h>
+#include <raytracing/sampler/MultiJittered.h>
+#include <raytracing/sampler/Regular.h>
+#include <raytracing/sampler/PureRandom.h>
 #include <raytracing/mapping/SphericalMap.h>
 #include <raytracing/mapping/LightProbe.h>
 #include <raytracing/mapping/SquareMap.h>
@@ -304,7 +304,7 @@ Evaluator::CreateLight(const bp::Node& node)
 
         auto& conns = node.GetAllInput()[0]->GetConnecting();
         if (!conns.empty()) {
-            std::shared_ptr<rt::Object> obj = CreateObject(conns[0]->GetFrom()->GetParent());
+            std::shared_ptr<rt::GeoPrimitive> obj = CreateObject(conns[0]->GetFrom()->GetParent());
             if (obj) {
                 light->SetObject(obj);
             }
@@ -423,10 +423,10 @@ Evaluator::CreateTracer(const bp::Node& node, rt::World& dst)
     return dst_tracer;
 }
 
-std::unique_ptr<rt::Object>
+std::unique_ptr<rt::GeoPrimitive>
 Evaluator::CreateObject(const bp::Node& node)
 {
-    std::unique_ptr<rt::Object> dst_object = nullptr;
+    std::unique_ptr<rt::GeoPrimitive> dst_object = nullptr;
 
     auto object_type = node.get_type();
     if (object_type == rttr::type::get<node::Box>())
@@ -837,7 +837,7 @@ Evaluator::CreateObject(const bp::Node& node)
         assert(0);
     }
 
-    dst_object->SetShadows(static_cast<const node::Object&>(node).shadows);
+    dst_object->SetShadows(static_cast<const node::GeoPrimitive&>(node).shadows);
 
     // material
 //    if (node.get_type() != rttr::type::get<node::Grid>())

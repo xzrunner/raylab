@@ -2,10 +2,10 @@
 #include "raylab/light_nodes.h"
 #include "raylab/camera_nodes.h"
 #include "raylab/tracer_nodes.h"
-#include "raylab/object_nodes.h"
+#include "raylab/primitive_nodes.h"
 #include "raylab/material_nodes.h"
 #include "raylab/texture_nodes.h"
-#include "raylab/brdf_nodes.h"
+#include "raylab/bxdf_nodes.h"
 #include "raylab/sampler_nodes.h"
 #include "raylab/mapping_nodes.h"
 #include "raylab/noise_nodes.h"
@@ -270,11 +270,11 @@ rttr::registration::class_<raylab::node::GlobalTrace>("raylab::GlobalTrace")
     .constructor<>()
 ;
 
-// Object
+// GeoPrimitive
 
-rttr::registration::class_<raylab::node::Object>("raylab::Object")
+rttr::registration::class_<raylab::node::GeoPrimitive>("raylab::GeoPrimitive")
     .constructor<const std::string&>()
-    .property("shadows", &raylab::node::Object::shadows)
+    .property("shadows", &raylab::node::GeoPrimitive::shadows)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Shadows"))
     )

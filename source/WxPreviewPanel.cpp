@@ -8,7 +8,7 @@
 #include <blueprint/Node.h>
 #include <blueprint/Connecting.h>
 #include <raytracing/world/World.h>
-#include <raytracing/cameras/Camera.h>
+#include <raytracing/camera/Camera.h>
 
 #include <node0/SceneNode.h>
 

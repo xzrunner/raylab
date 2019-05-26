@@ -9,24 +9,24 @@ namespace raylab
 namespace node
 {
 
-class BRDF : public Node
+class BxDF : public Node
 {
 public:
-    BRDF(const std::string& title) : Node(title) {}
+    BxDF(const std::string& title) : Node(title) {}
 
     RTTR_ENABLE(Node)
 
-}; // BRDF
+}; // BxDF
 
-class PerfectSpecular : public BRDF
+class PerfectSpecular : public BxDF
 {
 public:
-    PerfectSpecular() : BRDF("PerfectSpecular") {}
+    PerfectSpecular() : BxDF("PerfectSpecular") {}
 
     float      kr = 0.0f;
     pt0::Color cr = pt0::Color(1.0f, 1.0f, 1.0f);
 
-    RTTR_ENABLE(BRDF)
+    RTTR_ENABLE(BxDF)
 
 }; // PerfectSpecular
 

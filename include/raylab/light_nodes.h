@@ -71,7 +71,7 @@ public:
     AreaLight()
         : Light("AreaLight")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_OBJECT, "Obj", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_PRIMITIVE, "Obj", *this));
 
         Layout();
     }

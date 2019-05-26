@@ -19,7 +19,7 @@ public:
         AddPin(std::make_shared<bp::Pin>(true, 0, PIN_LIGHT,      "Light",  *this));
         AddPin(std::make_shared<bp::Pin>(true, 1, PIN_TRACER,     "Tracer", *this));
         AddPin(std::make_shared<bp::Pin>(true, 2, PIN_CAMERA,     "Camera", *this));
-        AddPin(std::make_shared<bp::Pin>(true, 3, PIN_OBJECT,     "Object", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 3, PIN_PRIMITIVE,  "Primitive", *this));
         AddPin(std::make_shared<bp::Pin>(true, 4, PIN_VIEW_PLANE, "ViewPlane", *this));
         AddPin(std::make_shared<bp::Pin>(true, 5, PIN_LIGHT,      "Ambient", *this));
 

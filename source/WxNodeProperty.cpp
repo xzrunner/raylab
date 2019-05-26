@@ -1,6 +1,6 @@
 #include "raylab/WxNodeProperty.h"
 #include "raylab/camera_nodes.h"
-#include "raylab/object_nodes.h"
+#include "raylab/primitive_nodes.h"
 #include "raylab/mapping_nodes.h"
 
 #include <ee0/SubjectMgr.h>

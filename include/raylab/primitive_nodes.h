@@ -12,14 +12,14 @@ namespace raylab
 namespace node
 {
 
-class Object : public Node
+class GeoPrimitive : public Node
 {
 public:
-    Object(const std::string& title)
+    GeoPrimitive(const std::string& title)
         : Node(title)
     {
         AddPin(std::make_shared<bp::Pin>(true,  0, PIN_MATERIAL, "Material", *this));
-        AddPin(std::make_shared<bp::Pin>(false, 0, PIN_OBJECT,   "Out", *this));
+        AddPin(std::make_shared<bp::Pin>(false, 0, PIN_PRIMITIVE,   "Out", *this));
 
         Layout();
     }
@@ -28,49 +28,49 @@ public:
 
     RTTR_ENABLE(Node)
 
-}; // Object
+}; // GeoPrimitive
 
-class Box : public Object
+class Box : public GeoPrimitive
 {
 public:
-    Box() : Object("Box") {}
+    Box() : GeoPrimitive("Box") {}
 
     sm::vec3 min;
     sm::vec3 max;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // Box
 
-class Sphere : public Object
+class Sphere : public GeoPrimitive
 {
 public:
-    Sphere() : Object("Sphere") {}
+    Sphere() : GeoPrimitive("Sphere") {}
 
     sm::vec3 center;
     float radius = 1.0f;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // Sphere
 
-class Plane : public Object
+class Plane : public GeoPrimitive
 {
 public:
-    Plane() : Object("Plane") {}
+    Plane() : GeoPrimitive("Plane") {}
 
     sm::vec3 pos;
     sm::vec3 normal = sm::vec3(0, 1, 0);
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // Plane
 
-class Rectangle : public Object
+class Rectangle : public GeoPrimitive
 {
 public:
     Rectangle()
-        : Object("Rectangle")
+        : GeoPrimitive("Rectangle")
     {
         AddPin(std::make_shared<bp::Pin>(true, 1, PIN_SAMPLER,    "Sampler", *this));
         AddPin(std::make_shared<bp::Pin>(true, 2, bp::PIN_FLOAT3, "P0",      *this));
@@ -88,40 +88,40 @@ public:
         ID_P0,
     };
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // Rectangle
 
-class Triangle : public Object
+class Triangle : public GeoPrimitive
 {
 public:
-    Triangle() : Object("Triangle") {}
+    Triangle() : GeoPrimitive("Triangle") {}
 
     sm::vec3 v0, v1, v2;
     sm::vec3 normal = sm::vec3(0, 1, 0);
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // Triangle
 
-class WireframeBox : public Object
+class WireframeBox : public GeoPrimitive
 {
 public:
-    WireframeBox() : Object("WireframeBox") {}
+    WireframeBox() : GeoPrimitive("WireframeBox") {}
 
     sm::vec3 p0, p1;
     float bevel_radius = 0.0f;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // WireframeBox
 
-class Instance : public Object
+class Instance : public GeoPrimitive
 {
 public:
-    Instance() : Object("Instance")
+    Instance() : GeoPrimitive("Instance")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_OBJECT, "Object", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_PRIMITIVE, "Primitive", *this));
         Layout();
     }
 
@@ -149,15 +149,15 @@ public:
         ID_OBJECT = 1,
     };
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // Instance
 
-class Disk : public Object
+class Disk : public GeoPrimitive
 {
 public:
     Disk()
-        : Object("Disk")
+        : GeoPrimitive("Disk")
     {
         AddPin(std::make_shared<bp::Pin>(true, 1, PIN_SAMPLER,  "Sampler",  *this));
 
@@ -175,15 +175,15 @@ public:
 
     bool shadows = false;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // Disk
 
-class SolidCylinder : public Object
+class SolidCylinder : public GeoPrimitive
 {
 public:
     SolidCylinder()
-        : Object("SolidCylinder")
+        : GeoPrimitive("SolidCylinder")
     {
         AddPin(std::make_shared<bp::Pin>(true, 1, PIN_MATERIAL, "Bottom Material", *this));
         AddPin(std::make_shared<bp::Pin>(true, 2, PIN_MATERIAL, "Top Material",    *this));
@@ -203,14 +203,14 @@ public:
         ID_WALL_MATERIAL,
     };
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // SolidCylinder
 
-class ConvexPartCylinder : public Object
+class ConvexPartCylinder : public GeoPrimitive
 {
 public:
-    ConvexPartCylinder() : Object("ConvexPartCylinder") {}
+    ConvexPartCylinder() : GeoPrimitive("ConvexPartCylinder") {}
 
     float bottom    = 0;
     float top       = 1;
@@ -218,14 +218,14 @@ public:
     float polar_min = 0;
     float polar_max = 180;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // ConvexPartCylinder
 
-class OpenPartCylinder : public Object
+class OpenPartCylinder : public GeoPrimitive
 {
 public:
-    OpenPartCylinder() : Object("OpenPartCylinder") {}
+    OpenPartCylinder() : GeoPrimitive("OpenPartCylinder") {}
 
     float bottom    = 0;
     float top       = 1;
@@ -233,15 +233,15 @@ public:
     float polar_min = 0;
     float polar_max = 180;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // OpenPartCylinder
 
-class Grid : public Object
+class Grid : public GeoPrimitive
 {
 public:
     Grid()
-        : Object("Grid")
+        : GeoPrimitive("Grid")
     {
         AddPin(std::make_shared<bp::Pin>(true, 1, bp::PIN_ANY_VAR, "Children", *this));
 
@@ -266,52 +266,52 @@ public:
         ID_CHILDREN = 1,
     };
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // Grid
 
-class ConcaveSphere : public Object
+class ConcaveSphere : public GeoPrimitive
 {
 public:
-    ConcaveSphere() : Object("ConcaveSphere") {}
+    ConcaveSphere() : GeoPrimitive("ConcaveSphere") {}
 
     sm::vec3 center;
     float    radius = 1.0f;
 
     bool shadows = false;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // ConcaveSphere
 
-class Torus : public Object
+class Torus : public GeoPrimitive
 {
 public:
-    Torus() : Object("Torus") {}
+    Torus() : GeoPrimitive("Torus") {}
 
     float swept_radius = 2.0f;
     float tube_radius  = 0.5f;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // Torus
 
-class OpenCone : public Object
+class OpenCone : public GeoPrimitive
 {
 public:
-    OpenCone() : Object("OpenCone") {}
+    OpenCone() : GeoPrimitive("OpenCone") {}
 
     float height = 2.0f;
     float radius = 1.5f;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // OpenCone
 
-class ConvexPartSphere : public Object
+class ConvexPartSphere : public GeoPrimitive
 {
 public:
-    ConvexPartSphere() : Object("ConvexPartSphere") {}
+    ConvexPartSphere() : GeoPrimitive("ConvexPartSphere") {}
 
     sm::vec3 center;
     float radius      = 1.0f;
@@ -320,14 +320,14 @@ public:
     float polar_min   = 0;
     float polar_max   = 180;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // ConvexPartSphere
 
-class ConcavePartSphere : public Object
+class ConcavePartSphere : public GeoPrimitive
 {
 public:
-    ConcavePartSphere() : Object("ConcavePartSphere") {}
+    ConcavePartSphere() : GeoPrimitive("ConcavePartSphere") {}
 
     sm::vec3 center;
     float radius      = 1.0f;
@@ -336,40 +336,40 @@ public:
     float polar_min   = 0;
     float polar_max   = 180;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // ConcavePartSphere
 
-class FlatRimmedBowl : public Object
+class FlatRimmedBowl : public GeoPrimitive
 {
 public:
-    FlatRimmedBowl() : Object("FlatRimmedBowl") {}
+    FlatRimmedBowl() : GeoPrimitive("FlatRimmedBowl") {}
 
     float inner_radius = 0.9f;		// radius of the inside glass surface
     float outer_radius = 1.0f;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // FlatRimmedBowl
 
-class RoundRimmedBowl : public Object
+class RoundRimmedBowl : public GeoPrimitive
 {
 public:
-    RoundRimmedBowl() : Object("RoundRimmedBowl") {}
+    RoundRimmedBowl() : GeoPrimitive("RoundRimmedBowl") {}
 
     float inner_radius   = 0.9f;		// radius of the inside glass surface
     float outer_radius   = 1.0f;
     float openning_angle = 180;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // RoundRimmedBowl
 
-class ThickRing : public Object
+class ThickRing : public GeoPrimitive
 {
 public:
     ThickRing()
-        : Object("ThickRing")
+        : GeoPrimitive("ThickRing")
     {
         AddPin(std::make_shared<bp::Pin>(true, 1, PIN_MATERIAL, "Bottom Material", *this));
         AddPin(std::make_shared<bp::Pin>(true, 2, PIN_MATERIAL, "Top Material", *this));
@@ -392,28 +392,28 @@ public:
         ID_OUTER_WALL_MATERIAL,
     };
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // ThickRing
 
-class BeveledCylinder : public Object
+class BeveledCylinder : public GeoPrimitive
 {
 public:
-    BeveledCylinder() : Object("BeveledCylinder") {}
+    BeveledCylinder() : GeoPrimitive("BeveledCylinder") {}
 
     float bottom       = 0.0f;
     float top          = 0.0f;
     float radius       = 0.0f;
     float bevel_radius = 0.0f;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // BeveledCylinder
 
-class BeveledRing : public Object
+class BeveledRing : public GeoPrimitive
 {
 public:
-    BeveledRing() : Object("BeveledRing") {}
+    BeveledRing() : GeoPrimitive("BeveledRing") {}
 
     float bottom       = 0.0f;
     float top          = 0.0f;
@@ -421,27 +421,27 @@ public:
     float outer_radius = 0.0f;
     float bevel_radius = 0.0f;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // BeveledRing
 
-class BeveledBox : public Object
+class BeveledBox : public GeoPrimitive
 {
 public:
-    BeveledBox() : Object("BeveledBox") {}
+    BeveledBox() : GeoPrimitive("BeveledBox") {}
 
     sm::vec3 bottom;
     sm::vec3 top;
     float bevel_radius = 0.0f;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // BeveledBox
 
-class BeveledWedge : public Object
+class BeveledWedge : public GeoPrimitive
 {
 public:
-    BeveledWedge() : Object("BeveledWedge") {}
+    BeveledWedge() : GeoPrimitive("BeveledWedge") {}
 
     float min_y        = 0;
     float max_y        = 0;
@@ -451,39 +451,39 @@ public:
     float min_azimuth  = 0;
     float max_azimuth  = 0;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // BeveledWedge
 
-class SolidCone : public Object
+class SolidCone : public GeoPrimitive
 {
 public:
-    SolidCone() : Object("SolidCone") {}
+    SolidCone() : GeoPrimitive("SolidCone") {}
 
     float radius = 1;
     float height = 2;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // SolidCone
 
-class OpenCylinder : public Object
+class OpenCylinder : public GeoPrimitive
 {
 public:
-    OpenCylinder() : Object("OpenCylinder") {}
+    OpenCylinder() : GeoPrimitive("OpenCylinder") {}
 
     float bottom = -1;
     float top    = 1;
     float radius = 1;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // OpenCylinder
 
-class ConcavePartCylinder : public Object
+class ConcavePartCylinder : public GeoPrimitive
 {
 public:
-    ConcavePartCylinder() : Object("ConcavePartCylinder") {}
+    ConcavePartCylinder() : GeoPrimitive("ConcavePartCylinder") {}
 
     float bottom     = -1.0;       // bottom y value
     float top        = 1.0;        // top y value
@@ -492,15 +492,15 @@ public:
     float polar_min  = 0.0;
     float polar_max  = SM_TWO_PI;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // ConcavePartCylinder
 
-class FishBowl : public Object
+class FishBowl : public GeoPrimitive
 {
 public:
     FishBowl()
-        : Object("FishBowl")
+        : GeoPrimitive("FishBowl")
     {
         AddPin(std::make_shared<bp::Pin>(true, ID_GLASS_AIR_MATERIAL,   PIN_MATERIAL, "Glass Air Material", *this));
         AddPin(std::make_shared<bp::Pin>(true, ID_WATER_AIR_MATERIAL,   PIN_MATERIAL, "Water Air Material", *this));
@@ -522,15 +522,15 @@ public:
         ID_WATER_GLASS_MATERIAL = 3,
     };
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // FishBowl
 
-class GlassOfWater : public Object
+class GlassOfWater : public GeoPrimitive
 {
 public:
     GlassOfWater()
-        : Object("GlassOfWater")
+        : GeoPrimitive("GlassOfWater")
     {
         AddPin(std::make_shared<bp::Pin>(true, ID_GLASS_AIR_MATERIAL,   PIN_MATERIAL, "Glass Air Material", *this));
         AddPin(std::make_shared<bp::Pin>(true, ID_WATER_AIR_MATERIAL,   PIN_MATERIAL, "Water Air Material", *this));
@@ -553,21 +553,21 @@ public:
         ID_WATER_GLASS_MATERIAL = 3,
     };
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // GlassOfWater
 
-class CutCube : public Object
+class CutCube : public GeoPrimitive
 {
 public:
-    CutCube() : Object("CutCube") {}
+    CutCube() : GeoPrimitive("CutCube") {}
 
     sm::vec3 p0 = sm::vec3(-1, -1, -1);
     sm::vec3 p1 = sm::vec3(1, 1, 1);
 
     float radius = 1.0f;
 
-    RTTR_ENABLE(Object)
+    RTTR_ENABLE(GeoPrimitive)
 
 }; // CutCube
 

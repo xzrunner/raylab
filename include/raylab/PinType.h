@@ -9,7 +9,7 @@ enum PinType
     PIN_CAMERA,
     PIN_LIGHT,
     PIN_MATERIAL,
-    PIN_OBJECT,
+    PIN_PRIMITIVE,
     PIN_SAMPLER,
     PIN_TEXTURE,
     PIN_TRACER,
