@@ -257,7 +257,7 @@ public:
         Flat,
         Smooth
     };
-    TriangleType triangle_type;
+    TriangleType triangle_type = TriangleType::Flat;
 
     enum InputID
     {

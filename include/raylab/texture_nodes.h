@@ -199,7 +199,7 @@ public:
 
     pt0::Color color;
     float min_val = 0;
-    float max_val = 0;
+    float max_val = 1;
 
     RTTR_ENABLE(Texture)
 
