@@ -90,6 +90,10 @@
 #include <raytracing/texture/TextureInstance.h>
 #include <raytracing/texture/Wood.h>
 #include <raytracing/texture/TurbulenceTexture.h>
+#include <raytracing/texture/WrappedTwoColors.h>
+#include <raytracing/texture/WrappedThreeColors.h>
+#include <raytracing/texture/NestedNoisesTexture.h>
+#include <raytracing/texture/WrappedRamp.h>
 #include <raytracing/brdfs/PerfectSpecular.h>
 #include <raytracing/samplers/Jittered.h>
 #include <raytracing/samplers/MultiJittered.h>
@@ -1365,6 +1369,86 @@ Evaluator::CreateTexture(const bp::Node& node)
         if (!conns.empty()) {
             tex->SetNoise(CreateNoise(conns[0]->GetFrom()->GetParent()));
         }
+
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::WrappedTwoColors>())
+    {
+        auto& src_tex = static_cast<const node::WrappedTwoColors&>(node);
+
+        auto tex = std::make_unique<rt::WrappedTwoColors>(
+            src_tex.min_val, src_tex.max_val, src_tex.exp
+        );
+
+        auto& conns = node.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            tex->SetNoise(CreateNoise(conns[0]->GetFrom()->GetParent()));
+        }
+
+        tex->SetColor1(to_rt_color(src_tex.color1));
+        tex->SetColor2(to_rt_color(src_tex.color2));
+
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::WrappedThreeColors>())
+    {
+        auto& src_tex = static_cast<const node::WrappedThreeColors&>(node);
+
+        auto tex = std::make_unique<rt::WrappedThreeColors>(
+            src_tex.min_val, src_tex.max_val, src_tex.exp
+        );
+
+        auto& conns = node.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            tex->SetNoise(CreateNoise(conns[0]->GetFrom()->GetParent()));
+        }
+
+        tex->SetColor1(to_rt_color(src_tex.color1));
+        tex->SetColor2(to_rt_color(src_tex.color2));
+        tex->SetColor3(to_rt_color(src_tex.color3));
+
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::NestedNoisesTexture>())
+    {
+        auto& src_tex = static_cast<const node::NestedNoisesTexture&>(node);
+
+        auto tex = std::make_unique<rt::NestedNoisesTexture>(
+            src_tex.min_val, src_tex.max_val, src_tex.exp,
+            src_tex.wrap_factor, to_rt_color(src_tex.color)
+        );
+
+        auto& noise_conns = node.GetAllInput()[node::NestedNoisesTexture::ID_NOISE]->GetConnecting();
+        if (!noise_conns.empty()) {
+            tex->SetNoise(CreateNoise(noise_conns[0]->GetFrom()->GetParent()));
+        }
+
+        auto& tex_conns = node.GetAllInput()[node::NestedNoisesTexture::ID_TEXTURE]->GetConnecting();
+        if (!tex_conns.empty()) {
+            tex->SetTexture(CreateTexture(tex_conns[0]->GetFrom()->GetParent()));
+        }
+
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::WrappedRamp>())
+    {
+        auto& src_tex = static_cast<const node::WrappedRamp&>(node);
+
+        std::shared_ptr<rt::Image> image = nullptr;
+        if (!src_tex.filepath.empty()) {
+            image = std::make_shared<rt::Image>();
+            image->ReadPPMFile(src_tex.filepath.c_str());
+        }
+        auto tex = std::make_unique<rt::WrappedRamp>(
+            image, src_tex.perturbation, src_tex.wrap_number
+        );
+
+        auto& conns = node.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            tex->SetNoise(CreateNoise(conns[0]->GetFrom()->GetParent()));
+        }
+
+        tex->SetColor(to_rt_color(src_tex.color));
 
         dst_tex = std::move(tex);
     }

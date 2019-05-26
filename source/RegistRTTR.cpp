@@ -1252,6 +1252,116 @@ rttr::registration::class_<raylab::node::TurbulenceTexture>("raylab::TurbulenceT
     )
 ;
 
+rttr::registration::class_<raylab::node::WrappedTwoColors>("raylab::WrappedTwoColors")
+    .constructor<>()
+    .property("min_val", &raylab::node::WrappedTwoColors::min_val)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Min Value"))
+    )
+    .property("max_val", &raylab::node::WrappedTwoColors::max_val)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Max Value"))
+    )
+    .property("exp", &raylab::node::WrappedTwoColors::exp)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Exp"))
+    )
+    .property("color1", &raylab::node::WrappedTwoColors::color1)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color1"))
+    )
+    .property("color2", &raylab::node::WrappedTwoColors::color2)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color2"))
+    )
+;
+
+rttr::registration::class_<raylab::node::WrappedThreeColors>("raylab::WrappedThreeColors")
+    .constructor<>()
+    .property("min_val", &raylab::node::WrappedThreeColors::min_val)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Min Value"))
+    )
+    .property("max_val", &raylab::node::WrappedThreeColors::max_val)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Max Value"))
+    )
+    .property("exp", &raylab::node::WrappedThreeColors::exp)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Exp"))
+    )
+    .property("color1", &raylab::node::WrappedThreeColors::color1)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color1"))
+    )
+    .property("color2", &raylab::node::WrappedThreeColors::color2)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color2"))
+    )
+    .property("color3", &raylab::node::WrappedThreeColors::color3)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color3"))
+    )
+;
+
+rttr::registration::class_<raylab::node::NestedNoisesTexture>("raylab::NestedNoisesTexture")
+    .constructor<>()
+    .property("min_val", &raylab::node::NestedNoisesTexture::min_val)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Min Value"))
+    )
+    .property("max_val", &raylab::node::NestedNoisesTexture::max_val)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Max Value"))
+    )
+    .property("exp", &raylab::node::NestedNoisesTexture::exp)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Exp"))
+    )
+    .property("wrap_factor", &raylab::node::NestedNoisesTexture::wrap_factor)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Wrap Factor"))
+    )
+    .property("color", &raylab::node::NestedNoisesTexture::color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color"))
+    )
+;
+
+rttr::registration::class_<raylab::node::WrappedRamp>("raylab::WrappedRamp")
+    .constructor<>()
+    .property("min_val", &raylab::node::WrappedRamp::min_val)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Min Value"))
+    )
+    .property("max_val", &raylab::node::WrappedRamp::max_val)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Max Value"))
+    )
+    .property("exp", &raylab::node::WrappedRamp::exp)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Exp"))
+    )
+    .property("color", &raylab::node::WrappedRamp::color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color"))
+    )
+    .property("perturbation", &raylab::node::WrappedRamp::perturbation)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Perturbation"))
+    )
+    .property("wrap_number", &raylab::node::WrappedRamp::wrap_number)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Wrap Number"))
+    )
+    .property("filepath", &raylab::node::WrappedRamp::filepath)
+    (
+        rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Filepath")),
+        rttr::metadata(js::RTTR::FilePathTag(), true),
+        rttr::metadata(ee0::PropOpenFileTag(), ee0::PropOpenFile("*.ppm"))
+    )
+;
+
 // brdf
 
 rttr::registration::class_<raylab::node::PerfectSpecular>("raylab::PerfectSpecular")

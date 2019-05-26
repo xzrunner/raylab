@@ -205,5 +205,110 @@ public:
 
 }; // TurbulenceTexture
 
+class WrappedTwoColors : public Texture
+{
+public:
+    WrappedTwoColors()
+        : Texture("WrappedTwoColors")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_NOISE, "Noise", *this));
+
+        Layout();
+    }
+
+    float min_val = 0;
+    float max_val = 1;
+
+    float exp = 0;
+
+    pt0::Color color1;
+    pt0::Color color2;
+
+    RTTR_ENABLE(Texture)
+
+}; // WrappedTwoColors
+
+class WrappedThreeColors : public Texture
+{
+public:
+    WrappedThreeColors()
+        : Texture("WrappedThreeColors")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_NOISE, "Noise", *this));
+
+        Layout();
+    }
+
+    float min_val = 0;
+    float max_val = 1;
+
+    float exp = 0;
+
+    pt0::Color color1;
+    pt0::Color color2;
+    pt0::Color color3;
+
+    RTTR_ENABLE(Texture)
+
+}; // WrappedThreeColors
+
+class NestedNoisesTexture : public Texture
+{
+public:
+    NestedNoisesTexture()
+        : Texture("NestedNoisesTexture")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, ID_NOISE,   PIN_NOISE,   "Noise",   *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_TEXTURE, PIN_TEXTURE, "Texture", *this));
+
+        Layout();
+    }
+
+    float min_val = 0;
+    float max_val = 1;
+
+    float exp = 0;
+    float wrap_factor = 0;
+
+    pt0::Color color;
+
+    enum InputID
+    {
+        ID_NOISE = 0,
+        ID_TEXTURE,
+    };
+
+    RTTR_ENABLE(Texture)
+
+}; // NestedNoisesTexture
+
+class WrappedRamp : public Texture
+{
+public:
+    WrappedRamp()
+        : Texture("WrappedRamp")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_NOISE, "Noise", *this));
+
+        Layout();
+    }
+
+    float min_val = 0;
+    float max_val = 1;
+
+    float exp = 0;
+
+    pt0::Color color;
+
+    float perturbation = 0;
+    float wrap_number  = 0;
+    int   hres         = 0;
+
+    std::string filepath;
+
+    RTTR_ENABLE(Texture)
+
+}; // WrappedRamp
+
 }
 }
