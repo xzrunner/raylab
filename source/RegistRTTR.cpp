@@ -272,6 +272,14 @@ rttr::registration::class_<raylab::node::GlobalTrace>("raylab::GlobalTrace")
 
 // Object
 
+rttr::registration::class_<raylab::node::Object>("raylab::Object")
+    .constructor<const std::string&>()
+    .property("shadows", &raylab::node::Object::shadows)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Shadows"))
+    )
+;
+
 rttr::registration::class_<raylab::node::Box>("raylab::Box")
     .constructor<>()
     .property("min", &raylab::node::Box::min)

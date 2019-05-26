@@ -24,6 +24,8 @@ public:
         Layout();
     }
 
+    bool shadows = true;
+
     RTTR_ENABLE(Node)
 
 }; // Object

@@ -837,6 +837,8 @@ Evaluator::CreateObject(const bp::Node& node)
         assert(0);
     }
 
+    dst_object->SetShadows(static_cast<const node::Object&>(node).shadows);
+
     // material
 //    if (node.get_type() != rttr::type::get<node::Grid>())
     {
