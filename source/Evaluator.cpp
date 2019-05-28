@@ -94,6 +94,7 @@
 #include <raytracing/texture/WrappedThreeColors.h>
 #include <raytracing/texture/NestedNoisesTexture.h>
 #include <raytracing/texture/WrappedRamp.h>
+#include <raytracing/texture/SphereTextures.h>
 #include <raytracing/bxdf/PerfectSpecular.h>
 #include <raytracing/sampler/Jittered.h>
 #include <raytracing/sampler/MultiJittered.h>
@@ -1453,6 +1454,26 @@ Evaluator::CreateTexture(const bp::Node& node)
         }
 
         tex->SetColor(to_rt_color(src_tex.color));
+
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::SphereTextures>())
+    {
+        auto& src_tex = static_cast<const node::SphereTextures&>(node);
+        auto tex = std::make_unique<rt::SphereTextures>();
+
+        tex->SetNumHorizontalCheckers(src_tex.num_hori_checkers);
+        tex->SetNumVerticalCheckers(src_tex.num_vert_checkers);
+
+        auto& tex1_conns = node.GetAllInput()[node::SphereTextures::ID_TEXTURE1]->GetConnecting();
+        if (!tex1_conns.empty()) {
+            tex->SetTexture1(CreateTexture(tex1_conns[0]->GetFrom()->GetParent()));
+        }
+
+        auto& tex2_conns = node.GetAllInput()[node::SphereTextures::ID_TEXTURE2]->GetConnecting();
+        if (!tex2_conns.empty()) {
+            tex->SetTexture2(CreateTexture(tex2_conns[0]->GetFrom()->GetParent()));
+        }
 
         dst_tex = std::move(tex);
     }

@@ -310,5 +310,30 @@ public:
 
 }; // WrappedRamp
 
+class SphereTextures : public Texture
+{
+public:
+    SphereTextures()
+        : Texture("SphereTextures")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, ID_TEXTURE1, PIN_TEXTURE, "Tex1", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_TEXTURE2, PIN_TEXTURE, "Tex2", *this));
+
+        Layout();
+    }
+
+    int num_hori_checkers = 12;
+    int num_vert_checkers = 6;
+
+    enum InputID
+    {
+        ID_TEXTURE1 = 0,
+        ID_TEXTURE2,
+    };
+
+    RTTR_ENABLE(Texture)
+
+}; // SphereTextures
+
 }
 }

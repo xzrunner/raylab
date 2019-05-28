@@ -1374,6 +1374,18 @@ rttr::registration::class_<raylab::node::WrappedRamp>("raylab::WrappedRamp")
     )
 ;
 
+rttr::registration::class_<raylab::node::SphereTextures>("raylab::SphereTextures")
+    .constructor<>()
+    .property("num_hori_checkers", &raylab::node::SphereTextures::num_hori_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Num Hori Checkers"))
+    )
+    .property("num_vert_checkers", &raylab::node::SphereTextures::num_vert_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Num Vert Checkers"))
+    )
+;
+
 // brdf
 
 rttr::registration::class_<raylab::node::PerfectSpecular>("raylab::PerfectSpecular")
