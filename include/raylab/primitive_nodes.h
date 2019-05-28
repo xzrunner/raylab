@@ -144,6 +144,8 @@ public:
     sm::vec3 rotate;
     sm::vec3 translate;
 
+    bool transform_tex = true;
+
     enum InputID
     {
         ID_OBJECT = 1,

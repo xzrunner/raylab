@@ -386,6 +386,10 @@ rttr::registration::class_<raylab::node::Instance>("raylab::Instance")
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Translate"))
     )
+    .property("transform_tex", &raylab::node::Instance::transform_tex)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Transform Texture"))
+    )
 ;
 
 rttr::registration::class_<raylab::node::Disk>("raylab::Disk")

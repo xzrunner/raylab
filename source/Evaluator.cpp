@@ -556,6 +556,8 @@ Evaluator::CreateObject(const bp::Node& node)
             object->Translate(to_rt_v3d(src_object.translate));
         }
 
+        object->SetTransformTexture(src_object.transform_tex);
+
         dst_object = std::move(object);
     }
     else if (object_type == rttr::type::get<node::Disk>())
