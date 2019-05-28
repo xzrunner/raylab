@@ -116,10 +116,10 @@ public:
 
 }; // WireframeBox
 
-class Instance : public GeoPrimitive
+class GeoInstance : public GeoPrimitive
 {
 public:
-    Instance() : GeoPrimitive("Instance")
+    GeoInstance() : GeoPrimitive("GeoInstance")
     {
         AddPin(std::make_shared<bp::Pin>(true, 1, PIN_PRIMITIVE, "Primitive", *this));
         Layout();
@@ -153,7 +153,7 @@ public:
 
     RTTR_ENABLE(GeoPrimitive)
 
-}; // Instance
+}; // GeoInstance
 
 class Disk : public GeoPrimitive
 {

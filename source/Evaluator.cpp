@@ -43,7 +43,7 @@
 #include <raytracing/primitive/Rectangle.h>
 #include <raytracing/primitive/Triangle.h>
 #include <raytracing/primitive/WireframeBox.h>
-#include <raytracing/primitive/Instance.h>
+#include <raytracing/primitive/GeoInstance.h>
 #include <raytracing/primitive/Disk.h>
 #include <raytracing/primitive/SolidCylinder.h>
 #include <raytracing/primitive/ConvexPartCylinder.h>
@@ -502,25 +502,25 @@ Evaluator::CreateObject(const bp::Node& node)
 
         dst_object = std::move(object);
     }
-    else if (object_type == rttr::type::get<node::Instance>())
+    else if (object_type == rttr::type::get<node::GeoInstance>())
     {
-        auto& src_object = static_cast<const node::Instance&>(node);
+        auto& src_object = static_cast<const node::GeoInstance&>(node);
 
-        std::unique_ptr<rt::Instance> object = nullptr;
-        auto& conns = node.GetAllInput()[node::Instance::ID_OBJECT]->GetConnecting();
+        std::unique_ptr<rt::GeoInstance> object = nullptr;
+        auto& conns = node.GetAllInput()[node::GeoInstance::ID_OBJECT]->GetConnecting();
         if (conns.empty()) {
-            object = std::make_unique<rt::Instance>();
+            object = std::make_unique<rt::GeoInstance>();
         } else {
-            object = std::make_unique<rt::Instance>(CreateObject(conns[0]->GetFrom()->GetParent()));
+            object = std::make_unique<rt::GeoInstance>(CreateObject(conns[0]->GetFrom()->GetParent()));
         }
         //for (auto& op : src_object.ops)
         //{
         //    switch (op.type)
         //    {
-        //    case node::Instance::OpType::Scale:
+        //    case node::GeoInstance::OpType::Scale:
         //        object->Scale(to_rt_v3d(op.val));
         //        break;
-        //    case node::Instance::OpType::Rotate:
+        //    case node::GeoInstance::OpType::Rotate:
         //        if (op.val.x != 0) {
         //            object->RotateX(op.val.x);
         //        }
@@ -531,7 +531,7 @@ Evaluator::CreateObject(const bp::Node& node)
         //            object->RotateZ(op.val.z);
         //        }
         //        break;
-        //    case node::Instance::OpType::Translate:
+        //    case node::GeoInstance::OpType::Translate:
         //        object->Translate(to_rt_v3d(op.val));
         //        break;
         //    }

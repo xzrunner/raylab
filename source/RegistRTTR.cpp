@@ -372,21 +372,21 @@ rttr::registration::class_<raylab::node::WireframeBox>("raylab::WireframeBox")
     )
 ;
 
-rttr::registration::class_<raylab::node::Instance>("raylab::Instance")
+rttr::registration::class_<raylab::node::GeoInstance>("raylab::GeoInstance")
     .constructor<>()
-    .property("scale", &raylab::node::Instance::scale)
+    .property("scale", &raylab::node::GeoInstance::scale)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Scale"))
     )
-    .property("rotate", &raylab::node::Instance::rotate)
+    .property("rotate", &raylab::node::GeoInstance::rotate)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Rotate"))
     )
-    .property("translate", &raylab::node::Instance::translate)
+    .property("translate", &raylab::node::GeoInstance::translate)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Translate"))
     )
-    .property("transform_tex", &raylab::node::Instance::transform_tex)
+    .property("transform_tex", &raylab::node::GeoInstance::transform_tex)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Transform Texture"))
     )
