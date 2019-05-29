@@ -264,6 +264,8 @@ void Evaluator::Build(rt::World& dst, const node::World& src)
     {
         dst.SetAmbient(std::make_unique<rt::Ambient>());
     }
+
+    dst.SetBackgroundColor(to_rt_color(src.background_color));
 }
 
 std::unique_ptr<rt::Light>

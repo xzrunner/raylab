@@ -28,6 +28,8 @@ public:
         Layout();
     }
 
+    pt0::Color background_color = pt0::Color(0, 0, 0);
+
     enum InputID
     {
         ID_LIGHT = 0,

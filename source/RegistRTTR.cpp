@@ -21,6 +21,10 @@ RTTR_REGISTRATION
 
 rttr::registration::class_<raylab::node::World>("raylab::World")
     .constructor<>()
+    .property("background_color", &raylab::node::World::background_color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Background Color"))
+    )
 ;
 
 rttr::registration::class_<raylab::node::Output>("raylab::Output")
