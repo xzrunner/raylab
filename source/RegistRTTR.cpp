@@ -864,6 +864,54 @@ rttr::registration::class_<raylab::node::CutCube>("raylab::CutCube")
     )
 ;
 
+rttr::registration::class_<raylab::node::ConcaveLens>("raylab::ConcaveLens")
+    .constructor<>()
+    .property("radius", &raylab::node::ConcaveLens::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+    .property("thickness", &raylab::node::ConcaveLens::thickness)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Thickness"))
+    )
+    .property("min_distance", &raylab::node::ConcaveLens::min_distance)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Min Distance"))
+    )
+;
+
+rttr::registration::class_<raylab::node::ProductJar>("raylab::ProductJar")
+    .constructor<>()
+    .property("bottom", &raylab::node::ProductJar::bottom)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bottom"))
+    )
+    .property("body_top", &raylab::node::ProductJar::body_top)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Body Top"))
+    )
+    .property("cap_top", &raylab::node::ProductJar::cap_top)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Cap Top"))
+    )
+    .property("body_radius", &raylab::node::ProductJar::body_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Body Radius"))
+    )
+    .property("bottom_bevel_radius", &raylab::node::ProductJar::bottom_bevel_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bottom Bevel Radius"))
+    )
+    .property("top_bevel_radius", &raylab::node::ProductJar::top_bevel_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Top Bevel Radius"))
+    )
+    .property("cap_bevel_radius", &raylab::node::ProductJar::cap_bevel_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Cap Bevel Radius"))
+    )
+;
+
 // Material
 
 rttr::registration::class_<raylab::node::Matte>("raylab::Matte")
@@ -1222,6 +1270,18 @@ rttr::registration::class_<raylab::node::RampFBmTexture>("raylab::RampFBmTexture
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Fbm Amount"))
     )
+    .property("perturbation", &raylab::node::RampFBmTexture::perturbation)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Perturbation"))
+    )
+    .property("lacunarity", &raylab::node::RampFBmTexture::lacunarity)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Lacunarity"))
+    )
+    .property("gain", &raylab::node::RampFBmTexture::gain)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Gain"))
+    )
 ;
 
 rttr::registration::class_<raylab::node::TextureInstance>("raylab::TextureInstance")
@@ -1387,6 +1447,22 @@ rttr::registration::class_<raylab::node::SphereTextures>("raylab::SphereTextures
     .property("num_vert_checkers", &raylab::node::SphereTextures::num_vert_checkers)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Num Vert Checkers"))
+    )
+;
+
+rttr::registration::class_<raylab::node::FBmTexture>("raylab::FBmTexture")
+    .constructor<>()
+    .property("color", &raylab::node::FBmTexture::color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color"))
+    )
+    .property("min_value", &raylab::node::FBmTexture::min_value)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Min Value"))
+    )
+    .property("max_value", &raylab::node::FBmTexture::max_value)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Max Value"))
     )
 ;
 

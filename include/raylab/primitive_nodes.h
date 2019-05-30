@@ -573,5 +573,35 @@ public:
 
 }; // CutCube
 
+class ConcaveLens : public GeoPrimitive
+{
+public:
+    ConcaveLens() : GeoPrimitive("ConcaveLens") {}
+
+    float radius       = 0;
+    float thickness    = 0;
+    float min_distance = 0;
+
+    RTTR_ENABLE(GeoPrimitive)
+
+}; // ConcaveLens
+
+class ProductJar : public GeoPrimitive
+{
+public:
+    ProductJar() : GeoPrimitive("ProductJar") {}
+
+    float bottom              = 0;
+    float body_top            = 0;
+    float cap_top             = 0;
+    float body_radius         = 0;
+    float bottom_bevel_radius = 0;
+    float top_bevel_radius    = 0;
+    float cap_bevel_radius    = 0;
+
+    RTTR_ENABLE(GeoPrimitive)
+
+}; // ProductJar
+
 }
 }

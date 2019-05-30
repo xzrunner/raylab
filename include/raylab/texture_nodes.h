@@ -144,12 +144,22 @@ public:
 class RampFBmTexture : public Texture
 {
 public:
-    RampFBmTexture() : Texture("RampFBmTexture") {}
+    RampFBmTexture()
+        : Texture("RampFBmTexture")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_NOISE, "Noise", *this));
+
+        Layout();
+    }
 
     std::string filepath;
 
     int   num_octaves = 0;
     float fbm_amount  = 0;
+
+    float perturbation = 0;
+    float lacunarity   = 0;
+    float gain         = 0;
 
     RTTR_ENABLE(Texture)
 
@@ -334,6 +344,26 @@ public:
     RTTR_ENABLE(Texture)
 
 }; // SphereTextures
+
+class FBmTexture : public Texture
+{
+public:
+    FBmTexture()
+        : Texture("FBmTexture")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_NOISE, "Noise", *this));
+
+        Layout();
+    }
+
+    pt0::Color color;
+
+    float min_value = 0;
+    float max_value = 0;
+
+    RTTR_ENABLE(Texture)
+
+}; // FBmTexture
 
 }
 }

@@ -67,6 +67,8 @@
 #include <raytracing/primitive/FishBowl.h>
 #include <raytracing/primitive/GlassOfWater.h>
 #include <raytracing/primitive/CutCube.h>
+#include <raytracing/primitive/ConcaveLens.h>
+#include <raytracing/primitive/ProductJar.h>
 #include <raytracing/material/Matte.h>
 #include <raytracing/material/SV_Matte.h>
 #include <raytracing/material/Emissive.h>
@@ -95,6 +97,7 @@
 #include <raytracing/texture/NestedNoisesTexture.h>
 #include <raytracing/texture/WrappedRamp.h>
 #include <raytracing/texture/SphereTextures.h>
+#include <raytracing/texture/FBmTexture.h>
 #include <raytracing/bxdf/PerfectSpecular.h>
 #include <raytracing/sampler/Jittered.h>
 #include <raytracing/sampler/MultiJittered.h>
@@ -837,6 +840,23 @@ Evaluator::CreateObject(const bp::Node& node)
         );
         dst_object = std::move(object);
     }
+    else if (object_type == rttr::type::get<node::ConcaveLens>())
+    {
+        auto& src_object = static_cast<const node::ConcaveLens&>(node);
+        auto object = std::make_unique<rt::ConcaveLens>(
+            src_object.radius, src_object.thickness, src_object.min_distance
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::ProductJar>())
+    {
+        auto& src_object = static_cast<const node::ProductJar&>(node);
+        auto object = std::make_unique<rt::ProductJar>(
+            src_object.bottom, src_object.body_top, src_object.cap_top, src_object.body_radius,
+            src_object.bottom_bevel_radius, src_object.top_bevel_radius, src_object.cap_bevel_radius
+        );
+        dst_object = std::move(object);
+    }
     else
     {
         assert(0);
@@ -1323,6 +1343,15 @@ Evaluator::CreateTexture(const bp::Node& node)
             image, src_tex.num_octaves, src_tex.fbm_amount
         );
 
+        tex->SetPerturbation(src_tex.perturbation);
+        tex->SetLacunarity(src_tex.lacunarity);
+        tex->SetGain(src_tex.gain);
+
+        auto& conns = node.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            tex->SetNoise(CreateNoise(conns[0]->GetFrom()->GetParent()));
+        }
+
         dst_tex = std::move(tex);
     }
     else if (tex_type == rttr::type::get<node::TextureInstance>())
@@ -1476,6 +1505,23 @@ Evaluator::CreateTexture(const bp::Node& node)
         if (!tex2_conns.empty()) {
             tex->SetTexture2(CreateTexture(tex2_conns[0]->GetFrom()->GetParent()));
         }
+
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::FBmTexture>())
+    {
+        std::shared_ptr<rt::LatticeNoise> noise = nullptr;
+        auto& conns = node.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            noise = CreateNoise(conns[0]->GetFrom()->GetParent());
+        }
+
+        auto& src_tex = static_cast<const node::FBmTexture&>(node);
+        auto tex = std::make_unique<rt::FBmTexture>(noise);
+
+        tex->SetColor(to_rt_color(src_tex.color));
+        tex->SetMinValue(src_tex.min_value);
+        tex->SetMaxValue(src_tex.max_value);
 
         dst_tex = std::move(tex);
     }
