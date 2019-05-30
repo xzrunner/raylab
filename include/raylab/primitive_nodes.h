@@ -175,8 +175,6 @@ public:
     sm::vec3 normal = sm::vec3(0, 0, 1);
     float    radius = 1.0;
 
-    bool shadows = false;
-
     RTTR_ENABLE(GeoPrimitive)
 
 }; // Disk
@@ -279,8 +277,6 @@ public:
 
     sm::vec3 center;
     float    radius = 1.0f;
-
-    bool shadows = false;
 
     RTTR_ENABLE(GeoPrimitive)
 

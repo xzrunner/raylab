@@ -410,10 +410,6 @@ rttr::registration::class_<raylab::node::Disk>("raylab::Disk")
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
     )
-    .property("shadows", &raylab::node::Disk::shadows)
-    (
-	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Shadows"))
-    )
 ;
 
 rttr::registration::class_<raylab::node::SolidCylinder>("raylab::SolidCylinder")
@@ -517,10 +513,6 @@ rttr::registration::class_<raylab::node::ConcaveSphere>("raylab::ConcaveSphere")
     .property("radius", &raylab::node::ConcaveSphere::radius)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
-    )
-    .property("shadows", &raylab::node::ConcaveSphere::shadows)
-    (
-	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Shadows"))
     )
 ;
 

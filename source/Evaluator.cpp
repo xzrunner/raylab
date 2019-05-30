@@ -679,11 +679,9 @@ Evaluator::CreateObject(const bp::Node& node)
     else if (object_type == rttr::type::get<node::ConcaveSphere>())
     {
         auto& src_object = static_cast<const node::ConcaveSphere&>(node);
-
-        auto center = to_rt_p3d(src_object.center);
-        auto object = std::make_unique<rt::ConcaveSphere>(center, src_object.radius);
-        object->SetShadows(src_object.shadows);
-
+        auto object = std::make_unique<rt::ConcaveSphere>(
+            to_rt_p3d(src_object.center), src_object.radius
+        );
         dst_object = std::move(object);
     }
     else if (object_type == rttr::type::get<node::Torus>())
