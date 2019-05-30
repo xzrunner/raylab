@@ -819,6 +819,22 @@ Evaluator::CreateObject(const bp::Node& node)
             src_object.inner_radius, src_object.glass_thickness, src_object.water_depth,
             src_object.meniscus_radius, src_object.opening_angle
         );
+
+        auto& conns_ga = node.GetAllInput()[node::FishBowl::ID_GLASS_AIR_MATERIAL]->GetConnecting();
+        if (!conns_ga.empty()) {
+            object->SetGlassAirMaterial(CreateMaterial(conns_ga[0]->GetFrom()->GetParent()));
+        }
+
+        auto& conns_wa = node.GetAllInput()[node::FishBowl::ID_WATER_AIR_MATERIAL]->GetConnecting();
+        if (!conns_wa.empty()) {
+            object->SetWaterAirMaterial(CreateMaterial(conns_wa[0]->GetFrom()->GetParent()));
+        }
+
+        auto& conns_wg = node.GetAllInput()[node::FishBowl::ID_WATER_GLASS_MATERIAL]->GetConnecting();
+        if (!conns_wg.empty()) {
+            object->SetWaterGlassMaterial(CreateMaterial(conns_wg[0]->GetFrom()->GetParent()));
+        }
+
         dst_object = std::move(object);
     }
     else if (object_type == rttr::type::get<node::GlassOfWater>())
@@ -828,6 +844,22 @@ Evaluator::CreateObject(const bp::Node& node)
             src_object.height, src_object.inner_radius, src_object.wall_thickness,
             src_object.base_thickness, src_object.water_height, src_object.meniscus_radius
         );
+
+        auto& conns_ga = node.GetAllInput()[node::GlassOfWater::ID_GLASS_AIR_MATERIAL]->GetConnecting();
+        if (!conns_ga.empty()) {
+            object->SetGlassAirMaterial(CreateMaterial(conns_ga[0]->GetFrom()->GetParent()));
+        }
+
+        auto& conns_wa = node.GetAllInput()[node::GlassOfWater::ID_WATER_AIR_MATERIAL]->GetConnecting();
+        if (!conns_wa.empty()) {
+            object->SetWaterAirMaterial(CreateMaterial(conns_wa[0]->GetFrom()->GetParent()));
+        }
+
+        auto& conns_wg = node.GetAllInput()[node::GlassOfWater::ID_WATER_GLASS_MATERIAL]->GetConnecting();
+        if (!conns_wg.empty()) {
+            object->SetWaterGlassMaterial(CreateMaterial(conns_wg[0]->GetFrom()->GetParent()));
+        }
+
         dst_object = std::move(object);
     }
     else if (object_type == rttr::type::get<node::CutCube>())
