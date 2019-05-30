@@ -154,12 +154,11 @@ public:
 
     std::string filepath;
 
-    int   num_octaves = 0;
+    int   num_octaves = 1;
     float fbm_amount  = 0;
 
-    float perturbation = 0;
-    float lacunarity   = 0;
-    float gain         = 0;
+    float lacunarity  = 2;
+    float gain        = 0.5f;
 
     RTTR_ENABLE(Texture)
 

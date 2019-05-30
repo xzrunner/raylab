@@ -1262,10 +1262,6 @@ rttr::registration::class_<raylab::node::RampFBmTexture>("raylab::RampFBmTexture
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Fbm Amount"))
     )
-    .property("perturbation", &raylab::node::RampFBmTexture::perturbation)
-    (
-	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Perturbation"))
-    )
     .property("lacunarity", &raylab::node::RampFBmTexture::lacunarity)
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Lacunarity"))

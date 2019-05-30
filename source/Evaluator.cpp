@@ -1373,7 +1373,6 @@ Evaluator::CreateTexture(const bp::Node& node)
             image, src_tex.num_octaves, src_tex.fbm_amount
         );
 
-        tex->SetPerturbation(src_tex.perturbation);
         tex->SetLacunarity(src_tex.lacunarity);
         tex->SetGain(src_tex.gain);
 
