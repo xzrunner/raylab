@@ -499,7 +499,12 @@ Evaluator::CreateObject(const bp::Node& node)
         auto a    = to_rt_v3d(src_object.a);
         auto b    = to_rt_v3d(src_object.b);
         auto norm = to_rt_normal(src_object.normal);
-        auto object = std::make_unique<rt::Rectangle>(p0, a, b/*, norm*/);
+        std::unique_ptr<rt::Rectangle> object = nullptr;
+        if (norm.x == 0 && norm.x == 0 && norm.y == 0) {
+            object = std::make_unique<rt::Rectangle>(p0, a, b);
+        } else {
+            object = std::make_unique<rt::Rectangle>(p0, a, b, norm);
+        }
 
         auto& conns_sampler = node.GetAllInput()[node::Rectangle::ID_SAMPLER]->GetConnecting();
         if (!conns_sampler.empty()) {
