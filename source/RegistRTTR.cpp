@@ -284,6 +284,10 @@ rttr::registration::class_<raylab::node::GeoPrimitive>("raylab::GeoPrimitive")
     )
 ;
 
+rttr::registration::class_<raylab::node::Compound>("raylab::Compound")
+    .constructor<>()
+;
+
 rttr::registration::class_<raylab::node::Box>("raylab::Box")
     .constructor<>()
     .property("min", &raylab::node::Box::min)

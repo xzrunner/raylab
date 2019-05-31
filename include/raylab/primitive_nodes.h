@@ -30,6 +30,25 @@ public:
 
 }; // GeoPrimitive
 
+class Compound : public GeoPrimitive
+{
+public:
+    Compound()
+        : GeoPrimitive("Compound")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_SAMPLER, "Children", *this));
+        Layout();
+    }
+
+    enum InputID
+    {
+        ID_CHILDREN = 1,
+    };
+
+    RTTR_ENABLE(GeoPrimitive)
+
+}; // Compound
+
 class Box : public GeoPrimitive
 {
 public:

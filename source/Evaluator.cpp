@@ -435,7 +435,32 @@ Evaluator::CreateObject(const bp::Node& node)
     std::unique_ptr<rt::GeoPrimitive> dst_object = nullptr;
 
     auto object_type = node.get_type();
-    if (object_type == rttr::type::get<node::Box>())
+    if (object_type == rttr::type::get<node::Compound>())
+    {
+        auto& src_object = static_cast<const node::Compound&>(node);
+        auto object = std::make_unique<rt::Compound>();
+
+        auto& conns = node.GetAllInput()[node::Compound::ID_CHILDREN]->GetConnecting();
+        if (!conns.empty())
+        {
+            auto& node = conns[0]->GetFrom()->GetParent();
+            if (node.get_type() == rttr::type::get<bp::node::Hub>())
+            {
+                auto& hub = static_cast<const bp::node::Hub&>(node);
+                for (auto& input : hub.GetAllInput()) {
+                    for (auto& conn : input->GetConnecting()) {
+                        auto& from_node = conn->GetFrom()->GetParent();
+                        if (auto obj = CreateObject(from_node)) {
+                            object->AddObject(std::move(obj));
+                        }
+                    }
+                }
+            }
+        }
+
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::Box>())
     {
         auto& src_object = static_cast<const node::Box&>(node);
         auto object = std::make_unique<rt::Box>(
