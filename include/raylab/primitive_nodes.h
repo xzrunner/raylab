@@ -36,7 +36,8 @@ public:
     Compound()
         : GeoPrimitive("Compound")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_SAMPLER, "Children", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_PRIMITIVE, "Children", *this));
+
         Layout();
     }
 
@@ -262,7 +263,7 @@ public:
     Grid()
         : GeoPrimitive("Grid")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 1, bp::PIN_ANY_VAR, "Children", *this));
+        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_PRIMITIVE, "Children", *this));
 
         Layout();
     }
