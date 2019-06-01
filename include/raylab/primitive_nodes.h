@@ -619,5 +619,17 @@ public:
 
 }; // ProductJar
 
+class ConcaveHemisphere : public GeoPrimitive
+{
+public:
+    ConcaveHemisphere() : GeoPrimitive("ConcaveHemisphere") {}
+
+    sm::vec3 center;
+    float radius = 1.0f;
+
+    RTTR_ENABLE(GeoPrimitive)
+
+}; // ConcaveHemisphere
+
 }
 }

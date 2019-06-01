@@ -69,6 +69,8 @@
 #include <raytracing/primitive/CutCube.h>
 #include <raytracing/primitive/ConcaveLens.h>
 #include <raytracing/primitive/ProductJar.h>
+#include <raytracing/primitive/ConcaveHemisphere.h>
+
 #include <raytracing/material/Matte.h>
 #include <raytracing/material/SV_Matte.h>
 #include <raytracing/material/Emissive.h>
@@ -98,6 +100,9 @@
 #include <raytracing/texture/WrappedRamp.h>
 #include <raytracing/texture/SphereTextures.h>
 #include <raytracing/texture/FBmTexture.h>
+#include <raytracing/texture/CylinderChecker.h>
+#include <raytracing/texture/RectangleChecker.h>
+#include <raytracing/texture/DiskChecker.h>
 #include <raytracing/bxdf/PerfectSpecular.h>
 #include <raytracing/sampler/Jittered.h>
 #include <raytracing/sampler/MultiJittered.h>
@@ -107,6 +112,7 @@
 #include <raytracing/mapping/LightProbe.h>
 #include <raytracing/mapping/SquareMap.h>
 #include <raytracing/mapping/CylindricalMap.h>
+#include <raytracing/mapping/HemisphericalMap.h>
 #include <raytracing/noise/LinearNoise.h>
 #include <raytracing/noise/CubicNoise.h>
 
@@ -917,6 +923,14 @@ Evaluator::CreateObject(const bp::Node& node)
         );
         dst_object = std::move(object);
     }
+    else if (object_type == rttr::type::get<node::ConcaveHemisphere>())
+    {
+        auto& src_object = static_cast<const node::ConcaveHemisphere&>(node);
+        auto object = std::make_unique<rt::ConcaveHemisphere>(
+            to_rt_p3d(src_object.center), src_object.radius
+        );
+        dst_object = std::move(object);
+    }
     else
     {
         assert(0);
@@ -1584,6 +1598,61 @@ Evaluator::CreateTexture(const bp::Node& node)
 
         dst_tex = std::move(tex);
     }
+    else if (tex_type == rttr::type::get<node::CylinderChecker>())
+    {
+        auto& src_tex = static_cast<const node::CylinderChecker&>(node);
+        auto tex = std::make_unique<rt::CylinderChecker>();
+
+        tex->SetNumHorizontalCheckers(src_tex.num_horizontal_checkers);
+        tex->SetNumVerticalCheckers(src_tex.num_vertical_checkers);
+        tex->SetHorizontalLineWidth(src_tex.horizontal_line_width);
+        tex->SetVerticalLineWidth(src_tex.vertical_line_width);
+
+        tex->SetColor1(to_rt_color(src_tex.color1));
+        tex->SetColor2(to_rt_color(src_tex.color2));
+        tex->SetLineColor(to_rt_color(src_tex.line_color));
+
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::RectangleChecker>())
+    {
+        auto& src_tex = static_cast<const node::RectangleChecker&>(node);
+        auto tex = std::make_unique<rt::RectangleChecker>();
+
+        tex->SetNumXCheckers(src_tex.num_x_checkers);
+        tex->SetNumZCheckers(src_tex.num_z_checkers);
+        tex->SetXLineWidth(src_tex.x_line_width);
+        tex->SetZLineWidth(src_tex.z_line_width);
+
+        tex->SetP0(to_rt_p3d(src_tex.p0));
+        tex->SetA(to_rt_v3d(src_tex.a));
+        tex->SetB(to_rt_v3d(src_tex.b));
+
+        tex->SetColor1(to_rt_color(src_tex.color1));
+        tex->SetColor2(to_rt_color(src_tex.color2));
+        tex->SetLineColor(to_rt_color(src_tex.line_color));
+
+        dst_tex = std::move(tex);
+    }
+    else if (tex_type == rttr::type::get<node::DiskChecker>())
+    {
+        auto& src_tex = static_cast<const node::DiskChecker&>(node);
+        auto tex = std::make_unique<rt::DiskChecker>();
+
+        tex->SetNumAngularCheckers(src_tex.num_angular_checkers);
+        tex->SetNumRadialCheckers(src_tex.num_radial_checkers);
+        tex->SetAngularLineWidth(src_tex.angular_line_width);
+        tex->SetRadialLineWidth(src_tex.radial_line_width);
+
+        tex->SetRadius(src_tex.radius);
+        tex->SetCenter(to_rt_p3d(src_tex.center));
+
+        tex->SetColor1(to_rt_color(src_tex.color1));
+        tex->SetColor2(to_rt_color(src_tex.color2));
+        tex->SetLineColor(to_rt_color(src_tex.line_color));
+
+        dst_tex = std::move(tex);
+    }
 
     return dst_tex;
 }
@@ -1699,6 +1768,12 @@ Evaluator::CreateMapping(const bp::Node& node)
     {
         auto& src_mapping = static_cast<const node::CylindricalMap&>(node);
         auto mapping = std::make_unique<rt::CylindricalMap>();
+        dst_mapping = std::move(mapping);
+    }
+    else if (mapping_type == rttr::type::get<node::HemisphericalMap>())
+    {
+        auto& src_mapping = static_cast<const node::HemisphericalMap&>(node);
+        auto mapping = std::make_unique<rt::HemisphericalMap>();
         dst_mapping = std::move(mapping);
     }
 

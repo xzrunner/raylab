@@ -364,5 +364,71 @@ public:
 
 }; // FBmTexture
 
+class CylinderChecker : public Texture
+{
+public:
+    CylinderChecker() : Texture("CylinderChecker") {}
+
+    int	     num_horizontal_checkers = 20;	           // number of checkers in the horizontal (azithum) direction
+    int	     num_vertical_checkers   = 10;		       // number of checkers in the vertical (polar) direction
+    float    horizontal_line_width   = 0.0f;		   // width of the horizontal lines as a fraction of the checker width
+    float    vertical_line_width     = 0.0f;		   // width of the vertical lines as a fraction of the checker width
+
+    pt0::Color color1     = pt0::Color(1.0f, 1.0f, 1.0f);   // checker color 1
+    pt0::Color color2     = pt0::Color(0.5f, 0.5f, 0.5f);   // checker color 2
+    pt0::Color line_color = pt0::Color(0, 0, 0);            // the line color
+
+    RTTR_ENABLE(Texture)
+
+}; // CylinderChecker
+
+class RectangleChecker : public Texture
+{
+public:
+    RectangleChecker() : Texture("RectangleChecker") {}
+
+    int	  num_horizontal_checkers = 20;	           // number of checkers in the horizontal (azithum) direction
+    int	  num_vertical_checkers   = 10;		       // number of checkers in the vertical (polar) direction
+    float horizontal_line_width   = 0.0f;		   // width of the horizontal lines as a fraction of the checker width
+    float vertical_line_width     = 0.0f;		   // width of the vertical lines as a fraction of the checker width
+
+	int   num_x_checkers = 20;
+	int   num_z_checkers = 20;
+	float x_line_width   = 0;
+	float z_line_width   = 0;
+
+	sm::vec3 p0 = sm::vec3(-1, 0, -1);
+    sm::vec3 a  = sm::vec3(0, 0, 2);
+    sm::vec3 b  = sm::vec3(2, 0, 0);
+
+    pt0::Color color1     = pt0::Color(1.0f, 1.0f, 1.0f);   // checker color 1
+    pt0::Color color2     = pt0::Color(0.5f, 0.5f, 0.5f);   // checker color 2
+    pt0::Color line_color = pt0::Color(0, 0, 0);            // the line color
+
+    RTTR_ENABLE(Texture)
+
+}; // RectangleChecker
+
+class DiskChecker : public Texture
+{
+public:
+    DiskChecker() : Texture("DiskChecker") {}
+
+	int   num_angular_checkers = 10;
+	int   num_radial_checkers  = 20;
+	float angular_line_width   = 0;
+	float radial_line_width    = 0;
+
+	float    radius = 1.0f;
+	sm::vec3 center = sm::vec3(0, 0, 0);
+
+    pt0::Color color1     = pt0::Color(1.0f, 1.0f, 1.0f);   // checker color 1
+    pt0::Color color2     = pt0::Color(0.5f, 0.5f, 0.5f);   // checker color 2
+    pt0::Color line_color = pt0::Color(0, 0, 0);            // the line color
+
+    RTTR_ENABLE(Texture)
+
+}; // DiskChecker
+
 }
 }

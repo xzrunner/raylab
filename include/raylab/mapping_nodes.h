@@ -66,5 +66,14 @@ public:
 
 }; // CylindricalMap
 
+class HemisphericalMap : public Mapping
+{
+public:
+    HemisphericalMap() : Mapping("HemisphericalMap") {}
+
+    RTTR_ENABLE(Mapping)
+
+}; // HemisphericalMap
+
 }
 }

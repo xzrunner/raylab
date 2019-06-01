@@ -908,6 +908,18 @@ rttr::registration::class_<raylab::node::ProductJar>("raylab::ProductJar")
     )
 ;
 
+rttr::registration::class_<raylab::node::ConcaveHemisphere>("raylab::ConcaveHemisphere")
+    .constructor<>()
+    .property("center", &raylab::node::ConcaveHemisphere::center)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Center"))
+    )
+    .property("radius", &raylab::node::ConcaveHemisphere::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+;
+
 // Material
 
 rttr::registration::class_<raylab::node::Matte>("raylab::Matte")
@@ -1458,6 +1470,122 @@ rttr::registration::class_<raylab::node::FBmTexture>("raylab::FBmTexture")
     )
 ;
 
+rttr::registration::class_<raylab::node::CylinderChecker>("raylab::CylinderChecker")
+    .constructor<>()
+    .property("num_horizontal_checkers", &raylab::node::CylinderChecker::num_horizontal_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("NumHorizontalCheckers"))
+    )
+    .property("num_vertical_checkers", &raylab::node::CylinderChecker::num_vertical_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("NumVerticalCheckers"))
+    )
+    .property("horizontal_line_width", &raylab::node::CylinderChecker::horizontal_line_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("HorizontalLineWidth"))
+    )
+    .property("vertical_line_width", &raylab::node::CylinderChecker::vertical_line_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("VerticalLineWidth"))
+    )
+    .property("color1", &raylab::node::CylinderChecker::color1)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color1"))
+    )
+    .property("color2", &raylab::node::CylinderChecker::color2)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color2"))
+    )
+    .property("line_color", &raylab::node::CylinderChecker::line_color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("LineColor"))
+    )
+;
+
+rttr::registration::class_<raylab::node::RectangleChecker>("raylab::RectangleChecker")
+    .constructor<>()
+    .property("num_x_checkers", &raylab::node::RectangleChecker::num_x_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Num X Checkers"))
+    )
+    .property("num_z_checkers", &raylab::node::RectangleChecker::num_z_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Num Z Checkers"))
+    )
+    .property("x_line_width", &raylab::node::RectangleChecker::x_line_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("X Line Width"))
+    )
+    .property("z_line_width", &raylab::node::RectangleChecker::z_line_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Z Line Width"))
+    )
+    .property("p0", &raylab::node::RectangleChecker::p0)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("P0"))
+    )
+    .property("a", &raylab::node::RectangleChecker::a)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("A"))
+    )
+    .property("b", &raylab::node::RectangleChecker::b)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("B"))
+    )
+    .property("color1", &raylab::node::RectangleChecker::color1)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color1"))
+    )
+    .property("color2", &raylab::node::RectangleChecker::color2)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color2"))
+    )
+    .property("line_color", &raylab::node::RectangleChecker::line_color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("LineColor"))
+    )
+;
+
+rttr::registration::class_<raylab::node::DiskChecker>("raylab::DiskChecker")
+    .constructor<>()
+    .property("num_angular_checkers", &raylab::node::DiskChecker::num_angular_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("NumAngularCheckers"))
+    )
+    .property("num_radial_checkers", &raylab::node::DiskChecker::num_radial_checkers)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("NumRadialCheckers"))
+    )
+    .property("angular_line_width", &raylab::node::DiskChecker::angular_line_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("AngularLineWidth"))
+    )
+    .property("radial_line_width", &raylab::node::DiskChecker::radial_line_width)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("RadialLineWidth"))
+    )
+    .property("radius", &raylab::node::DiskChecker::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+    .property("center", &raylab::node::DiskChecker::center)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Center"))
+    )
+    .property("color1", &raylab::node::DiskChecker::color1)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color1"))
+    )
+    .property("color2", &raylab::node::DiskChecker::color2)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Color2"))
+    )
+    .property("line_color", &raylab::node::DiskChecker::line_color)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("LineColor"))
+    )
+;
+
 // brdf
 
 rttr::registration::class_<raylab::node::PerfectSpecular>("raylab::PerfectSpecular")
@@ -1523,6 +1651,10 @@ rttr::registration::class_<raylab::node::SquareMap>("raylab::SquareMap")
 ;
 
 rttr::registration::class_<raylab::node::CylindricalMap>("raylab::CylindricalMap")
+    .constructor<>()
+;
+
+rttr::registration::class_<raylab::node::HemisphericalMap>("raylab::HemisphericalMap")
     .constructor<>()
 ;
 
