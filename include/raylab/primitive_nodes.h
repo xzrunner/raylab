@@ -192,7 +192,7 @@ public:
     };
 
     sm::vec3 center;
-    sm::vec3 normal = sm::vec3(0, 0, 1);
+    sm::vec3 normal = sm::vec3(0, 1, 0);
     float    radius = 1.0;
 
     RTTR_ENABLE(GeoPrimitive)
@@ -320,7 +320,7 @@ public:
     OpenCone() : GeoPrimitive("OpenCone") {}
 
     float height = 2.0f;
-    float radius = 1.5f;
+    float radius = 1.0f;
 
     RTTR_ENABLE(GeoPrimitive)
 
