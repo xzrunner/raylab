@@ -605,7 +605,13 @@ public:
 class ProductJar : public GeoPrimitive
 {
 public:
-    ProductJar() : GeoPrimitive("ProductJar") {}
+    ProductJar()
+        : GeoPrimitive("ProductJar")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, ID_BODY_MATERIAL, PIN_MATERIAL, "Body Material", *this));
+
+        Layout();
+    }
 
     float bottom              = 0;
     float body_top            = 0;
@@ -614,6 +620,11 @@ public:
     float bottom_bevel_radius = 0;
     float top_bevel_radius    = 0;
     float cap_bevel_radius    = 0;
+
+    enum InputID
+    {
+        ID_BODY_MATERIAL = 1,
+    };
 
     RTTR_ENABLE(GeoPrimitive)
 

@@ -921,6 +921,12 @@ Evaluator::CreateObject(const bp::Node& node)
             src_object.bottom, src_object.body_top, src_object.cap_top, src_object.body_radius,
             src_object.bottom_bevel_radius, src_object.top_bevel_radius, src_object.cap_bevel_radius
         );
+
+        auto& conns = node.GetAllInput()[node::ProductJar::ID_BODY_MATERIAL]->GetConnecting();
+        if (!conns.empty()) {
+            object->SetBodyMaterial(CreateMaterial(conns[0]->GetFrom()->GetParent()));
+        }
+
         dst_object = std::move(object);
     }
     else if (object_type == rttr::type::get<node::ConcaveHemisphere>())
