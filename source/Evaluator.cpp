@@ -440,6 +440,19 @@ Evaluator::CreateObject(const bp::Node& node)
 {
     std::unique_ptr<rt::GeoPrimitive> dst_object = nullptr;
 
+    bool need_set_material = true;
+    auto set_material = [](const bp::Node& src, rt::GeoPrimitive& dst)
+    {
+        auto& material_conns = src.GetAllInput()[0]->GetConnecting();
+        if (!material_conns.empty())
+        {
+            std::shared_ptr<rt::Material> dst_material = CreateMaterial(material_conns[0]->GetFrom()->GetParent());
+            if (dst_material) {
+                dst.SetMaterial(dst_material);
+            }
+        }
+    };
+
     auto object_type = node.get_type();
     if (object_type == rttr::type::get<node::Compound>())
     {
@@ -710,6 +723,9 @@ Evaluator::CreateObject(const bp::Node& node)
 
         object->SetupCells();
 
+        // todo
+        // need_set_material = false;
+
         dst_object = std::move(object);
     }
     else if (object_type == rttr::type::get<node::ConcaveSphere>())
@@ -922,6 +938,9 @@ Evaluator::CreateObject(const bp::Node& node)
             src_object.bottom_bevel_radius, src_object.top_bevel_radius, src_object.cap_bevel_radius
         );
 
+        need_set_material = false;
+        set_material(node, *object);
+
         auto& conns = node.GetAllInput()[node::ProductJar::ID_BODY_MATERIAL]->GetConnecting();
         if (!conns.empty()) {
             object->SetBodyMaterial(CreateMaterial(conns[0]->GetFrom()->GetParent()));
@@ -944,17 +963,8 @@ Evaluator::CreateObject(const bp::Node& node)
 
     dst_object->SetShadows(static_cast<const node::GeoPrimitive&>(node).shadows);
 
-    // material
-//    if (node.get_type() != rttr::type::get<node::Grid>())
-    {
-        auto& material_conns = node.GetAllInput()[0]->GetConnecting();
-        if (!material_conns.empty())
-        {
-            std::shared_ptr<rt::Material> dst_material = CreateMaterial(material_conns[0]->GetFrom()->GetParent());
-            if (dst_material) {
-                dst_object->SetMaterial(dst_material);
-            }
-        }
+    if (need_set_material) {
+        set_material(node, *dst_object);
     }
 
     return dst_object;
