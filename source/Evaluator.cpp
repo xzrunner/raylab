@@ -494,8 +494,15 @@ Evaluator::CreateObject(const bp::Node& node)
     {
         auto& src_object = static_cast<const node::Sphere&>(node);
         auto object = std::make_unique<rt::Sphere>();
+
         object->SetCenter(to_rt_p3d(src_object.center));
         object->SetRadius(src_object.radius);
+
+        auto& conns = node.GetAllInput()[node::Sphere::ID_SAMPLER]->GetConnecting();
+        if (!conns.empty()) {
+            object->SetSampler(CreateSampler(conns[0]->GetFrom()->GetParent()));
+        }
+
         dst_object = std::move(object);
     }
     else if (object_type == rttr::type::get<node::Plane>())

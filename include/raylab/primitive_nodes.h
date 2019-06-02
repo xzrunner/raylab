@@ -65,10 +65,21 @@ public:
 class Sphere : public GeoPrimitive
 {
 public:
-    Sphere() : GeoPrimitive("Sphere") {}
+    Sphere()
+        : GeoPrimitive("Sphere")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, ID_SAMPLER, PIN_SAMPLER, "Sampler", *this));
+
+        Layout();
+    }
 
     sm::vec3 center;
     float radius = 1.0f;
+
+    enum InputID
+    {
+        ID_SAMPLER = ID_MAX_BASE_INPUT_ID,
+    };
 
     RTTR_ENABLE(GeoPrimitive)
 
