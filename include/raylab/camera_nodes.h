@@ -66,6 +66,7 @@ public:
     FishEye() : Camera("FishEye") {}
 
     float fov = 180.0f;
+    bool  rectangular = false;
 
     RTTR_ENABLE(Camera)
 

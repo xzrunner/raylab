@@ -1245,6 +1245,7 @@ Evaluator::CreateCamera(const bp::Node& node)
         auto& src_camera = static_cast<const node::FishEye&>(node);
         auto camera = std::make_unique<rt::FishEye>();
         camera->SetFov(src_camera.fov);
+        camera->SetRectangular(src_camera.rectangular);
         dst_camera = std::move(camera);
     }
     else if (camera_type == rttr::type::get<node::Spherical>())

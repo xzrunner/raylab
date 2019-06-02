@@ -200,6 +200,10 @@ rttr::registration::class_<raylab::node::FishEye>("raylab::FishEye")
     (
 	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Fov"))
     )
+    .property("rectangular", &raylab::node::FishEye::rectangular)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Rectangular"))
+    )
 ;
 
 rttr::registration::class_<raylab::node::Spherical>("raylab::Spherical")
