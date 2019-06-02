@@ -642,5 +642,30 @@ public:
 
 }; // ConcaveHemisphere
 
+class CutFace : public GeoPrimitive
+{
+public:
+    CutFace() : GeoPrimitive("CutFace") {}
+
+    float size   = 1;		// x and w dimensions of the square
+    float radius = 0.5;		// radius of the hole
+
+    RTTR_ENABLE(GeoPrimitive)
+
+}; // CutFace
+
+class BeveledBoxShell : public GeoPrimitive
+{
+public:
+    BeveledBoxShell() : GeoPrimitive("BeveledBoxShell") {}
+
+    sm::vec3 bottom;
+    sm::vec3 top;
+    float bevel_radius = 0.0f;
+
+    RTTR_ENABLE(GeoPrimitive)
+
+}; // BeveledBoxShell
+
 }
 }

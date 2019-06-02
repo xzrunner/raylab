@@ -924,6 +924,34 @@ rttr::registration::class_<raylab::node::ConcaveHemisphere>("raylab::ConcaveHemi
     )
 ;
 
+rttr::registration::class_<raylab::node::CutFace>("raylab::CutFace")
+    .constructor<>()
+    .property("size", &raylab::node::CutFace::size)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Size"))
+    )
+    .property("radius", &raylab::node::CutFace::radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Radius"))
+    )
+;
+
+rttr::registration::class_<raylab::node::BeveledBoxShell>("raylab::BeveledBoxShell")
+    .constructor<>()
+    .property("bottom", &raylab::node::BeveledBoxShell::bottom)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bottom"))
+    )
+    .property("top", &raylab::node::BeveledBoxShell::top)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Top"))
+    )
+    .property("bevel_radius", &raylab::node::BeveledBoxShell::bevel_radius)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("Bevel Radius"))
+    )
+;
+
 // Material
 
 rttr::registration::class_<raylab::node::Matte>("raylab::Matte")
@@ -1627,6 +1655,10 @@ rttr::registration::class_<raylab::node::Regular>("raylab::Regular")
 ;
 
 rttr::registration::class_<raylab::node::PureRandom>("raylab::PureRandom")
+    .constructor<>()
+;
+
+rttr::registration::class_<raylab::node::Hammersley>("raylab::Hammersley")
     .constructor<>()
 ;
 

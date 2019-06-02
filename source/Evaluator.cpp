@@ -70,6 +70,8 @@
 #include <raytracing/primitive/ConcaveLens.h>
 #include <raytracing/primitive/ProductJar.h>
 #include <raytracing/primitive/ConcaveHemisphere.h>
+#include <raytracing/primitive/CutFace.h>
+#include <raytracing/primitive/BeveledBoxShell.h>
 
 #include <raytracing/material/Matte.h>
 #include <raytracing/material/SV_Matte.h>
@@ -108,6 +110,7 @@
 #include <raytracing/sampler/MultiJittered.h>
 #include <raytracing/sampler/Regular.h>
 #include <raytracing/sampler/PureRandom.h>
+#include <raytracing/sampler/Hammersley.h>
 #include <raytracing/mapping/SphericalMap.h>
 #include <raytracing/mapping/LightProbe.h>
 #include <raytracing/mapping/SquareMap.h>
@@ -956,6 +959,22 @@ Evaluator::CreateObject(const bp::Node& node)
         );
         dst_object = std::move(object);
     }
+    else if (object_type == rttr::type::get<node::CutFace>())
+    {
+        auto& src_object = static_cast<const node::CutFace&>(node);
+        auto object = std::make_unique<rt::CutFace>(
+            src_object.size, src_object.radius
+        );
+        dst_object = std::move(object);
+    }
+    else if (object_type == rttr::type::get<node::BeveledBoxShell>())
+    {
+        auto& src_object = static_cast<const node::BeveledBoxShell&>(node);
+        auto object = std::make_unique<rt::BeveledBoxShell>(
+            to_rt_p3d(src_object.bottom), to_rt_p3d(src_object.top), src_object.bevel_radius
+        );
+        dst_object = std::move(object);
+    }
     else
     {
         assert(0);
@@ -1751,6 +1770,15 @@ Evaluator::CreateSampler(const bp::Node& node)
             num_samples = src_sampler.num_samples;
         }
         auto sampler = std::make_unique<rt::PureRandom>(num_samples);
+        dst_sampler = std::move(sampler);
+    }
+    else if (sampler_type == rttr::type::get<node::Hammersley>())
+    {
+        auto& src_sampler = static_cast<const node::Hammersley&>(node);
+        if (num_samples == 0) {
+            num_samples = src_sampler.num_samples;
+        }
+        auto sampler = std::make_unique<rt::Hammersley>(num_samples);
         dst_sampler = std::move(sampler);
     }
 

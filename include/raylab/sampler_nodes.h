@@ -64,5 +64,14 @@ public:
 
 }; // PureRandom
 
+class Hammersley : public Sampler
+{
+public:
+    Hammersley() : Sampler("Hammersley") {}
+
+    RTTR_ENABLE(Sampler)
+
+}; // Hammersley
+
 }
 }
