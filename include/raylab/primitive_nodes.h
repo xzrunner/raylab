@@ -519,7 +519,7 @@ public:
     float radius     = 1.0;        // radius
     float inv_radius = 1.0;        // one over the radius
     float polar_min  = 0.0;
-    float polar_max  = SM_TWO_PI;
+    float polar_max  = 360.0f;
 
     RTTR_ENABLE(GeoPrimitive)
 
