@@ -18,13 +18,20 @@ public:
     GeoPrimitive(const std::string& title)
         : Node(title)
     {
-        AddPin(std::make_shared<bp::Pin>(true,  0, PIN_MATERIAL, "Material", *this));
-        AddPin(std::make_shared<bp::Pin>(false, 0, PIN_PRIMITIVE,   "Out", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_MATERIAL, PIN_MATERIAL, "Material", *this));
+        AddPin(std::make_shared<bp::Pin>(false, 0, PIN_PRIMITIVE, "Out", *this));
 
         Layout();
     }
 
     bool shadows = true;
+
+    enum InputID
+    {
+        ID_MATERIAL = 0,
+
+        ID_MAX_BASE_INPUT_ID,
+    };
 
     RTTR_ENABLE(Node)
 
@@ -36,14 +43,14 @@ public:
     Compound()
         : GeoPrimitive("Compound")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_PRIMITIVE, "Children", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_CHILDREN, PIN_PRIMITIVE, "Children", *this));
 
         Layout();
     }
 
     enum InputID
     {
-        ID_CHILDREN = 1,
+        ID_CHILDREN = ID_MAX_BASE_INPUT_ID,
     };
 
     RTTR_ENABLE(GeoPrimitive)
@@ -103,8 +110,8 @@ public:
     Rectangle()
         : GeoPrimitive("Rectangle")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_SAMPLER,    "Sampler", *this));
-        AddPin(std::make_shared<bp::Pin>(true, 2, bp::PIN_FLOAT3, "P0",      *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_SAMPLER, PIN_SAMPLER,    "Sampler", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_P0,      bp::PIN_FLOAT3, "P0",      *this));
         Layout();
     }
 
@@ -115,7 +122,7 @@ public:
 
     enum InputID
     {
-        ID_SAMPLER = 1,
+        ID_SAMPLER = ID_MAX_BASE_INPUT_ID,
         ID_P0,
     };
 
@@ -152,7 +159,7 @@ class GeoInstance : public GeoPrimitive
 public:
     GeoInstance() : GeoPrimitive("GeoInstance")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_PRIMITIVE, "Primitive", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_OBJECT, PIN_PRIMITIVE, "Primitive", *this));
         Layout();
     }
 
@@ -179,7 +186,7 @@ public:
 
     enum InputID
     {
-        ID_OBJECT = 1,
+        ID_OBJECT = ID_MAX_BASE_INPUT_ID,
     };
 
     RTTR_ENABLE(GeoPrimitive)
@@ -192,14 +199,14 @@ public:
     Disk()
         : GeoPrimitive("Disk")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_SAMPLER,  "Sampler",  *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_SAMPLER, PIN_SAMPLER, "Sampler",  *this));
 
         Layout();
     }
 
     enum InputID
     {
-        ID_SAMPLER = 1,
+        ID_SAMPLER = ID_MAX_BASE_INPUT_ID,
     };
 
     sm::vec3 center;
@@ -216,9 +223,9 @@ public:
     SolidCylinder()
         : GeoPrimitive("SolidCylinder")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_MATERIAL, "Bottom Material", *this));
-        AddPin(std::make_shared<bp::Pin>(true, 2, PIN_MATERIAL, "Top Material",    *this));
-        AddPin(std::make_shared<bp::Pin>(true, 3, PIN_MATERIAL, "Wall Material",   *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_BOTTOM_MATERIAL, PIN_MATERIAL, "Bottom Material", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_TOP_MATERIAL,    PIN_MATERIAL, "Top Material",    *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_WALL_MATERIAL,   PIN_MATERIAL, "Wall Material",   *this));
 
         Layout();
     }
@@ -229,7 +236,7 @@ public:
 
     enum InputID
     {
-        ID_BOTTOM_MATERIAL = 1,
+        ID_BOTTOM_MATERIAL = ID_MAX_BASE_INPUT_ID,
         ID_TOP_MATERIAL,
         ID_WALL_MATERIAL,
     };
@@ -274,7 +281,7 @@ public:
     Grid()
         : GeoPrimitive("Grid")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_PRIMITIVE, "Children", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_CHILDREN, PIN_PRIMITIVE, "Children", *this));
 
         Layout();
     }
@@ -294,7 +301,7 @@ public:
 
     enum InputID
     {
-        ID_CHILDREN = 1,
+        ID_CHILDREN = ID_MAX_BASE_INPUT_ID,
     };
 
     RTTR_ENABLE(GeoPrimitive)
@@ -400,10 +407,10 @@ public:
     ThickRing()
         : GeoPrimitive("ThickRing")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 1, PIN_MATERIAL, "Bottom Material", *this));
-        AddPin(std::make_shared<bp::Pin>(true, 2, PIN_MATERIAL, "Top Material", *this));
-        AddPin(std::make_shared<bp::Pin>(true, 3, PIN_MATERIAL, "Inner Wall Material", *this));
-        AddPin(std::make_shared<bp::Pin>(true, 4, PIN_MATERIAL, "Outer Wall Material", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_BOTTOM_MATERIAL,     PIN_MATERIAL, "Bottom Material", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_TOP_MATERIAL,        PIN_MATERIAL, "Top Material", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_INNER_WALL_MATERIAL, PIN_MATERIAL, "Inner Wall Material", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_OUTER_WALL_MATERIAL, PIN_MATERIAL, "Outer Wall Material", *this));
 
         Layout();
     }
@@ -415,7 +422,7 @@ public:
 
     enum InputID
     {
-        ID_BOTTOM_MATERIAL = 1,
+        ID_BOTTOM_MATERIAL = ID_MAX_BASE_INPUT_ID,
         ID_TOP_MATERIAL,
         ID_INNER_WALL_MATERIAL,
         ID_OUTER_WALL_MATERIAL,
@@ -546,9 +553,9 @@ public:
 
     enum InputID
     {
-        ID_GLASS_AIR_MATERIAL   = 1,
-        ID_WATER_AIR_MATERIAL   = 2,
-        ID_WATER_GLASS_MATERIAL = 3,
+        ID_GLASS_AIR_MATERIAL = ID_MAX_BASE_INPUT_ID,
+        ID_WATER_AIR_MATERIAL,
+        ID_WATER_GLASS_MATERIAL,
     };
 
     RTTR_ENABLE(GeoPrimitive)
@@ -577,9 +584,9 @@ public:
 
     enum InputID
     {
-        ID_GLASS_AIR_MATERIAL   = 1,
-        ID_WATER_AIR_MATERIAL   = 2,
-        ID_WATER_GLASS_MATERIAL = 3,
+        ID_GLASS_AIR_MATERIAL = ID_MAX_BASE_INPUT_ID,
+        ID_WATER_AIR_MATERIAL,
+        ID_WATER_GLASS_MATERIAL,
     };
 
     RTTR_ENABLE(GeoPrimitive)
@@ -634,7 +641,7 @@ public:
 
     enum InputID
     {
-        ID_BODY_MATERIAL = 1,
+        ID_BODY_MATERIAL = ID_MAX_BASE_INPUT_ID,
     };
 
     RTTR_ENABLE(GeoPrimitive)
