@@ -100,7 +100,7 @@ public:
     sm::vec3 p0     = sm::vec3(-1, 0, -1);
     sm::vec3 a      = sm::vec3(0, 0, 2);
     sm::vec3 b      = sm::vec3(2, 0, 0);
-    sm::vec3 normal = sm::vec3(0, 1, 0);
+    sm::vec3 normal = sm::vec3(0, 0, 0);
 
     enum InputID
     {
