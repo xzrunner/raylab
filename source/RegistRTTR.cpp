@@ -1150,6 +1150,14 @@ rttr::registration::class_<raylab::node::SV_Phong>("raylab::SV_Phong")
     )
 ;
 
+rttr::registration::class_<raylab::node::SV_Reflector>("raylab::SV_Reflector")
+    .constructor<>()
+    .property("kr", &raylab::node::SV_Reflector::kr)
+    (
+	    rttr::metadata(ee0::UIMetaInfoTag(), ee0::UIMetaInfo("kr"))
+    )
+;
+
 // texture
 
 rttr::registration::class_<raylab::node::Checker3D>("raylab::Checker3D")

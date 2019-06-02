@@ -247,5 +247,22 @@ public:
 
 }; // SV_Phong
 
+class SV_Reflector : public Phong
+{
+public:
+    SV_Reflector()
+        : Phong("SV_Reflector")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_TEXTURE, "cr", *this));
+
+        Layout();
+    }
+
+    float kr  = 0.0f;
+
+    RTTR_ENABLE(Material)
+
+}; // SV_Reflector
+
 }
 }

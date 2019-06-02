@@ -84,6 +84,7 @@
 #include <raytracing/material/Dielectric.h>
 #include <raytracing/material/SphereMaterials.h>
 #include <raytracing/material/SV_Phong.h>
+#include <raytracing/material/SV_Reflector.h>
 #include <raytracing/texture/Checker3D.h>
 #include <raytracing/texture/ImageTexture.h>
 #include <raytracing/texture/Image.h>
@@ -146,6 +147,16 @@ rt::Vector3D to_rt_v3d(const sm::vec3& pos)
 rt::Normal to_rt_normal(const sm::vec3& pos)
 {
     return rt::Normal(pos.x, pos.y, pos.z);
+}
+
+void init_phong(const raylab::node::Phong& src, rt::Phong& dst)
+{
+    dst.SetKa(src.ka);
+    dst.SetKd(src.kd);
+    dst.SetKs(src.ks);
+    dst.SetCd(to_rt_color(src.cd));
+    dst.SetCs(to_rt_color(src.cs));
+    dst.SetExp(src.exp);
 }
 
 }
@@ -1078,12 +1089,7 @@ Evaluator::CreateMaterial(const bp::Node& node)
         auto& src_material = static_cast<const node::Phong&>(node);
         auto material = std::make_unique<rt::Phong>();
 
-        material->SetKa(src_material.ka);
-        material->SetKd(src_material.kd);
-        material->SetKs(src_material.ks);
-        material->SetCd(to_rt_color(src_material.cd));
-        material->SetCs(to_rt_color(src_material.cs));
-        material->SetExp(src_material.exp);
+        init_phong(src_material, *material);
 
         dst_material = std::move(material);
     }
@@ -1092,13 +1098,7 @@ Evaluator::CreateMaterial(const bp::Node& node)
         auto& src_material = static_cast<const node::Reflective&>(node);
         auto material = std::make_unique<rt::Reflective>();
 
-        // fixme: copy from phong
-        material->SetKa(src_material.ka);
-        material->SetKd(src_material.kd);
-        material->SetKs(src_material.ks);
-        material->SetCd(to_rt_color(src_material.cd));
-        material->SetCs(to_rt_color(src_material.cs));
-        material->SetExp(src_material.exp);
+        init_phong(src_material, *material);
 
         material->SetKr(src_material.kr);
         material->SetCr(to_rt_color(src_material.cr));
@@ -1125,13 +1125,7 @@ Evaluator::CreateMaterial(const bp::Node& node)
         auto& src_material = static_cast<const node::GlossyReflector&>(node);
         auto material = std::make_unique<rt::GlossyReflector>();
 
-        // fixme: copy from phong
-        material->SetKa(src_material.ka);
-        material->SetKd(src_material.kd);
-        material->SetKs(src_material.ks);
-        material->SetCd(to_rt_color(src_material.cd));
-        material->SetCs(to_rt_color(src_material.cs));
-        material->SetExp(src_material.exp);
+        init_phong(src_material, *material);
 
         material->SetKr(src_material.kr);
         material->SetCr(to_rt_color(src_material.cr));
@@ -1150,13 +1144,7 @@ Evaluator::CreateMaterial(const bp::Node& node)
         auto& src_material = static_cast<const node::Transparent&>(node);
         auto material = std::make_unique<rt::Transparent>();
 
-        // fixme: copy from phong
-        material->SetKa(src_material.ka);
-        material->SetKd(src_material.kd);
-        material->SetKs(src_material.ks);
-        material->SetCd(to_rt_color(src_material.cd));
-        material->SetCs(to_rt_color(src_material.cs));
-        material->SetExp(src_material.exp);
+        init_phong(src_material, *material);
 
         material->SetIor(src_material.ior);
         material->SetKr(src_material.kr);
@@ -1169,13 +1157,7 @@ Evaluator::CreateMaterial(const bp::Node& node)
         auto& src_material = static_cast<const node::Dielectric&>(node);
         auto material = std::make_unique<rt::Dielectric>();
 
-        // fixme: copy from phong
-        material->SetKa(src_material.ka);
-        material->SetKd(src_material.kd);
-        material->SetKs(src_material.ks);
-        material->SetCd(to_rt_color(src_material.cd));
-        material->SetCs(to_rt_color(src_material.cs));
-        material->SetExp(src_material.exp);
+        init_phong(src_material, *material);
 
         material->SetEtaIn(src_material.eta_in);
         material->SetEtaOut(src_material.eta_out);
@@ -1231,6 +1213,22 @@ Evaluator::CreateMaterial(const bp::Node& node)
         auto& cs_conns = src_material.GetAllInput()[node::SV_Phong::ID_CS_TEXTURE]->GetConnecting();
         if (!cs_conns.empty()) {
             material->SetCs(CreateTexture(cs_conns[0]->GetFrom()->GetParent()));
+        }
+
+        dst_material = std::move(material);
+    }
+    else if (material_type == rttr::type::get<node::SV_Reflector>())
+    {
+        auto& src_material = static_cast<const node::SV_Reflector&>(node);
+        auto material = std::make_unique<rt::SV_Reflector>();
+
+        init_phong(src_material, *material);
+
+        material->SetKr(src_material.kr);
+
+        auto& conns = src_material.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) {
+            material->SetCr(CreateTexture(conns[0]->GetFrom()->GetParent()));
         }
 
         dst_material = std::move(material);
