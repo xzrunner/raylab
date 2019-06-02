@@ -31,8 +31,9 @@ public:
     Matte()
         : Material("Matte")
     {
-        AddPin(std::make_shared<bp::Pin>(true, 0, bp::PIN_FLOAT1, "ka", *this));
-        AddPin(std::make_shared<bp::Pin>(true, 1, bp::PIN_FLOAT1, "kd", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_KA,      bp::PIN_FLOAT1, "ka", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_KD,      bp::PIN_FLOAT1, "kd", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_SAMPLER, PIN_SAMPLER,    "Sampler", *this));
 
         Layout();
     }
@@ -45,6 +46,7 @@ public:
     {
         ID_KA = 0,
         ID_KD,
+        ID_SAMPLER,
     };
 
     RTTR_ENABLE(Material)
@@ -142,7 +144,13 @@ public:
 class GlossyReflector : public Phong
 {
 public:
-    GlossyReflector() : Phong("GlossyReflector") {}
+    GlossyReflector()
+        : Phong("GlossyReflector")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, 0, PIN_SAMPLER, "Sampler", *this));
+
+        Layout();
+    }
 
     float      kr  = 0.0f;
     pt0::Color cr  = pt0::Color(255, 255, 255);
