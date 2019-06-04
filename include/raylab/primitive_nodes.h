@@ -60,10 +60,23 @@ public:
 class Box : public GeoPrimitive
 {
 public:
-    Box() : GeoPrimitive("Box") {}
+    Box()
+        : GeoPrimitive("Box")
+    {
+        AddPin(std::make_shared<bp::Pin>(true, ID_MIN, bp::PIN_FLOAT3, "Min", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_MAX, bp::PIN_FLOAT3, "Max", *this));
+
+        Layout();
+    }
 
     sm::vec3 min;
     sm::vec3 max;
+
+    enum InputID
+    {
+        ID_MIN = ID_MAX_BASE_INPUT_ID,
+        ID_MAX,
+    };
 
     RTTR_ENABLE(GeoPrimitive)
 
