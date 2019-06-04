@@ -66,9 +66,6 @@ private:
     static std::unique_ptr<rt::LatticeNoise>
         CreateNoise(const bp::Node& node);
 
-    static float CalcFloat(const bp::Connecting& conn);
-    static sm::vec3 CalcFloat3(const bp::Connecting& conn);
-
 }; // Evaluator
 
 }

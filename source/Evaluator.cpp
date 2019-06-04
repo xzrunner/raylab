@@ -12,7 +12,9 @@
 #include "raylab/noise_nodes.h"
 
 #include <blueprint/Connecting.h>
+#include <blueprint/Evaluator.h>
 #include <blueprint/node/Hub.h>
+#include <blueprint/node/For.h>
 #include <blueprint/node/Vector1.h>
 #include <blueprint/node/Vector3.h>
 
@@ -259,7 +261,7 @@ void Evaluator::Build(rt::World& dst, const node::World& src)
 
             auto& num_conns = vp_node.GetAllInput()[node::ViewPlane::ID_NUM_SAMPLES]->GetConnecting();
             if (!num_conns.empty()) {
-                int num = static_cast<int>(CalcFloat(*num_conns[0]));
+                int num = static_cast<int>(bp::Evaluator::CalcFloat(*num_conns[0]));
                 vp->SetSamples(num);
             }
 
@@ -496,9 +498,21 @@ Evaluator::CreateObject(const bp::Node& node)
     else if (object_type == rttr::type::get<node::Box>())
     {
         auto& src_object = static_cast<const node::Box&>(node);
-        auto object = std::make_unique<rt::Box>(
-            to_rt_p3d(src_object.min), to_rt_p3d(src_object.max)
-        );
+
+        sm::vec3 min = src_object.min;
+        sm::vec3 max = src_object.max;
+
+        auto& conns_min = node.GetAllInput()[node::Box::ID_MIN]->GetConnecting();
+        if (!conns_min.empty()) {
+            min = bp::Evaluator::CalcFloat3(*conns_min[0]);
+        }
+
+        auto& conns_max = node.GetAllInput()[node::Box::ID_MAX]->GetConnecting();
+        if (!conns_max.empty()) {
+            max = bp::Evaluator::CalcFloat3(*conns_max[0]);
+        }
+
+        auto object = std::make_unique<rt::Box>(to_rt_p3d(min), to_rt_p3d(max));
         dst_object = std::move(object);
     }
     else if (object_type == rttr::type::get<node::Sphere>())
@@ -532,7 +546,7 @@ Evaluator::CreateObject(const bp::Node& node)
         rt::Point3D p0;
         auto& conns_p0 = node.GetAllInput()[node::Rectangle::ID_P0]->GetConnecting();
         if (!conns_p0.empty()) {
-            p0 = to_rt_p3d(CalcFloat3(*conns_p0[0]));
+            p0 = to_rt_p3d(bp::Evaluator::CalcFloat3(*conns_p0[0]));
         } else {
             p0 = to_rt_p3d(src_object.p0);
         }
@@ -1023,13 +1037,13 @@ Evaluator::CreateMaterial(const bp::Node& node)
         float ka = src_material.ka;
         auto& ka_conns = inputs[node::Matte::ID_KA]->GetConnecting();
         if (!ka_conns.empty()) {
-            ka = CalcFloat(*ka_conns[0]);
+            ka = bp::Evaluator::CalcFloat(*ka_conns[0]);
         }
 
         float kd = src_material.kd;
         auto& kd_conns = inputs[node::Matte::ID_KD]->GetConnecting();
         if (!kd_conns.empty()) {
-            kd = CalcFloat(*kd_conns[0]);
+            kd = bp::Evaluator::CalcFloat(*kd_conns[0]);
         }
 
         auto& sp_conns = inputs[node::Matte::ID_SAMPLER]->GetConnecting();
@@ -1053,13 +1067,13 @@ Evaluator::CreateMaterial(const bp::Node& node)
         float ka = src_material.ka;
         auto& ka_conns = inputs[node::SV_Matte::ID_KA]->GetConnecting();
         if (!ka_conns.empty()) {
-            ka = CalcFloat(*ka_conns[0]);
+            ka = bp::Evaluator::CalcFloat(*ka_conns[0]);
         }
 
         float kd = src_material.kd;
         auto& kd_conns = inputs[node::SV_Matte::ID_KD]->GetConnecting();
         if (!kd_conns.empty()) {
-            kd = CalcFloat(*kd_conns[0]);
+            kd = bp::Evaluator::CalcFloat(*kd_conns[0]);
         }
 
         std::shared_ptr<rt::Texture> tex = nullptr;
@@ -1737,7 +1751,7 @@ Evaluator::CreateSampler(const bp::Node& node)
     int num_samples = 0;
     auto& conns = node.GetAllInput()[0]->GetConnecting();
     if (!conns.empty()) {
-        num_samples = static_cast<int>(CalcFloat(*conns[0]));
+        num_samples = static_cast<int>(bp::Evaluator::CalcFloat(*conns[0]));
     }
 
     auto sampler_type = node.get_type();
@@ -1865,32 +1879,6 @@ Evaluator::CreateNoise(const bp::Node& node)
     }
 
     return dst_noise;
-}
-
-float Evaluator::CalcFloat(const bp::Connecting& conn)
-{
-    float ret = 0;
-
-    auto& node = conn.GetFrom()->GetParent();
-    auto node_type = node.get_type();
-    if (node_type == rttr::type::get<bp::node::Vector1>()) {
-        ret = static_cast<const bp::node::Vector1&>(node).GetValue();
-    }
-
-    return ret;
-}
-
-sm::vec3 Evaluator::CalcFloat3(const bp::Connecting& conn)
-{
-    sm::vec3 ret;
-
-    auto& node = conn.GetFrom()->GetParent();
-    auto node_type = node.get_type();
-    if (node_type == rttr::type::get<bp::node::Vector3>()) {
-        ret = static_cast<const bp::node::Vector3&>(node).GetValue();
-    }
-
-    return ret;
 }
 
 }

@@ -13,8 +13,18 @@
 #include "raylab/world_nodes.h"
 
 #include <blueprint/node/Hub.h>
+#include <blueprint/node/For.h>
 #include <blueprint/node/Vector1.h>
+#include <blueprint/node/Vector2.h>
 #include <blueprint/node/Vector3.h>
+#include <blueprint/node/Vector4.h>
+#include <blueprint/node/Negate.h>
+#include <blueprint/node/Add.h>
+#include <blueprint/node/Subtract.h>
+#include <blueprint/node/Multiply.h>
+#include <blueprint/node/Divide.h>
+#include <blueprint/node/Combine.h>
+#include <blueprint/node/Split.h>
 
 namespace raylab
 {
@@ -60,8 +70,18 @@ void RayLab::InitNodes()
     };
 
     add_node(rttr::type::get<bp::node::Hub>());
+    add_node(rttr::type::get<bp::node::For>());
     add_node(rttr::type::get<bp::node::Vector1>());
+    add_node(rttr::type::get<bp::node::Vector2>());
     add_node(rttr::type::get<bp::node::Vector3>());
+    add_node(rttr::type::get<bp::node::Vector4>());
+    add_node(rttr::type::get<bp::node::Negate>());
+    add_node(rttr::type::get<bp::node::Add>());
+    add_node(rttr::type::get<bp::node::Subtract>());
+    add_node(rttr::type::get<bp::node::Multiply>());
+    add_node(rttr::type::get<bp::node::Divide>());
+    add_node(rttr::type::get<bp::node::Combine>());
+    add_node(rttr::type::get<bp::node::Split>());
 
     add_node(rttr::type::get<node::World>());
     add_node(rttr::type::get<node::Output>());
