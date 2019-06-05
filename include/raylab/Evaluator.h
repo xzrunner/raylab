@@ -3,6 +3,7 @@
 #include <SM_Vector.h>
 
 #include <memory>
+#include <vector>
 
 namespace rt
 {
@@ -42,8 +43,10 @@ private:
     static std::unique_ptr<rt::Tracer>
         CreateTracer(const bp::Node& node, rt::World& dst);
 
+    static void CreateObjects(const bp::Connecting& conn,
+        std::vector<std::unique_ptr<rt::GeoPrimitive>>& objects, int for_idx = 0);
     static std::unique_ptr<rt::GeoPrimitive>
-        CreateObject(const bp::Node& node);
+        CreateObject(const bp::Node& node, int for_idx = 0);
 
     static std::unique_ptr<rt::Material>
         CreateMaterial(const bp::Node& node);
