@@ -25,6 +25,7 @@
 #include <blueprint/node/Divide.h>
 #include <blueprint/node/Combine.h>
 #include <blueprint/node/Split.h>
+#include <blueprint/node/Script.h>
 
 namespace raylab
 {
@@ -82,6 +83,7 @@ void RayLab::InitNodes()
     add_node(rttr::type::get<bp::node::Divide>());
     add_node(rttr::type::get<bp::node::Combine>());
     add_node(rttr::type::get<bp::node::Split>());
+    add_node(rttr::type::get<bp::node::Script>());
 
     add_node(rttr::type::get<node::World>());
     add_node(rttr::type::get<node::Output>());
