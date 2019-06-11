@@ -1074,6 +1074,13 @@ Evaluator::CreateMaterial(const bp::Node& node)
             kd = bp::Evaluator::CalcFloat(*kd_conns[0]);
         }
 
+        auto cd = src_material.cd;
+        auto& cd_conns = inputs[node::Matte::ID_CD]->GetConnecting();
+        if (!cd_conns.empty()) {
+            auto v3 = bp::Evaluator::CalcFloat3(*cd_conns[0]);
+            cd.FromFloat(v3.x, v3.y, v3.z);
+        }
+
         auto& sp_conns = inputs[node::Matte::ID_SAMPLER]->GetConnecting();
         if (!sp_conns.empty()) {
             material->SetSampler(CreateSampler(sp_conns[0]->GetFrom()->GetParent()));
@@ -1081,7 +1088,7 @@ Evaluator::CreateMaterial(const bp::Node& node)
 
         material->SetKa(ka);
         material->SetKd(kd);
-        material->SetCd(to_rt_color(src_material.cd));
+        material->SetCd(to_rt_color(cd));
 
         dst_material = std::move(material);
     }
