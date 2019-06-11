@@ -14,6 +14,7 @@
 
 #include <blueprint/node/Hub.h>
 #include <blueprint/node/For.h>
+#include <blueprint/node/For2.h>
 #include <blueprint/node/Vector1.h>
 #include <blueprint/node/Vector2.h>
 #include <blueprint/node/Vector3.h>
@@ -72,6 +73,7 @@ void RayLab::InitNodes()
 
     add_node(rttr::type::get<bp::node::Hub>());
     add_node(rttr::type::get<bp::node::For>());
+    add_node(rttr::type::get<bp::node::For2>());
     add_node(rttr::type::get<bp::node::Vector1>());
     add_node(rttr::type::get<bp::node::Vector2>());
     add_node(rttr::type::get<bp::node::Vector3>());

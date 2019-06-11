@@ -15,6 +15,7 @@
 #include <blueprint/Evaluator.h>
 #include <blueprint/node/Hub.h>
 #include <blueprint/node/For.h>
+#include <blueprint/node/For2.h>
 #include <blueprint/node/Vector1.h>
 #include <blueprint/node/Vector3.h>
 
@@ -436,7 +437,7 @@ Evaluator::CreateTracer(const bp::Node& node, rt::World& dst)
     return dst_tracer;
 }
 
-void Evaluator::CreateObjects(const bp::Connecting& conn, std::vector<std::unique_ptr<rt::GeoPrimitive>>& objects, int for_idx)
+void Evaluator::CreateObjects(const bp::Connecting& conn, std::vector<std::unique_ptr<rt::GeoPrimitive>>& objects)
 {
     auto& object_node = conn.GetFrom()->GetParent();
     auto object_type = object_node.get_type();
@@ -445,7 +446,7 @@ void Evaluator::CreateObjects(const bp::Connecting& conn, std::vector<std::uniqu
         auto& hub = static_cast<const bp::node::Hub&>(object_node);
         for (auto& input : hub.GetAllInput()) {
             for (auto& c : input->GetConnecting()) {
-                CreateObjects(*c, objects, for_idx);
+                CreateObjects(*c, objects);
             }
         }
     }
@@ -454,21 +455,40 @@ void Evaluator::CreateObjects(const bp::Connecting& conn, std::vector<std::uniqu
         auto& f = static_cast<const bp::node::For&>(object_node);
         auto& conns = f.GetAllInput()[0]->GetConnecting();
         if (!conns.empty()) {
-            for (int i = f.index_begin; i < f.index_end; i += f.index_step) {
-                CreateObjects(*conns[0], objects, i);
+            for (int i = f.index_begin; i < f.index_end; i += f.index_step) 
+            {
+                const_cast<bp::node::For&>(f).index_curr = i;
+                CreateObjects(*conns[0], objects);
+            }
+        }
+    }
+    else if (object_type == rttr::type::get<bp::node::For2>())
+    {
+        auto& f = static_cast<const bp::node::For2&>(object_node);
+        auto& conns = f.GetAllInput()[0]->GetConnecting();
+        if (!conns.empty()) 
+        {
+            for (int i = f.i_begin; i < f.i_end; i += f.i_step) 
+            {
+                const_cast<bp::node::For2&>(f).i_curr = i;
+                for (int j = f.j_begin; j < f.j_end; j += f.j_step)
+                {
+                    const_cast<bp::node::For2&>(f).j_curr = j;
+                    CreateObjects(*conns[0], objects);
+                }
             }
         }
     }
     else if (object_type.is_derived_from<node::GeoPrimitive>())
     {
-        if (auto obj = CreateObject(object_node, for_idx)) {
+        if (auto obj = CreateObject(object_node)) {
             objects.push_back(std::move(obj));
         }
     }
 }
 
 std::unique_ptr<rt::GeoPrimitive>
-Evaluator::CreateObject(const bp::Node& node, int for_idx)
+Evaluator::CreateObject(const bp::Node& node)
 {
     std::unique_ptr<rt::GeoPrimitive> dst_object = nullptr;
 
@@ -501,7 +521,7 @@ Evaluator::CreateObject(const bp::Node& node, int for_idx)
                 for (auto& input : hub.GetAllInput()) {
                     for (auto& conn : input->GetConnecting()) {
                         auto& from_node = conn->GetFrom()->GetParent();
-                        if (auto obj = CreateObject(from_node, for_idx)) {
+                        if (auto obj = CreateObject(from_node)) {
                             object->AddObject(std::move(obj));
                         }
                     }
@@ -520,12 +540,12 @@ Evaluator::CreateObject(const bp::Node& node, int for_idx)
 
         auto& conns_min = node.GetAllInput()[node::Box::ID_MIN]->GetConnecting();
         if (!conns_min.empty()) {
-            min = bp::Evaluator::CalcFloat3(*conns_min[0], for_idx);
+            min = bp::Evaluator::CalcFloat3(*conns_min[0]);
         }
 
         auto& conns_max = node.GetAllInput()[node::Box::ID_MAX]->GetConnecting();
         if (!conns_max.empty()) {
-            max = bp::Evaluator::CalcFloat3(*conns_max[0], for_idx);
+            max = bp::Evaluator::CalcFloat3(*conns_max[0]);
         }
 
         auto object = std::make_unique<rt::Box>(to_rt_p3d(min), to_rt_p3d(max));
@@ -562,7 +582,7 @@ Evaluator::CreateObject(const bp::Node& node, int for_idx)
         rt::Point3D p0;
         auto& conns_p0 = node.GetAllInput()[node::Rectangle::ID_P0]->GetConnecting();
         if (!conns_p0.empty()) {
-            p0 = to_rt_p3d(bp::Evaluator::CalcFloat3(*conns_p0[0], for_idx));
+            p0 = to_rt_p3d(bp::Evaluator::CalcFloat3(*conns_p0[0]));
         } else {
             p0 = to_rt_p3d(src_object.p0);
         }
@@ -617,7 +637,7 @@ Evaluator::CreateObject(const bp::Node& node, int for_idx)
         if (conns.empty()) {
             object = std::make_unique<rt::GeoInstance>();
         } else {
-            object = std::make_unique<rt::GeoInstance>(CreateObject(conns[0]->GetFrom()->GetParent(), for_idx));
+            object = std::make_unique<rt::GeoInstance>(CreateObject(conns[0]->GetFrom()->GetParent()));
         }
         //for (auto& op : src_object.ops)
         //{
@@ -757,18 +777,10 @@ Evaluator::CreateObject(const bp::Node& node, int for_idx)
         auto& conns = node.GetAllInput()[node::Grid::ID_CHILDREN]->GetConnecting();
         if (!conns.empty())
         {
-            auto& node = conns[0]->GetFrom()->GetParent();
-            if (node.get_type() == rttr::type::get<bp::node::Hub>())
-            {
-                auto& hub = static_cast<const bp::node::Hub&>(node);
-                for (auto& input : hub.GetAllInput()) {
-                    for (auto& conn : input->GetConnecting()) {
-                        auto& from_node = conn->GetFrom()->GetParent();
-                        if (auto obj = CreateObject(from_node, for_idx)) {
-                            object->AddObject(std::move(obj));
-                        }
-                    }
-                }
+            std::vector<std::unique_ptr<rt::GeoPrimitive>> objects;
+            CreateObjects(*conns[0], objects);
+            for (auto& obj : objects) {
+                object->AddObject(std::move(obj));
             }
         }
 

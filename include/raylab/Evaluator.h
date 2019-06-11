@@ -44,9 +44,9 @@ private:
         CreateTracer(const bp::Node& node, rt::World& dst);
 
     static void CreateObjects(const bp::Connecting& conn,
-        std::vector<std::unique_ptr<rt::GeoPrimitive>>& objects, int for_idx = 0);
+        std::vector<std::unique_ptr<rt::GeoPrimitive>>& objects);
     static std::unique_ptr<rt::GeoPrimitive>
-        CreateObject(const bp::Node& node, int for_idx = 0);
+        CreateObject(const bp::Node& node);
 
     static std::unique_ptr<rt::Material>
         CreateMaterial(const bp::Node& node);
