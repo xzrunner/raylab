@@ -556,7 +556,13 @@ Evaluator::CreateObject(const bp::Node& node)
         auto& src_object = static_cast<const node::Sphere&>(node);
         auto object = std::make_unique<rt::Sphere>();
 
-        object->SetCenter(to_rt_p3d(src_object.center));
+        sm::vec3 center = src_object.center;
+        auto& conns_center = node.GetAllInput()[node::Sphere::ID_CENTER]->GetConnecting();
+        if (!conns_center.empty()) {
+            center = bp::Evaluator::CalcFloat3(*conns_center[0]);
+        }
+        object->SetCenter(to_rt_p3d(center));
+
         object->SetRadius(src_object.radius);
 
         auto& conns = node.GetAllInput()[node::Sphere::ID_SAMPLER]->GetConnecting();

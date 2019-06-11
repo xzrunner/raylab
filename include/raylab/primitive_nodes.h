@@ -88,7 +88,8 @@ public:
     Sphere()
         : GeoPrimitive("Sphere")
     {
-        AddPin(std::make_shared<bp::Pin>(true, ID_SAMPLER, PIN_SAMPLER, "Sampler", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_SAMPLER, PIN_SAMPLER,    "Sampler", *this));
+        AddPin(std::make_shared<bp::Pin>(true, ID_CENTER,  bp::PIN_FLOAT3, "Center",  *this));
 
         Layout();
     }
@@ -99,6 +100,7 @@ public:
     enum InputID
     {
         ID_SAMPLER = ID_MAX_BASE_INPUT_ID,
+        ID_CENTER
     };
 
     RTTR_ENABLE(GeoPrimitive)
