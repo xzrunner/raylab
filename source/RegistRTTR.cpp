@@ -1730,11 +1730,19 @@ rttr::registration::class_<raylab::node::CubicNoise>("raylab::CubicNoise")
 
 }
 
+namespace bp
+{
+extern void regist_sm_rttr();
+extern void regist_pt0_rttr();
+}
+
 namespace raylab
 {
 
 void regist_rttr()
 {
+    bp::regist_sm_rttr();
+    bp::regist_pt0_rttr();
 }
 
 }
