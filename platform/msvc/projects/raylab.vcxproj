@@ -40,7 +40,7 @@
     <ClCompile Include="..\..\..\source\WxPreviewPanel.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>1.raylab</ProjectName>
+    <ProjectName>6.raylab</ProjectName>
     <ProjectGuid>{7F806517-AF5C-466E-8B85-16A44E546642}</ProjectGuid>
     <RootNamespace>raylab</RootNamespace>
     <Keyword>Win32Proj</Keyword>
