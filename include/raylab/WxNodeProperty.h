@@ -8,7 +8,8 @@ namespace raylab
 class WxNodeProperty : public bp::WxNodeProperty
 {
 public:
-	WxNodeProperty(wxWindow* parent, const ee0::SubjectMgrPtr& sub_mgr);
+	WxNodeProperty(const ur2::Device& dev, wxWindow* parent,
+        const ee0::SubjectMgrPtr& sub_mgr);
 
 protected:
     virtual bool InitView(const rttr::property& prop, const bp::NodePtr& node) override;
