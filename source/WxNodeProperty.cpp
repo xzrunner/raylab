@@ -23,7 +23,7 @@
 namespace raylab
 {
 
-WxNodeProperty::WxNodeProperty(const ur2::Device& dev, wxWindow* parent,
+WxNodeProperty::WxNodeProperty(const ur::Device& dev, wxWindow* parent,
                                const ee0::SubjectMgrPtr& sub_mgr)
 	: bp::WxNodeProperty(dev, parent, sub_mgr)
 {

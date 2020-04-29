@@ -8,7 +8,7 @@ namespace raylab
 class WxNodeProperty : public bp::WxNodeProperty
 {
 public:
-	WxNodeProperty(const ur2::Device& dev, wxWindow* parent,
+	WxNodeProperty(const ur::Device& dev, wxWindow* parent,
         const ee0::SubjectMgrPtr& sub_mgr);
 
 protected:
